@@ -1,16 +1,8 @@
 {
-  "version": "v0.12.1",
+  "version": "v0.12.0",
   "release": "v0.12.0",
-  "buildDate": "2026-11-18T16:02:06Z",
-  "gitCommit": "bd3aed960",
+  "buildDate": "2026-11-18T16:39:14Z",
+  "gitCommit": "bbc0ecd",
   "environment": "production",
-  "updates": [
-    {
-      "version": "v0.12.1",
-      "date": "2026-11-18",
-      "pr": 505,
-      "title": "Use the protected-account flag instead of a hardcoded personal user id",
-      "category": "fix"
-    }
-  ]
+  "updates": []
 }
