@@ -39,9 +39,8 @@
 // `svg-sanitizer` / `sanitize-svg` packages use under the hood for
 // their core logic.
 
-const SCRIPT_TAG_RE = /<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>/gi;
-// Catches self-closing or unclosed `<script />` too.
-const SCRIPT_SELF_CLOSING_RE = /<\/?script\b[^>]*>?/gi;
+// The `<` that opens any `<script` or `</script` tag, however written.
+const SCRIPT_TAG_OPEN_RE = /<(?=\/?script)/gi;
 // Match any `on*` attribute (event handler) regardless of quote style
 // or absence. We capture the leading space so we keep tag structure
 // readable, but the replacement just drops the entire attribute.
@@ -123,20 +122,19 @@ export function sanitizeSvg(input: string): SanitizeSvgResult {
   do {
     previous = cleaned;
 
-    // 1. Strip `<script>` blocks (including self-closing variants).
-    cleaned = cleaned.replace(SCRIPT_TAG_RE, () => {
+    // 1. Escape the `<` of every `<script>` / `</script>` tag. Escaping
+    //    a single character can't join text into a new tag the way
+    //    deleting a match can; the script becomes inert text.
+    cleaned = cleaned.replace(SCRIPT_TAG_OPEN_RE, () => {
       removed.scripts++;
-      return '';
-    });
-    cleaned = cleaned.replace(SCRIPT_SELF_CLOSING_RE, () => {
-      removed.scripts++;
-      return '';
+      return '&lt;';
     });
 
-    // 2. Strip inline event-handler attributes (onclick / onload / …).
+    // 2. Replace inline event-handler attributes (onclick / onload / …)
+    //    with an inert placeholder attribute.
     cleaned = cleaned.replace(EVENT_HANDLER_ATTR_RE, () => {
       removed.eventHandlers++;
-      return '';
+      return ' data-removed-handler=""';
     });
 
     // 3. Neutralise `javascript:` URIs in href/xlink:href/src/action.
@@ -158,9 +156,7 @@ export function sanitizeSvg(input: string): SanitizeSvgResult {
     });
   } while (cleaned !== previous);
 
-  // Last guards: escape any `<` that would still open a script tag, and
-  // refuse the file outright if an event handler somehow survived.
-  cleaned = cleaned.replace(/<(?=\/?script)/gi, '&lt;');
+  // Last guard: refuse the file outright if an event handler survived.
   if (/\son[a-z]+\s*=/i.test(cleaned)) {
     return {
       ok: false,

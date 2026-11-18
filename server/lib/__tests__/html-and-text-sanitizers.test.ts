@@ -5,18 +5,16 @@ import { sanitizeSvg } from "../svg-sanitizer";
 import { resolveMinifiedStack } from "../sourcemap-resolver";
 
 describe("stripScriptTags", () => {
-  it("removes script blocks and keeps the rest", () => {
-    expect(stripScriptTags('<p>Hi</p><script>alert(1)</script><b>x</b>')).toBe("<p>Hi</p><b>x</b>");
+  it("turns script tags into inert text and keeps the rest", () => {
+    expect(stripScriptTags("<p>Hi</p><script>alert(1)</script><b>x</b>")).toBe(
+      "<p>Hi</p>&lt;script>alert(1)&lt;/script><b>x</b>",
+    );
   });
 
-  it("removes a script that a single pass would leave behind", () => {
-    const out = stripScriptTags("<scr<script>x</script>ipt>alert(1)</script>");
-    expect(out.toLowerCase()).not.toContain("<script");
-  });
-
-  it("removes closing tags with attributes and unmatched tags", () => {
-    expect(stripScriptTags("a<script>b</script foo>c")).toBe("ac");
-    expect(stripScriptTags("a<SCRIPT src=x>b")).toBe("ab");
+  it("leaves no script tag opener, however the input is nested or cased", () => {
+    for (const input of ["<scr<script>x</script>ipt>alert(1)</script>", "a<SCRIPT src=x>b", "a</script foo>c"]) {
+      expect(stripScriptTags(input).toLowerCase()).not.toMatch(/<\/?script/);
+    }
   });
 });
 
@@ -46,6 +44,7 @@ describe("sanitizeSvg", () => {
   it("removes an event handler rebuilt by an earlier removal", () => {
     const svg = '<svg xmlns="http://www.w3.org/2000/svg"><rect o<script></script>nload="alert(1)"/></svg>';
     const result = sanitizeSvg(svg);
+    expect(result.ok).toBe(true);
     expect(result.content).not.toMatch(/\son[a-z]+\s*=/i);
   });
 });

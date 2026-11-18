@@ -1,24 +1,15 @@
 // Server-side defence in depth for admin-authored email HTML. Emails are
 // sanitized again with DOMPurify wherever the app renders them
 // (client/src/lib/safeHtml.ts), and mail clients don't run scripts; this
-// only keeps <script> elements out of what is stored.
+// only keeps working <script> elements out of what is stored.
 //
-// A single regex pass is not enough: removing one match can join the
-// text around it into a new tag (`<scr<script></script>ipt>`). So the
-// passes repeat until nothing changes, and any opening or closing script
-// tag left without a partner is removed too.
+// Removing tags with a regex is fragile: deleting one match can join the
+// text around it into a new tag (`<scr<script></script>ipt>`). Escaping
+// the `<` that opens any script tag can't create a new one, so a script
+// ends up as harmless visible text instead.
 
-const SCRIPT_BLOCK_RE = /<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>/gi;
-const SCRIPT_TAG_RE = /<\/?script\b[^>]*>?/gi;
+const SCRIPT_TAG_OPEN_RE = /<(?=\/?script)/gi;
 
 export function stripScriptTags(html: string): string {
-  let previous: string;
-  let current = html;
-  do {
-    previous = current;
-    current = current.replace(SCRIPT_BLOCK_RE, "").replace(SCRIPT_TAG_RE, "");
-  } while (current !== previous);
-  // The loop leaves no script tag behind; escaping any `<` that would
-  // open one is a last guard that a regex-only pass can't get wrong.
-  return current.replace(/<(?=\/?script)/gi, "&lt;");
+  return html.replace(SCRIPT_TAG_OPEN_RE, "&lt;");
 }
