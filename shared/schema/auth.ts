@@ -206,6 +206,11 @@ export const users = pgTable("users", {
   // the app-wide setting (`system_settings.demo_mode_app_wide`); the
   // resolver in `server/lib/demo-mode.ts` ORs the three sources.
   demoModeForcedOn: boolean("demo_mode_forced_on").default(false).notNull(),
+  // Demo login (migration 136): "admin" or "engineer" for the two shared
+  // accounts Demo Mode hands to outside visitors, null for everyone else.
+  // Such an account is always in demo, works in the demo sandbox only and
+  // loses its MFA on every password sign-in (server/lib/demo-logins.ts).
+  demoLogin: varchar("demo_login", { length: 16 }),
   lastAccessedProjectId: integer("last_accessed_project_id").references(
     (): AnyPgColumn => projects.id,
   ),
@@ -270,6 +275,10 @@ export const users = pgTable("users", {
   index("users_sso_idx")
     .on(table.ssoProvider, table.ssoExternalId)
     .where(sql`${table.ssoExternalId} IS NOT NULL`),
+  // At most one Demo Admin and one Demo Engineer login (migration 136).
+  uniqueIndex("users_demo_login_unique")
+    .on(table.demoLogin)
+    .where(sql`${table.demoLogin} IS NOT NULL`),
 ]);
 
 export const userAccounts = pgTable(

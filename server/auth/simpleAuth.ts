@@ -1478,6 +1478,12 @@ export async function setupSimpleAuth(app: Express) {
   // routes below, so no write slips past it. See ./view-as.ts.
   app.use(viewAsGuard);
 
+  // Demo logins (Demo Mode): the two shared visitor accounts work with demo
+  // data only. Mounted here, before the auth routes below, so password
+  // change and profile edits are covered too. See ../lib/demo-login-guard.ts.
+  const { demoLoginGuard } = await import("../lib/demo-login-guard");
+  app.use(demoLoginGuard);
+
   // Login route for user authentication
   app.post("/api/login", async (req: any, res) => {
     try {
@@ -1745,6 +1751,14 @@ export async function setupSimpleAuth(app: Express) {
       // bookkeeping below is intentionally skipped on this branch — it
       // runs after the challenge succeeds, recorded by the challenge
       // route once the session is actually created.
+      // Demo logins (Demo Mode) are shared by outside visitors: each
+      // password sign-in clears the last visitor's MFA so this one enrolls
+      // their own authenticator. See server/lib/demo-logins.ts.
+      if (existingUser.demoLogin) {
+        const { resetDemoLoginMfa } = await import("../lib/demo-logins");
+        if (await resetDemoLoginMfa(existingUser)) existingUser.mfaEnabled = false;
+      }
+
       if (existingUser.mfaEnabled) {
         try {
           const { generateTempToken } = await import("./mfaUtils");

@@ -24,6 +24,8 @@ interface User {
   firstName?: string;
   lastName?: string;
   role?: string;
+  /** "admin" or "engineer" for a shared Demo Mode login, else null. */
+  demoLogin?: string | null;
   timezone?: string | null;
   isApproved?: boolean;
   mfaEnabled?: boolean | null;

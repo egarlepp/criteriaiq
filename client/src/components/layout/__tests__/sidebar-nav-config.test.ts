@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { demoLoginCanView } from "@shared/demo-login";
 import {
   SIDEBAR_NAV,
   activeChildId,
@@ -228,6 +229,17 @@ describe("filterSidebarNav", () => {
     const noUsers = (s: string) => !teamPages.includes(s);
     const admin = filterSidebarNav(SIDEBAR_NAV, noUsers, true).find((g) => g.id === "admin")!;
     expect(admin.items.map((i) => i.id)).not.toContain("team-people");
+  });
+
+  it("hides Demo Mode, people, logs and the error log from a demo login", () => {
+    const ids = (groups: ReturnType<typeof filterSidebarNav>) =>
+      groups.flatMap((g) => g.items.flatMap((i) => [i.id, ...(i.children ?? []).map((c) => c.id)]));
+    const demo = ids(filterSidebarNav(SIDEBAR_NAV, demoLoginCanView, true, undefined, true));
+    for (const id of ["demo-mode", "users", "teams", "roles", "login-history", "error-log", "email-logs", "backup"]) {
+      expect(demo).not.toContain(id);
+    }
+    expect(demo).toContain("dashboard");
+    expect(ids(filterSidebarNav(SIDEBAR_NAV, () => true, true))).toContain("error-log");
   });
 });
 

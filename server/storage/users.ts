@@ -190,6 +190,7 @@ export class UsersStorageMixin {
         showFlightDeck: users.showFlightDeck,
         flightDeckLastShownAt: users.flightDeckLastShownAt,
         demoModeForcedOn: users.demoModeForcedOn,
+        demoLogin: users.demoLogin,
         lastAccessedProjectId: users.lastAccessedProjectId,
         dupCleanupNoticeDismissedAt: users.dupCleanupNoticeDismissedAt,
         ssoProvider: users.ssoProvider,

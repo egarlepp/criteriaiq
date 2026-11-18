@@ -6,6 +6,8 @@ export interface SidebarProps {
     timezone?: string;
     role?: string;
     lastLogin?: string | null;
+    /** Set for a shared Demo Mode login (shared/demo-login.ts). */
+    demoLogin?: string | null;
   };
 }
 

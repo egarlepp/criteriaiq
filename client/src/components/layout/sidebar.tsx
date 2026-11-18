@@ -123,7 +123,7 @@ export function Sidebar({ user }: SidebarProps) {
   const { provider: activeCrm } = useCrmProvider();
   // Fills {{record}} in menu labels such as "{{record}} Requests".
   useValidationRecordLabel();
-  const navGroups = filterSidebarNav(SIDEBAR_NAV, canView, user?.role === "Admin", activeCrm);
+  const navGroups = filterSidebarNav(SIDEBAR_NAV, canView, user?.role === "Admin", activeCrm, !!user?.demoLogin);
 
   const isExternalUser = ["customer", "partner", "guest"].includes((user?.role ?? "").toLowerCase());
 

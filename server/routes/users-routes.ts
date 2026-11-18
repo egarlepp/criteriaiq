@@ -50,6 +50,8 @@ import { toPageValues, validatePermissionPayload } from "@shared/permissions";
 import { EXTERNAL_ROLES, isExternalRole, isInternalAccount } from "../lib/internal-access";
 import { parseRequestedAccountId, resolveAccountAssignment } from "../lib/user-account-assignment";
 import { revokeUserAccess, type RevocationReason } from "../auth/session-revocation";
+import { isDemoUserEmail } from "../lib/demo-story";
+
 import {
   insertUserSchema,
   passwordResetRequestSchema,
@@ -70,6 +72,11 @@ import {
   validateAdminPasswordField,
   PASSWORD_RECENTLY_USED_ERROR_CODE,
 } from "@shared/admin-validation";
+
+/** Demo Staff, demo Customer users and the demo logins. */
+function isDemoPerson(user: { email?: string | null; demoLogin?: string | null }): boolean {
+  return !!user.demoLogin || isDemoUserEmail(user.email);
+}
 
 // Validates an optional `allowedLoginMethods` field on the user CRUD
 // routes. Only admins may set it, and only to one of the known values.
@@ -214,6 +221,11 @@ export function registerUsersRoutes(app: Express) {
       }));
 
       const actor = (req as any).session.user;
+      // A demo login (Demo Mode) sees only demo people and the demo logins,
+      // so every people picker it opens stays inside the demo.
+      if (actor?.demoLogin) {
+        return res.json(enrichedUsers.filter(isDemoPerson));
+      }
       if (EXTERNAL_ROLES.has(actor?.role) && !(await canReadUserDirectory(req))) {
         return res.json(await scopeUsersForExternalViewer(actor.id, enrichedUsers));
       }
@@ -243,6 +255,7 @@ export function registerUsersRoutes(app: Express) {
 
       const allUsers = await storage.getAllUsers();
       const filteredUsers = allUsers
+        .filter((user: any) => !req.session.user.demoLogin || isDemoPerson(user))
         .filter((user: any) => 
           user.isActive && 
           user.isApproved && 

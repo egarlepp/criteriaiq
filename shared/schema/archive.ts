@@ -77,6 +77,7 @@ export const archivedUsers = pgTable("archived_users", {
   // dismissed (Task #721).
   dupCleanupNoticeDismissedAt: timestamp("dup_cleanup_notice_dismissed_at"),
   demoModeForcedOn: boolean("demo_mode_forced_on").default(false).notNull(),
+  demoLogin: varchar("demo_login", { length: 16 }),
   // Mirrors `users.sso_*` so the OIDC identity link survives an
   // archive → restore round-trip. Source columns added in migration 071;
   // archive backfill in migration 072. Without these, restoring a

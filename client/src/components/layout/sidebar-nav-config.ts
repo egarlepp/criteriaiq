@@ -124,6 +124,12 @@ export interface SidebarNavLink {
   /** Only shown to Admins. */
   adminOnly?: boolean;
   /**
+   * Hidden from the shared demo logins (Demo Mode) although they sign in as
+   * Admins: the page shows real records. Sections they can't see are in
+   * DEMO_LOGIN_HIDDEN_SECTIONS (shared/demo-login.ts).
+   */
+  hideForDemoLogin?: boolean;
+  /**
    * Settings pages of one CRM: shown only while it is the install's CRM
    * (Admin › Integrations › Overview › CRM).
    */
@@ -498,7 +504,7 @@ export const SIDEBAR_NAV: SidebarNavGroup[] = [
           },
           { id: "login-history", labelKey: "layout.sidebar.items.loginHistory", icon: LogIn, href: "/admin?tab=login-history", section: "config.login-history" },
           { id: "email-logs", labelKey: "layout.sidebar.items.emailLogs", icon: Mail, href: "/admin?tab=email-logs", section: "communications.email-logs" },
-          { id: "error-log", labelKey: "layout.sidebar.items.errorLog", icon: Bug, href: "/admin?tab=error-log", section: "about.support-features", adminOnly: true },
+          { id: "error-log", labelKey: "layout.sidebar.items.errorLog", icon: Bug, href: "/admin?tab=error-log", section: "about.support-features", adminOnly: true, hideForDemoLogin: true },
           { id: "page-usage", labelKey: "layout.sidebar.items.pageUsage", icon: ChartColumnStacked, href: "/admin?tab=page-usage", section: "config.system-health", adminOnly: true },
           { id: "scheduler", labelKey: "layout.sidebar.items.scheduler", icon: CalendarClock, href: "/admin?tab=scheduler", section: "config.scheduler" },
           { id: "database-connection", labelKey: "layout.sidebar.items.databaseConnection", icon: DatabaseZap, href: "/admin?tab=database-connection", section: "config.database-connection" },
@@ -625,9 +631,11 @@ export function filterSidebarNav(
   canView: (section: string) => boolean,
   isAdmin: boolean,
   activeCrm?: CrmProviderId,
+  demoLogin = false,
 ): SidebarNavGroup[] {
   const linkVisible = (l: SidebarNavLink) =>
-    (!l.adminOnly || isAdmin) && (!l.section || canView(l.section)) && (!l.crm || !activeCrm || l.crm === activeCrm);
+    (!l.adminOnly || isAdmin) && (!l.section || canView(l.section)) && (!l.crm || !activeCrm || l.crm === activeCrm)
+    && !(demoLogin && l.hideForDemoLogin);
   return groups
     .map((g) => ({
       ...g,
