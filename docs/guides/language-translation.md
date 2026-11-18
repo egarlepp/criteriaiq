@@ -185,6 +185,6 @@ For the comprehensive plan to convert the entire CriteriaIQ application to use t
 
 - **Ratcheting build gate added:** `.i18n-allowlist.txt` + `npm run lint:i18n` (script `scripts/check-i18n-coverage.ts`). Replaces the "propagate `[TODO]` placeholders into every locale" workflow that was producing drift.
 - **Lockstep convention (Phase 1, PR 9):** every new key lands in all 6 locale files in the same PR; the locale parity test fails the build on a missing key. This replaced the earlier en-US-only write convention.
-- **Layout banners i18n'd:** `ExcludedScreenNotice`, `PersonaBanner`, `SidebarDemoIndicator`, `DataDirReadOnlyBanner`, `EnvSourceWarningBanner` (5 of the 8 layout chrome components). Plus `FieldSourceBadge` and `PasswordRuleChecklist`. Current allowlist coverage: 7 of 297 components (~2.4%) — run `npm run lint:i18n` for the live number.
+- **Layout banners i18n'd:** `ExcludedScreenNotice`, `PersonaBanner`, `SidebarDemoIndicator`, `DataDirReadOnlyBanner`, `EnvSourceWarningBanner` (5 of the 8 layout chrome components). Plus `FieldSourceBadge` and `PasswordRuleChecklist`. Current allowlist coverage: 188 of 452 components (~42%) — run `npm run lint:i18n` for the live number.
 
 For the running plan and priority order of the next folders to convert, see [`i18n-sweep-plan.md`](../plans/i18n-sweep-plan.md).

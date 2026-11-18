@@ -6,9 +6,9 @@
 
 - **6 supported languages:** en-US, fr-FR, de-DE, es-ES, pt-BR, it-IT.
   - Wired in `client/src/i18n/index.ts` via `i18next` + `react-i18next` + `i18next-browser-languagedetector`.
-  - Each locale file is `client/src/i18n/locales/<locale>.json` — between 2,343 and 2,468 lines (~14,312 lines total across all 6 files).
+  - Each locale file is `client/src/i18n/locales/<locale>.json` — about 10,100 lines each.
   - Bare-language keys in i18next config (`en`, `fr`, etc.) — region codes only used for filenames and `<html lang>`.
-- **Strict-checked coverage:** **7 of 297 components (~2.4%)** in `.i18n-allowlist.txt` (run `npm run lint:i18n` for the live number). Files NOT on the allowlist still hardcode English — they're exempt from the strict check until added. The list only grows.
+- **Strict-checked coverage:** **188 of 452 components (~42%)** in `.i18n-allowlist.txt` (run `npm run lint:i18n` for the live number). Files NOT on the allowlist still hardcode English — they're exempt from the strict check until added. The list only grows.
 - **Existing namespace structure** in `en-US.json` (top-level keys observed):
   - `common.*` — generic actions and labels (Save, Cancel, Edit, etc.). **Reuse these whenever possible** — many strings are already wrapped.
   - Plus per-feature namespaces matching folder names (`projects`, `accounts`, `dashboard`, `analytics`, `config`, `layout`, etc.).
@@ -16,7 +16,7 @@
 
 ## Strategy: ratcheting allowlist
 
-Strict-gate-everything would fail the build on day one (92% of files would need fixes). Instead:
+Strict-gate-everything would fail the build (more than half the files still hardcode English). Instead:
 
 1. **Maintain `.i18n-allowlist.txt`** at the repo root. Each line is a path to a file that has been fully i18n'd. The build gate (`npm run lint:i18n`) verifies every file on the allowlist still has zero hardcoded English.
 2. **Files NOT on the allowlist are exempted** from strict checking — legacy code keeps working.
@@ -59,36 +59,36 @@ The unstructured "priority order" above evolved into a phased rollout with expli
 
 ### Phase 1 — Always-visible chrome (foundation)
 
-**Folders:** `layout/`, `shared/`, `errors/`, `flight-deck/`, `search/`, `icons/`
-**Files:** ~38
-**Status today:** layout 61%, shared 29%, search 100%, errors 0%, flight-deck 0%, icons 0%
+**Folders:** `layout/`, `shared/`, `errors/`, `flight-deck/`, `search/`, `icons/`, `notifications/`
+**Files:** ~41
+**Status today:** layout 76%, shared 57%, errors 67%, search 0%, flight-deck 0%, icons 0%, notifications 0%
 **Why first:** every page renders these. Without i18n on the chrome, switching language is visibly half-applied — the top bar still says "Settings" while the content translates. Ship this before anything else and the language switcher feels real.
 **Estimated effort:** 2 hours.
 **New keys (estimate):** ~80 keys across `layout.*`, `errors.*`, `common.*`.
 
 ### Phase 2 — Account, auth, security
 
-**Folders:** `accounts/`, `security/`, `audit/`
-**Files:** ~31
-**Status today:** accounts 33%, security 44%, audit 33%
+**Folders:** `accounts/`, `security/`, `audit/`, `teams/`
+**Files:** ~45
+**Status today:** accounts 73%, security 100%, audit 67%, teams 0%
 **Why next:** account creation, login dialogs, MFA enrollment, password reset — every user touches at least the login flow on first visit. Security/audit screens are admin-only but high-stakes.
 **Estimated effort:** 2.5 hours.
 **New keys (estimate):** ~150.
 
 ### Phase 3 — Project workspace (the core)
 
-**Folders:** `project/`, `project-detail/`, `project-form/`, `projects/`, `templates/`, `validation-criteria/`
-**Files:** ~58
-**Status today:** project 0%, project-detail 0%, project-form 0%, projects 0%, templates 0%, validation-criteria 10%
+**Folders:** `project-detail/`, `project-form/`, `projects/`, `templates/`, `validation-criteria/`, `customer-workspace/`, `value-journey/`
+**Files:** ~83
+**Status today:** project-detail 69%, project-form 78%, projects 42%, validation-criteria 33%, templates 0%, customer-workspace 80%, value-journey 100%
 **Why next:** the primary daily surface for SEs. Lots of strings — form labels, status pills, action menus, success toasts, empty states. This is the largest single phase by string count and the most user-facing.
 **Estimated effort:** 4 hours.
 **New keys (estimate):** ~400.
 
 ### Phase 4 — Dashboards, analytics, outcomes
 
-**Folders:** `dashboard/`, `dashboard-widgets/`, `analytics/`, `outcomes/`
-**Files:** ~34
-**Status today:** dashboard 12%, dashboard-widgets 0%, analytics 10%, outcomes 50%
+**Folders:** `dashboard/`, `dashboard-widgets/`, `analytics/`, `outcomes/`, `reports/`
+**Files:** ~29
+**Status today:** dashboard 80%, outcomes 67%, analytics 0%, dashboard-widgets 0%, reports 100%
 **Why next:** the home surface. Heavy on labels (KPI titles, axis labels, legend text) but light on dynamic content. Most data values are user-supplied (already locale-agnostic) — only the chrome around them needs translation.
 **Estimated effort:** 2.5 hours.
 **New keys (estimate):** ~200.
@@ -96,17 +96,17 @@ The unstructured "priority order" above evolved into a phased rollout with expli
 ### Phase 5 — MAP, gaps, criteria builders
 
 **Folders:** `map/`, `gap-analysis/`, `validation-criteria/` (top-up if not finished in Phase 3)
-**Files:** ~31
-**Status today:** map 0%, gap-analysis 0%
+**Files:** ~32
+**Status today:** map 46%, gap-analysis 0%
 **Why next:** customer-facing portal screens — when an external customer logs in to view their MAP, those strings ARE the experience. MoSCoW pills (Must Have / Should Have / Nice to Have / Won't Have) need careful key naming since they're acronyms — keys should be `gap.priority.must` etc. with English value `"Must Have"`.
 **Estimated effort:** 2.5 hours.
 **New keys (estimate):** ~250.
 
 ### Phase 6 — Communications, automation, integrations
 
-**Folders:** `communications/`, `automation/`, `integrations/`, `salesforce/`, `requests/`, `support/`, `announcements/`
-**Files:** ~29
-**Status today:** all 0–33%
+**Folders:** `communications/`, `automation/`, `integrations/`, `requests/`, `support/`, `announcements/`, `scheduler/`, `resource-content/`
+**Files:** ~61
+**Status today:** requests 100%, integrations 48%, automation 33%, communications 0%, support 0%, announcements 0%, scheduler 78%, resource-content 83%
 **Why next:** email template builder, workflow automation rules, Salesforce field mapping, support request forms. Mostly admin/internal surfaces but surfaces a lot of dialog-based flows where un-translated strings stand out.
 **Estimated effort:** 3 hours.
 **New keys (estimate):** ~250.
@@ -122,9 +122,9 @@ The unstructured "priority order" above evolved into a phased rollout with expli
 
 ### Phase 8 — Admin/config surfaces (last and largest)
 
-**Folders:** `configuration/` (48 files), `config/` (4 files), `about/`
-**Files:** ~64
-**Status today:** configuration 6%, config 25%, about 8%
+**Folders:** `configuration/`, `about/`, `appearance/`, `guide/`
+**Files:** ~70
+**Status today:** configuration 29%, about 9%, appearance 67%, guide 88%
 **Why last:** `configuration/` is the largest single folder by file count. It's also admin-only so impact-per-key is lowest. Knock this out at the end when the patterns are well-rehearsed.
 **Estimated effort:** 4 hours.
 **New keys (estimate):** ~400.
@@ -164,7 +164,7 @@ Repeat for `de-DE`, `es-ES`, `pt-BR` and `it-IT`. The output should always be em
 
 ## When to flip the default to "strict"
 
-When the allowlist covers ≥80% of `client/src/components/**/*.tsx` files (about 290 of 361 — finishable after Phase 6 at the current trajectory), invert the gate: the allowlist becomes a `.i18n-exempt.txt` (legacy hold-outs) and every other file is strict-checked by default. At that point, new components default to i18n-required.
+When the allowlist covers ≥80% of `client/src/components/**/*.tsx` files (about 362 of the 452 that `npm run lint:i18n` counts), invert the gate: the allowlist becomes a `.i18n-exempt.txt` (legacy hold-outs) and every other file is strict-checked by default. At that point, new components default to i18n-required.
 
 ---
 

@@ -85,7 +85,7 @@ The platform follows the **5A Framework** (Attach → Assess → Affect → Alig
 - Partner portal access for collaborative validations
 
 ### Email & Communication Automation
-- Rule-based workflow automation with email, webhook, and Salesforce triggers
+- Rule-based workflow automation with email, webhook, and Salesforce actions
 - Scheduled tasks with full run history and manual trigger capability
 - Outbound Webhook System (MS Teams, Slack, generic HTTP) with HMAC-SHA256 signing and exponential backoff retry
 - Rich email template system with design editor
@@ -95,9 +95,18 @@ The platform follows the **5A Framework** (Attach → Assess → Affect → Alig
 - Custom Report Builder and Dashboard Builder with drag-and-drop layout
 - Leading indicator tracking: time to kickoff, time to first proven use case, gap counts, TCC probability
 
-### Salesforce Integration
-- User-context OAuth with encrypted token storage
-- Configurable bidirectional field mapping and sync policies
+### CRM Integration (Salesforce or HubSpot)
+Each install connects to one CRM, or none (the default). An admin picks it at Admin › Integrations › Overview › CRM. See [`docs/features/crm-provider.md`](docs/features/crm-provider.md).
+
+| | Salesforce | HubSpot |
+|---|---|---|
+| **Connection** | Per-user OAuth (Connected App), tokens encrypted at rest | Private app token, encrypted at rest; users matched to HubSpot owners by email |
+| **Project link** | Opportunity picker on each project | Deal picker on each project |
+| **Account link** | Salesforce Account | HubSpot Company |
+| **Field sync** | Admin-defined field mappings, picklist value translation, sync policies, queue with retries, Sync History and Sync Issues | Same mapping and sync engine, for Deals and Companies |
+| **Validation record** | Configurable Salesforce object | Configurable HubSpot object type |
+
+Once projects or accounts hold record ids from one CRM, the install can keep that CRM or switch to None, so links never point at the wrong system.
 
 ### Security & Access Control
 - Role-based access control (RBAC) with hierarchical sub-section permissions
@@ -110,7 +119,7 @@ The platform follows the **5A Framework** (Attach → Assess → Affect → Alig
 - System Health Monitoring Dashboard (database, email, integrations, security, storage, performance)
 - Universal Status, Risk Level, and Ranking configuration
 - Announcement system, Flight Deck modal, Global Search (Ctrl+K command palette)
-- Multi-language support: English, French, German, Spanish, Portuguese, Italian
+- Multi-language support: English, French, German, Spanish, Portuguese, Italian (translation still in progress; see [Known issues](#known-issues))
 
 ---
 
@@ -137,12 +146,12 @@ Each stage includes entrance and exit criteria, required artifacts with direct i
 | **Rich Text & Charts** | Tiptap 3 (Markdown storage), TinyMCE 8, Recharts |
 | **Real-time** | WebSocket Manager (singleton, auto-reconnect, event deduplication) |
 | **Backend** | Node.js, Express 5, TypeScript 6, ES modules |
-| **Database** | PostgreSQL (Neon serverless), Drizzle ORM (16 domain-based schema files) |
+| **Database** | PostgreSQL (node-postgres or Neon serverless driver), Drizzle ORM (16 domain-based schema files) |
 | **Authentication** | bcryptjs, TOTP (otplib), WebAuthn / Passkeys (@simplewebauthn), AES-256-GCM, encrypted recovery codes |
-| **Email** | Nodemailer (SMTP) |
+| **Email** | Nodemailer (SMTP), Microsoft Graph |
 | **Storage Backends** | Local FS, AWS S3 (`@aws-sdk/client-s3`), Azure Blob (`@azure/storage-blob`), Google Cloud Storage |
-| **Integrations** | Salesforce (jsforce), Puppeteer (PDF), Handlebars (templating) |
-| **i18n** | i18next 26 / react-i18next 15 (6 languages, ratcheting allowlist gate) |
+| **Integrations** | Salesforce (jsforce) or HubSpot CRM, Okta / Microsoft Entra ID SSO (OIDC), Puppeteer (PDF), Handlebars (templating) |
+| **i18n** | i18next 27 / react-i18next 18 (6 languages, ratcheting allowlist gate) |
 
 ---
 
@@ -176,6 +185,10 @@ For local development without Docker, see [`docs/guides/local-dev-setup.md`](doc
 
 CriteriaIQ is in **beta** (see [`version.json`](version.json) for the current version). Expect breaking changes between minor versions until 1.0, and back up your database before upgrading.
 
+### Known issues
+
+- **Translations are incomplete.** The interface supports six languages (English, French, German, Spanish, Portuguese and Italian), but only about 40% of screens are fully translated so far. On the rest, some or all text still shows in English whichever language you pick. The remaining screens are being converted folder by folder; see [`docs/plans/i18n-sweep-plan.md`](docs/plans/i18n-sweep-plan.md) for progress. Translation pull requests are welcome.
+
 ---
 
 ## Build & Type-Check Contract
@@ -208,7 +221,7 @@ Architecture decisions, development guidelines and schema organization are in:
 - [`docs/plans/backlog.md`](docs/plans/backlog.md) — Ideas and deferred follow-ups that are not scheduled yet.
 - [`CLAUDE.md`](CLAUDE.md) — Onboarding for Claude Code / AI assistants working on this codebase. Reading order, conventions, lint-gate awareness, and the deferred-work backlog.
 - [`docs/guides/`](docs/guides/) — Development guides: deployment, error handling, performance, versioning, language translation, i18n sweep plan, storage-split retrospective, etc.
-- [`docs/features/`](docs/features/) — Individual feature documentation (MAP, Gap Analysis, Outcome Intelligence, Webhooks, AI Assessments, Salesforce, and more).
+- [`docs/features/`](docs/features/) — Individual feature documentation (MAP, Gap Analysis, Outcome Intelligence, Webhooks, AI Assessments, Salesforce and HubSpot, and more).
 - [`docs/architecture/`](docs/architecture/) — System architecture diagrams and design docs.
 - [`docs/admin/demo-mode.md`](docs/admin/demo-mode.md) — Admin Demo Mode operator reference (how to enable, what it isolates, wipe safety).
 
