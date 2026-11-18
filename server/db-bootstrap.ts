@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { trimEdgeChar } from './lib/trim-edge';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'db-config.json');
@@ -152,11 +153,10 @@ function nowIso(): string {
 }
 
 function slugify(name: string, existing: Iterable<string>): string {
-  const base = (name || 'connection')
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+  const base = trimEdgeChar(
+    (name || 'connection').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-'),
+    '-',
+  );
   const safe = base.length > 0 ? base.slice(0, 60) : 'connection';
   const used = new Set(existing);
   if (!used.has(safe)) return safe;

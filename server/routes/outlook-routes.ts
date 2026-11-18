@@ -52,9 +52,11 @@ function session(req: Request): SessionWithOutlook | undefined {
 
 function stateMatches(expected: string, given: unknown): boolean {
   if (typeof given !== "string" || given.length === 0) return false;
-  const a = crypto.createHash("sha256").update(expected).digest();
-  const b = crypto.createHash("sha256").update(given).digest();
-  return crypto.timingSafeEqual(a, b);
+  // The state is a fixed-length random value, so comparing lengths first
+  // reveals nothing.
+  const a = Buffer.from(expected, "utf8");
+  const b = Buffer.from(given, "utf8");
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
 function requireAdmin(req: Request, res: Response, next: NextFunction) {

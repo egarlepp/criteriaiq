@@ -41,9 +41,11 @@ const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
 
 function stateMatches(expected: string, given: unknown): boolean {
   if (typeof given !== "string" || given.length === 0) return false;
-  const a = crypto.createHash("sha256").update(expected).digest();
-  const b = crypto.createHash("sha256").update(given).digest();
-  return crypto.timingSafeEqual(a, b);
+  // The state is a fixed-length random value, so comparing lengths first
+  // reveals nothing.
+  const a = Buffer.from(expected, "utf8");
+  const b = Buffer.from(given, "utf8");
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
 // Back to the app with Profile Settings open on Integrations (the sidebar

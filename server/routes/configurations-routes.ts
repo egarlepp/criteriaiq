@@ -27,6 +27,7 @@ import {
 import { isAuthenticated } from "../auth/simpleAuth";
 import { requireAdmin, requireSectionEdit, requireSectionView } from "../lib/section-permissions";
 import { getBroadcaster } from "../services/websocket-broadcaster";
+import { stripScriptTags } from "../lib/strip-script-tags";
 
 // Writes to the Field Settings lists (Account and Project statuses, risk
 // levels, rankings) need edit permission on Configuration › Field Settings;
@@ -674,7 +675,7 @@ export function registerConfigurationsRoutes(app: Express) {
       }
 
       // Sanitize HTML content - strip script tags but allow email-safe HTML
-      const sanitizedHtml = req.body.htmlRaw?.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+      const sanitizedHtml = (typeof req.body.htmlRaw === 'string' ? stripScriptTags(req.body.htmlRaw) : req.body.htmlRaw);
 
       const designData = {
         ...req.body,
@@ -699,7 +700,7 @@ export function registerConfigurationsRoutes(app: Express) {
       }
 
       // Sanitize HTML content - strip script tags but allow email-safe HTML
-      const sanitizedHtml = req.body.htmlRaw?.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+      const sanitizedHtml = (typeof req.body.htmlRaw === 'string' ? stripScriptTags(req.body.htmlRaw) : req.body.htmlRaw);
 
       const updates = {
         ...req.body,

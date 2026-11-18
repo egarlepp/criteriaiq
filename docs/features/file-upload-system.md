@@ -144,6 +144,8 @@ buildSupportPath(filename)
 4. **ClamAV scan** — `scanFile()` via local ClamAV daemon; fails open if daemon is offline
 5. **Cloud upload** — `uploadFile()` delegates to the active `StorageDriver`
 
+SVG uploads are also cleaned by `sanitizeSvg()` (`server/lib/svg-sanitizer.ts`), which strips scripts, event handlers, `javascript:` links, `<foreignObject>` and external `<use>` refs, repeating until a pass removes nothing. `GET /api/files/:key` sends `X-Content-Type-Options: nosniff` on every file and, for SVGs, a `Content-Security-Policy` with no script and `sandbox`, so an SVG opened directly can't run script on the app's origin.
+
 ### Size Limits
 
 | Context | Limit |

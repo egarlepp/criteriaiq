@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
+import { trimEdgeChar } from './trim-edge';
 
 // ─── Allowed MIME types with per-type size limits ─────────────────────────────
 
@@ -520,11 +521,10 @@ export function normalizeFilename(originalName: string): string {
   const base = path.basename(originalName, ext);
 
   // Remove everything that is not alphanumeric, dash, underscore, or dot
-  const safeBase = base
-    .replace(/[^a-zA-Z0-9\-_.]/g, '_')
-    .replace(/_{2,}/g, '_')
-    .replace(/^_+|_+$/g, '')
-    .substring(0, 100);
+  const safeBase = trimEdgeChar(
+    base.replace(/[^a-zA-Z0-9\-_.]/g, '_').replace(/_{2,}/g, '_'),
+    '_',
+  ).substring(0, 100);
 
   const timestamp = Date.now();
   const uuid = crypto.randomBytes(6).toString('hex');
