@@ -1,8 +1,16 @@
 {
-  "version": "v0.12.0",
+  "version": "v0.12.1",
   "release": "v0.12.0",
-  "buildDate": "2026-11-18T16:39:14Z",
-  "gitCommit": "bbc0ecd",
+  "buildDate": "2026-11-18T16:54:44Z",
+  "gitCommit": "6252235",
   "environment": "production",
-  "updates": []
+  "updates": [
+    {
+      "version": "v0.12.1",
+      "date": "2026-11-18",
+      "pr": 2,
+      "title": "Add screenshots to the README and fix doc dates for the new repository",
+      "category": "improvement"
+    }
+  ]
 }
