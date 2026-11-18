@@ -35,7 +35,7 @@ export function SectionTabBar() {
   const { provider: activeCrm } = useCrmProvider();
 
   const role = user?.role;
-  const groups = filterSidebarNav(SIDEBAR_NAV, canView, role === "Admin", activeCrm);
+  const groups = filterSidebarNav(SIDEBAR_NAV, canView, role === "Admin", activeCrm, !!user?.demoLogin);
   const query = search ? `?${search}` : "";
   const section = activeSection(groups, pathname, query);
   const inSecondTier = !!section && groups.some((g) => g.secondTier && g.items.includes(section));

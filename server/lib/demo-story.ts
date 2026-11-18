@@ -76,7 +76,7 @@ export interface DemoStaff {
 }
 
 /** Starts a demo user with its role's page permissions, as a new user would. */
-async function copyRolePermissions(userId: string, role: string): Promise<void> {
+export async function copyRolePermissions(userId: string, role: string): Promise<void> {
   const roleRow = await storage.getRoleByName(role);
   if (!roleRow) return;
   const defaults = toPageValues(await storage.getRolePermissions(roleRow.id));

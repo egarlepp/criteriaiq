@@ -19,6 +19,11 @@
  * /api/demo/reseed            POST  — { confirm: "RESEED DEMO DATA", ...seed
  *                                       options } wipes, then seeds afresh.
  * /api/demo/wipe              POST  — DELETEs is_demo=true rows; returns counts.
+ * /api/demo/logins            GET   — the two demo logins with their passwords.
+ * /api/demo/logins/:kind      POST  — create the Demo Admin or Demo Engineer.
+ * /api/demo/logins/:kind/regenerate POST — new password, MFA cleared,
+ *                                       sessions ended.
+ * /api/demo/logins/:kind/(enable|disable) POST — turn sign-in on or off.
  */
 import type { Express, Request, Response, NextFunction } from "express";
 import { db } from "../db";
@@ -37,15 +42,25 @@ import {
   setUserDemoForcedOn,
 } from "../lib/demo-mode";
 import { listDemoEvents, recordDemoEvent } from "../lib/demo-events";
+import {
+  createDemoLogin,
+  demoLoginUserId,
+  DemoLoginConflictError,
+  listDemoLogins,
+  regenerateDemoLogin,
+  setDemoLoginEnabled,
+} from "../lib/demo-logins";
+import { isDemoLoginKind, type DemoLoginKind } from "@shared/demo-login";
 import { demoDataExists, reseedDemoData, seedDemoData, wipeDemoData, type SeedOptions } from "../lib/demo-seeder";
 
 function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const session = (req as Request & { session?: { user?: { role?: string; id?: string } } }).session;
+  const session = (req as Request & { session?: { user?: { role?: string; id?: string; demoLogin?: string | null } } }).session;
   const user = session?.user;
   if (!user) {
     return res.status(401).json({ error: "Authentication required", errorCode: "unauthenticated" });
   }
-  if (user.role !== "Admin") {
+  // A demo login signs in as an Admin but never runs Demo Mode.
+  if (user.role !== "Admin" || user.demoLogin) {
     return res.status(403).json({ error: "Admin role required", errorCode: "forbidden" });
   }
   return next();
@@ -69,10 +84,11 @@ export function registerDemoRoutes(app: Express): void {
    * refresh.
    */
   app.get("/api/demo/status", async (req: Request, res: Response) => {
-    const session = (req as unknown as { session?: { demoMode?: boolean; user?: { id?: string; role?: string } } }).session;
+    const session = (req as unknown as { session?: { demoMode?: boolean; user?: { id?: string; role?: string; demoLogin?: string | null } } }).session;
     const userId = session?.user?.id;
     const role = session?.user?.role ?? null;
-    const isAdmin = role === "Admin";
+    const demoLogin = session?.user?.demoLogin ?? null;
+    const isAdmin = role === "Admin" && !demoLogin;
 
     let userFlag = false;
     let appWide = false;
@@ -119,6 +135,7 @@ export function registerDemoRoutes(app: Express): void {
       appWideFlag: appWide,
       role,
       isAdmin,
+      demoLogin,
       forcedUsers,
     });
   });
@@ -148,6 +165,10 @@ export function registerDemoRoutes(app: Express): void {
   app.post("/api/demo/users/:id/exit", requireAdmin, async (req: Request, res: Response) => {
     const targetId = String(req.params.id ?? "");
     const session = (req as unknown as { session: { user: { id: string } } }).session;
+    const [target] = await db.select({ demoLogin: users.demoLogin }).from(users).where(eq(users.id, targetId)).limit(1);
+    if (target?.demoLogin) {
+      return res.status(409).json({ error: "A demo login is always in Demo Mode.", errorCode: "demo_login_always_demo" });
+    }
     await setUserDemoForcedOn(targetId, false);
     await recordDemoEvent(session.user.id, "demo_user_exit", { targetUserId: targetId });
     res.json({ ok: true, userId: targetId, demoModeForcedOn: false });
@@ -176,6 +197,7 @@ export function registerDemoRoutes(app: Express): void {
         role: users.role,
         isActive: users.isActive,
         demoModeForcedOn: users.demoModeForcedOn,
+        demoLogin: users.demoLogin,
       })
       .from(users)
       .orderBy(users.email);
@@ -283,4 +305,75 @@ export function registerDemoRoutes(app: Express): void {
       res.status(500).json({ error: err instanceof Error ? err.message : "Event list failed" });
     }
   });
+
+  // ── Demo logins (server/lib/demo-logins.ts) ──────────────────────────────
+  // Real Admins only (requireAdmin refuses a demo login). The list carries
+  // the readable passwords, so it is never cached by the browser.
+
+  function loginKind(req: Request, res: Response): DemoLoginKind | null {
+    const kind = String(req.params.kind ?? "");
+    if (isDemoLoginKind(kind)) return kind;
+    res.status(404).json({ error: "Unknown demo login", errorCode: "demo_login_unknown" });
+    return null;
+  }
+
+  function sendLoginError(res: Response, err: unknown, label: string) {
+    if (err instanceof DemoLoginConflictError) {
+      return res.status(409).json({ error: err.message, errorCode: "demo_login_conflict" });
+    }
+    console.error(`[demo-mode] demo login ${label} failed:`, err);
+    return res.status(500).json({ error: err instanceof Error ? err.message : `Demo login ${label} failed` });
+  }
+
+  app.get("/api/demo/logins", requireAdmin, async (_req: Request, res: Response) => {
+    try {
+      res.setHeader("Cache-Control", "no-store");
+      res.json(await listDemoLogins());
+    } catch (err: unknown) {
+      sendLoginError(res, err, "list");
+    }
+  });
+
+  app.post("/api/demo/logins/:kind", requireAdmin, async (req: Request, res: Response) => {
+    const kind = loginKind(req, res);
+    if (!kind) return;
+    const session = (req as unknown as { session: { user: { id: string } } }).session;
+    try {
+      await createDemoLogin(kind, session.user.id);
+      await recordDemoEvent(session.user.id, "demo_login_create", { targetUserId: (await demoLoginUserId(kind)) ?? undefined });
+      res.json({ ok: true });
+    } catch (err: unknown) {
+      sendLoginError(res, err, "create");
+    }
+  });
+
+  app.post("/api/demo/logins/:kind/regenerate", requireAdmin, async (req: Request, res: Response) => {
+    const kind = loginKind(req, res);
+    if (!kind) return;
+    const session = (req as unknown as { session: { user: { id: string } } }).session;
+    try {
+      await regenerateDemoLogin(kind, session.user.id);
+      await recordDemoEvent(session.user.id, "demo_login_regenerate", { targetUserId: (await demoLoginUserId(kind)) ?? undefined });
+      res.json({ ok: true });
+    } catch (err: unknown) {
+      sendLoginError(res, err, "regenerate");
+    }
+  });
+
+  for (const action of ["enable", "disable"] as const) {
+    app.post(`/api/demo/logins/:kind/${action}`, requireAdmin, async (req: Request, res: Response) => {
+      const kind = loginKind(req, res);
+      if (!kind) return;
+      const session = (req as unknown as { session: { user: { id: string } } }).session;
+      try {
+        await setDemoLoginEnabled(kind, action === "enable", session.user.id);
+        await recordDemoEvent(session.user.id, action === "enable" ? "demo_login_enable" : "demo_login_disable", {
+          targetUserId: (await demoLoginUserId(kind)) ?? undefined,
+        });
+        res.json({ ok: true });
+      } catch (err: unknown) {
+        sendLoginError(res, err, action);
+      }
+    });
+  }
 }

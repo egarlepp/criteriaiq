@@ -7,8 +7,8 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import type { LucideIcon } from "lucide-react";
 import {
-  ChevronDown, ChevronUp, DatabaseZap, Globe, GlobeLock, MonitorOff, MonitorPlay,
-  RefreshCw, Trash2, UserCheck, UserX, History,
+  ChevronDown, ChevronUp, DatabaseZap, Globe, GlobeLock, KeyRound, MonitorOff, MonitorPlay,
+  Power, PowerOff, RefreshCw, RotateCcwKey, Trash2, UserCheck, UserX, History,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,10 @@ const ACTION_ICONS: Record<string, LucideIcon> = {
   demo_seed: DatabaseZap,
   demo_reseed: RefreshCw,
   demo_wipe: Trash2,
+  demo_login_create: KeyRound,
+  demo_login_regenerate: RotateCcwKey,
+  demo_login_enable: Power,
+  demo_login_disable: PowerOff,
 };
 
 const ACTION_TONES: Record<string, string> = {
@@ -105,6 +109,10 @@ function EventDetails({ row }: { row: DemoEventView }) {
       return <span>{t("configuration.demoMode.activityOwnSession")}</span>;
     case "demo_user_enter":
     case "demo_user_exit":
+    case "demo_login_create":
+    case "demo_login_regenerate":
+    case "demo_login_enable":
+    case "demo_login_disable":
       return row.target
         ? <span title={row.target.email ?? undefined}>{row.target.name}</span>
         : <span className="text-muted-foreground">—</span>;

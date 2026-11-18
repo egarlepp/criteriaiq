@@ -2224,8 +2224,10 @@ export default function ConfigPage() {
     { id: "demo-mode", section: "config.demo-mode" },
   ].filter((item) => {
     const isAdminUser = user?.role === "Admin";
-    if (item.adminOnly) return isAdminUser;
     const sections = typeof item.section === "string" ? [item.section] : item.section ?? [];
+    // An Admin-only page with a section also needs that section (a demo
+    // login is an Admin that can't see App Health, for one).
+    if (item.adminOnly) return isAdminUser && sections.every((section) => canViewSection(section));
     return sections.some((section) => canViewSection(section));
   });
 

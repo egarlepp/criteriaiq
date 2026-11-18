@@ -19,6 +19,10 @@ export const DEMO_EVENT_ACTIONS = [
   "demo_seed",
   "demo_reseed",
   "demo_wipe",
+  "demo_login_create",
+  "demo_login_regenerate",
+  "demo_login_enable",
+  "demo_login_disable",
 ] as const;
 export type DemoEventAction = (typeof DEMO_EVENT_ACTIONS)[number];
 

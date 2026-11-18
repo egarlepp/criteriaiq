@@ -11,7 +11,7 @@ A request is "in demo" when **any** of the three independent sources is on:
 | Source     | Storage                                                                 | Lifetime                          |
 | ---------- | ----------------------------------------------------------------------- | --------------------------------- |
 | Session    | `req.session.demoMode` (set via *Per-session* toggle)                   | This browser session only         |
-| User       | `users.demoModeForcedOn` boolean column                                 | Persistent until admin clears it  |
+| User       | `users.demoModeForcedOn` boolean column, or a demo login (`users.demo_login`) | Persistent until admin clears it (a demo login can't be cleared) |
 | App-wide   | `system_settings.demo_mode_app_wide` jsonb (`{ enabled: boolean }`)     | Persistent until admin clears it  |
 
 Resolution is computed once per request by the demo middleware (`server/lib/demo-mode.ts`) and stored in an `AsyncLocalStorage` so storage helpers can consult it via `isCurrentRequestDemo()` without threading the flag through every function.
@@ -69,6 +69,12 @@ All endpoints below require `role = Admin` and write a `demo_mode_events` row (s
 | POST   | `/api/demo/reseed`                | Wipe, then seed a fresh set (body: seed options + `confirm: "RESEED DEMO DATA"`); returns `counts` and `wiped` |
 | POST   | `/api/demo/wipe`                  | DELETE rows where `is_demo = true`; returns counts |
 | GET    | `/api/demo/audit`                 | Last 50 Demo Mode events, with names              |
+| GET    | `/api/demo/logins`                | The two demo logins with their readable passwords (`Cache-Control: no-store`) |
+| POST   | `/api/demo/logins/:kind`          | Create the Demo Admin (`admin`) or Demo Engineer (`engineer`); 409 if it exists |
+| POST   | `/api/demo/logins/:kind/regenerate` | New password, MFA cleared, open sessions ended  |
+| POST   | `/api/demo/logins/:kind/enable`, `/disable` | Turn sign-in on or off; disable ends open sessions |
+
+A demo login is refused by every endpoint here except `GET /api/demo/status`, which also returns `demoLogin` and reports `isAdmin: false` for it.
 
 ### Seed body
 
@@ -209,11 +215,30 @@ After the transaction commits, the `demo:` KPI history is deleted, and demo peop
 - **Page** (`client/src/components/configuration/DemoModeSection.tsx`) — admin form covering all toggles, seed, and wipe. The per-user section is a **searchable picker** (search by name/email/role; capped at 50 hits) rather than a full table, so it stays usable on instances with hundreds of users. Turning the **app-wide** flag ON pops a confirmation dialog (`AlertDialog`); turning it OFF is one click. An in-page **How Demo Mode works** accordion mirrors this doc.
 - **Hook** (`client/src/hooks/useDemoStatus.ts`) — TanStack Query against `/api/demo/status`, polling every 30s. Returns mode flags only; the `excluded` decision is computed client-side per route (see above).
 
+## Demo logins
+
+Two shared accounts for people outside the company who want to try the app without an account of their own: **Demo Admin** (role Admin) and **Demo Engineer** (role Engineer). An Admin creates them on the **Demo logins** card of the Demo Mode page and hands a visitor the address and password (**Copy sign-in details** copies the URL, address and password together).
+
+- **Accounts.** `users.demo_login` is `admin` or `engineer` (migration 136, unique). The addresses are `demo.admin@criteriaiq.invalid` and `demo.engineer@criteriaiq.invalid`: a reserved domain, so no mail reaches anyone, and not the Demo Staff domain, so a wipe or reseed keeps them. They are approved, password-only (`allowed_login_methods = password_only`), get no email, and start with their role's page permissions.
+- **Passwords.** Made at runtime by `generateDemoPassword()` (`server/lib/demo-logins.ts`): 10 letters and digits, at least one capital, one small letter and one digit, without look-alikes (0/O/o, 1/l/I). They are never in source or seed files. The bcrypt hash is on the user row; the readable password is AES-256-GCM encrypted (`ENCRYPTION_KEY`) in `system_settings.demo_login_passwords` and shown only to real Admins on this page.
+- **MFA.** Every password sign-in clears the account's MFA before the MFA check in `/api/login` (`resetDemoLoginMfa`), so each visitor enrolls their own authenticator and the next visitor can't use it. Two visitors signed in at once share the account, and the second sign-in clears the first visitor's MFA.
+- **Always in demo.** The demo resolver counts a demo login as forced on, and the per-user switch for it is locked.
+- **Sandbox.** `demoLoginGuard` (`server/lib/demo-login-guard.ts`), mounted in `setupSimpleAuth` before every route:
+  - Refuses (403, `DEMO_LOGIN_READ_ONLY`) Demo Mode, people, teams and roles changes, audit and login history, archives, email and error logs, database connections, backups, API keys, secrets, setup, View As and live CRM data.
+  - Allows changes only to demo data (projects, accounts, MAPs, library items, competitors, automation rules, templates, documents...) and the visitor's own sign-in, MFA and page state. Every other change is refused, so real settings are read-only. `PUT /api/users/me` takes display preferences only; the password can't be changed.
+  - A project, account, library item or MAP row named by id in the path, query or body must be a demo row; a real one answers 404. Files are limited to demo uploads, branding and the visitor's own documents.
+  - People lists (`/api/users`, `/api/users/by-roles`) show demo people and the demo logins only.
+- **Menu.** `shared/demo-login.ts` lists the sections a demo login can't see (`DEMO_LOGIN_HIDDEN_SECTIONS`) and the settings it may change. `usePermissions` applies them, so the sidebar, search and Admin tabs hide those pages. Admin pages that show edit buttons regardless still get a 403 from the server.
+- **Regenerate** makes a new password, clears MFA and ends open sessions; **Disable** turns sign-in off and ends open sessions. Session revocation needs the Postgres session store (production); the development memory store keeps the old session until it expires.
+- **Known limit.** Only the resources listed in `ID_ROUTES` are checked by id. A row reached by another id (a project message, a competitor's link) is only as safe as its route; most of them are reached from a demo project or competitor that is checked.
+
+Accepted risk: with MFA cleared on each sign-in, the password is the only real control. Regenerate after each visit, or disable the login when it isn't needed.
+
 ## Audit
 
 Every toggle (session, user, app-wide), seed, reseed and wipe writes one row to `demo_mode_events` (migration 134) with:
 
-- `action ∈ {demo_session_enter, demo_session_exit, demo_user_enter, demo_user_exit, demo_app_wide_enable, demo_app_wide_disable, demo_seed, demo_reseed, demo_wipe}`
+- `action ∈ {demo_session_enter, demo_session_exit, demo_user_enter, demo_user_exit, demo_app_wide_enable, demo_app_wide_disable, demo_seed, demo_reseed, demo_wipe, demo_login_create, demo_login_regenerate, demo_login_enable, demo_login_disable}`
 - `details`, the event's facts as JSON (`DemoEventData` in `server/lib/demo-events.ts`): `targetUserId` for a per-user switch, `counts` for what a seed or reseed added, `wiped` for what a wipe or reseed removed
 - `user_id`, the admin who made it
 

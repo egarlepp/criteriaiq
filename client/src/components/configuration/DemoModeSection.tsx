@@ -31,6 +31,7 @@ import { ExcludedScreenNotice } from "@/components/layout/ExcludedScreenNotice";
 import { useDemoStatus } from "@/hooks/useDemoStatus";
 import { useDemoCountLabels } from "./demo-count-labels";
 import DemoModeActivityTable from "./DemoModeActivityTable";
+import DemoLoginsCard from "./DemoLoginsCard";
 import {
   Database, DatabaseZap, FlaskConical, Skull, Trash2, Users, AlertTriangle, Search, BookOpen,
   MonitorPlay, Clock, Globe, History, RefreshCw,
@@ -44,6 +45,7 @@ interface DemoUser {
   role: string | null;
   isActive: boolean | null;
   demoModeForcedOn: boolean | null;
+  demoLogin?: string | null;
 }
 
 const PICKER_LIMIT = 50;
@@ -443,7 +445,10 @@ export default function DemoModeSection() {
                       <td className="px-3 py-2 text-right">
                         <Switch
                           data-testid={`demo-user-toggle-${u.id}`}
-                          checked={Boolean(u.demoModeForcedOn)}
+                          checked={Boolean(u.demoModeForcedOn || u.demoLogin)}
+                          // A demo login is always in Demo Mode.
+                          disabled={Boolean(u.demoLogin)}
+                          title={u.demoLogin ? t("configuration.demoMode.loginsAlwaysDemo") : undefined}
                           onCheckedChange={(v) => toggleUser.mutate({ id: u.id, enable: v })}
                         />
                       </td>
@@ -464,6 +469,8 @@ export default function DemoModeSection() {
           </div>
         </CardContent>
       </Card>
+
+      <DemoLoginsCard />
 
       <Card data-testid="demo-counts-card">
         <CardHeader>

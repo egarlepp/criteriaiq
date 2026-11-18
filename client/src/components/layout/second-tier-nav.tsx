@@ -27,7 +27,7 @@ export function SecondTierNav() {
 
   const role = user?.role;
   const query = search ? `?${search}` : "";
-  const group = filterSidebarNav(SIDEBAR_NAV, canView, role === "Admin", activeCrm)
+  const group = filterSidebarNav(SIDEBAR_NAV, canView, role === "Admin", activeCrm, !!user?.demoLogin)
     .find((g) => g.secondTier && isGroupActive(g, pathname, query));
 
   // The group's sections live on several URLs; load their code once this page

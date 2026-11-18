@@ -115,7 +115,7 @@ export function GlobalSearch() {
   const role = user?.role;
   const pageIndexRef = useRef<PageSearchEntry[]>([]);
   pageIndexRef.current = buildPageIndex(
-    filterSidebarNav(SIDEBAR_NAV, canView, role === "Admin", activeCrm),
+    filterSidebarNav(SIDEBAR_NAV, canView, role === "Admin", activeCrm, !!user?.demoLogin),
     (key) => t(key),
     role === "Admin",
   );

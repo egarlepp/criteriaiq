@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./useAuth";
 import { levelAllows, resolveLevel, type PermissionLevel } from "@shared/permissions";
+import { demoLoginCanEdit, demoLoginCanView } from "@shared/demo-login";
 
 export interface Permission {
   id: number;
@@ -46,12 +47,19 @@ export function usePermissions() {
   // Each page has its own value (Role Management); no row means None.
   const getEffectivePermission = (section: string): PermissionLevel | "admin" | null => {
     if (!user) return null;
-    if (activeRole?.toLowerCase() === "admin") return "admin";
+    if (demoLogin && !demoLoginCanView(section)) return null;
+    if (activeRole?.toLowerCase() === "admin") return demoLogin && !demoLoginCanEdit(section) ? "view" : "admin";
     return resolveLevel(activePermissions, section);
   };
 
+  // A shared demo login (Demo Mode) signs in as an Admin or Engineer but
+  // never sees people, teams, roles or Demo Mode, and reads real settings
+  // only (shared/demo-login.ts). The server enforces the same rules.
+  const demoLogin = !!user?.demoLogin;
+
   const hasPermission = (section: string, requiredPermission: "view" | "edit" = "view") => {
     if (!user) return false;
+    if (demoLogin && !(requiredPermission === "edit" ? demoLoginCanEdit(section) : demoLoginCanView(section))) return false;
     if (activeRole?.toLowerCase() === "admin") return true;
     return levelAllows(section, resolveLevel(activePermissions, section), requiredPermission);
   };

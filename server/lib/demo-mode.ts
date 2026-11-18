@@ -103,14 +103,17 @@ export async function setAppWideDemoEnabled(
     });
 }
 
-/** Resolves the per-user `demoModeForcedOn` flag. */
+/**
+ * Resolves the per-user flag: `demoModeForcedOn`, or a demo login
+ * (`users.demo_login`), which is always in demo and can't be switched out.
+ */
 export async function getUserDemoForcedOn(userId: string): Promise<boolean> {
   const rows = await db
-    .select({ flag: users.demoModeForcedOn })
+    .select({ flag: users.demoModeForcedOn, demoLogin: users.demoLogin })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
-  return Boolean(rows[0]?.flag);
+  return Boolean(rows[0]?.flag || rows[0]?.demoLogin);
 }
 
 /** Per-user toggle (admin-only callers). */
