@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.5",
+  "version": "v0.12.6",
   "release": "v0.12.0",
-  "buildDate": "2026-11-18T19:47:31Z",
-  "gitCommit": "b6da0d9",
+  "buildDate": "2026-11-18T20:04:36Z",
+  "gitCommit": "003f5d7",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.6",
+      "date": "2026-11-18",
+      "pr": 5,
+      "title": "Update README (known issues, CRM section) and refresh backlog and i18n docs",
+      "category": "improvement"
+    },
     {
       "version": "v0.12.5",
       "date": "2026-11-18",
