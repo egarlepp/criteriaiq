@@ -220,6 +220,8 @@ export default function SsoError() {
                 defaultValue:
                   "Your administrator has set this account to sign in with a password. Please use the email and password form instead.",
               })
+          : code === "rate_limited"
+            ? t("auth.errors.tooManyAttempts")
           : code === "link_expired"
             ? t("auth.sso.error.link_password.expired", { defaultValue: "Link request expired. Please start sign-in again." })
             : (body.message ?? "Link failed");

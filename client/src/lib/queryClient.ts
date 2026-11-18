@@ -186,7 +186,7 @@ export async function apiRequest(method: string, url: string, data?: any): Promi
     const errorData = await response.json().catch(() => ({}));
     const errorMessage = errorData.message || `HTTP ${response.status}: ${response.statusText}`;
     recordBreadcrumb("fetch-error", `${method} ${url} → ${response.status}`);
-    console.error(`Query Error: ${url}`, errorMessage, errorData);
+    console.error("Query Error: %s", url, errorMessage, errorData);
 
     // Log detailed error information
     const errorDetails = {
@@ -202,7 +202,7 @@ export async function apiRequest(method: string, url: string, data?: any): Promi
       userAgent: navigator.userAgent
     };
 
-    console.error(`[ERROR ${errorDetails.id}]`, errorDetails);
+    console.error("[ERROR %s]", errorDetails.id, errorDetails);
 
     // Centralized friendly toast for the seeded built-in Overview
     // dashboard's protected-row 409 (Task #561). Recognized here so

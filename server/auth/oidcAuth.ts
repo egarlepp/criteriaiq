@@ -97,7 +97,15 @@ import {
 
 import { storage } from "../storage";
 import { decryptText, encryptText, checkRateLimit, recordAttemptResult } from "./mfaUtils";
-import { recordSuccessfulLogin, recordFailedLogin } from "./simpleAuth";
+import {
+  recordSuccessfulLogin,
+  recordFailedLogin,
+  loginRateLimitKeys,
+  LOGIN_RATE_LIMIT_MAX_ATTEMPTS_PER_EMAIL,
+  LOGIN_RATE_LIMIT_MAX_ATTEMPTS_PER_IP,
+  LOGIN_RATE_LIMIT_WINDOW_MS,
+  LOGIN_RATE_LIMIT_REASON,
+} from "./simpleAuth";
 import { parkSsoMfaChallenge, ssoMfaPendingHandler } from "./ssoMfaHandoff";
 import { getPublicAppUrl } from "../lib/app-config";
 import { isSsoProvider, SSO_PROVIDERS } from "@shared/schema";
@@ -242,7 +250,7 @@ async function loadOidcConfiguration(
   try {
     clientSecret = decryptText(row.clientSecretEnc!);
   } catch (err) {
-    console.error(`[sso] ${provider}: failed to decrypt client secret — disabling until resaved:`, err);
+    console.error("[sso] %s: failed to decrypt client secret — disabling until resaved:", provider, err);
     return null;
   }
 
@@ -256,7 +264,7 @@ async function loadOidcConfiguration(
   try {
     candidates = await issuerCandidates(row);
   } catch (err) {
-    console.error(`[sso] ${provider}: issuer resolution failed:`, redactError(err));
+    console.error("[sso] %s: issuer resolution failed:", provider, redactError(err));
     return null;
   }
 
@@ -273,7 +281,7 @@ async function loadOidcConfiguration(
       cachedOidcConfig.set(provider, { config, fingerprint });
       return { config, row };
     } catch (err) {
-      console.error(`[sso] ${provider}: OIDC discovery failed for ${issuer.origin}${issuer.pathname}:`, redactError(err));
+      console.error("[sso] %s: OIDC discovery failed for %s%s:", provider, issuer.origin, issuer.pathname, redactError(err));
     }
   }
   return null;
@@ -360,7 +368,7 @@ function safeLog(message: string, meta: Record<string, unknown> = {}): void {
   for (const [k, v] of Object.entries(meta)) {
     scrubbed[k] = REDACT_KEYS.has(k) ? "[REDACTED]" : v;
   }
-  console.log(`[sso] ${message}`, scrubbed);
+  console.log("[sso] %s", message, scrubbed);
 }
 
 function redactError(err: unknown): unknown {
@@ -791,6 +799,22 @@ const linkConfirmHandler: RequestHandler = async (req: any, res) => {
     return res.status(400).json({ message: "Password required", code: "password_required" });
   }
 
+  // This is a password check, so it shares the /api/login budgets: a
+  // guess here counts toward the same per-account and per-IP lockout
+  // as a guess on the sign-in form.
+  const { emailKey, ipKey } = loginRateLimitKeys(
+    String(pending.email).trim().toLowerCase(),
+    getClientIp(req),
+  );
+  const [emailWithinBudget, ipWithinBudget] = await Promise.all([
+    checkRateLimit(emailKey, LOGIN_RATE_LIMIT_MAX_ATTEMPTS_PER_EMAIL, LOGIN_RATE_LIMIT_WINDOW_MS),
+    checkRateLimit(ipKey, LOGIN_RATE_LIMIT_MAX_ATTEMPTS_PER_IP, LOGIN_RATE_LIMIT_WINDOW_MS),
+  ]);
+  if (!emailWithinBudget || !ipWithinBudget) {
+    await recordFailedLogin(req, { email: pending.email }, `${provider}-link`, LOGIN_RATE_LIMIT_REASON);
+    return res.status(429).json({ message: "Too many attempts. Please try again later.", code: "rate_limited" });
+  }
+
   const existing = await storage.getUserByEmail(pending.email);
   if (!existing || !existing.password) {
     delete req.session.pendingSsoLink;
@@ -800,9 +824,17 @@ const linkConfirmHandler: RequestHandler = async (req: any, res) => {
   const bcrypt = await import("bcryptjs");
   const ok = await bcrypt.default.compare(password, existing.password);
   if (!ok) {
+    await Promise.all([
+      recordAttemptResult(emailKey, false, LOGIN_RATE_LIMIT_WINDOW_MS),
+      recordAttemptResult(ipKey, false, LOGIN_RATE_LIMIT_WINDOW_MS),
+    ]);
     await recordFailedLogin(req, { email: pending.email, id: existing.id }, `${provider}-link`, "invalid_password");
     return res.status(401).json({ message: "Invalid password", code: "invalid_password" });
   }
+  await Promise.all([
+    recordAttemptResult(emailKey, true, LOGIN_RATE_LIMIT_WINDOW_MS),
+    recordAttemptResult(ipKey, true, LOGIN_RATE_LIMIT_WINDOW_MS),
+  ]);
 
   if (!isInternalRole(existing.role)) {
     delete req.session.pendingSsoLink;

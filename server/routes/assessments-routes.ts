@@ -336,7 +336,7 @@ export function registerAssessmentsRoutes(app: Express) {
       const analysis = await aiRiskEngine.analyzeProject(project);
       res.json(analysis);
     } catch (error: any) {
-      console.error(`Error analyzing risk for project ${req.params.id}:`, error);
+      console.error("Error analyzing risk for project %s:", req.params.id, error);
       res.status(500).json({ message: "Failed to analyze project risk", error: String(error) });
     }
   });
@@ -355,7 +355,7 @@ export function registerAssessmentsRoutes(app: Express) {
       const prediction = await storage.getLatestRiskPrediction(projectId);
       res.json(prediction);
     } catch (error: any) {
-      console.error(`Error fetching risk prediction for project ${req.params.id}:`, error);
+      console.error("Error fetching risk prediction for project %s:", req.params.id, error);
       res.status(500).json({ message: "Failed to fetch risk prediction" });
     }
   });

@@ -520,7 +520,8 @@ export async function checkRateLimit(
     // the in-memory bucket so we at least preserve single-process
     // brute-force defence while the DB is being pieced back together.
     console.error(
-      `[rate-limit] DB read failed for bucket ${identifier}; falling back to in-memory map:`,
+      "[rate-limit] DB read failed for bucket %s; falling back to in-memory map:",
+      identifier,
       err,
     );
     return checkInMemoryRateLimit(identifier, maxAttempts);
@@ -580,8 +581,8 @@ export async function getRateLimitResetTime(
     // stale countdown but never a wrong one (it can only be too
     // short, never too long).
     console.error(
-      `[rate-limit] DB read failed for reset-time lookup of bucket ${identifier}; ` +
-        "falling back to in-memory map:",
+      "[rate-limit] DB read failed for reset-time lookup of bucket %s; falling back to in-memory map:",
+      identifier,
       err,
     );
     return getInMemoryRateLimitResetTime(identifier);
@@ -669,8 +670,9 @@ export async function recordAttemptResult(
     // will retry the DB write, and a sustained DB outage degrades
     // gracefully to the old behaviour.
     console.error(
-      `[rate-limit] DB write failed for bucket ${identifier} (success=${success}); ` +
-        "kept in-memory mirror in sync, will retry on next attempt:",
+      "[rate-limit] DB write failed for bucket %s (success=%s); kept in-memory mirror in sync, will retry on next attempt:",
+      identifier,
+      success,
       err,
     );
   }

@@ -26,6 +26,7 @@ import { sendWelcomeEmail } from "../email/email";
 import { canImport, contactEligibility, type ContactBlockReason, type ContactState, type ContactUserFacts } from "./contact-eligibility";
 import type { CrmContact } from "./types";
 import type { User } from "@shared/schema";
+import { randomUUID } from "crypto";
 
 type Customer = NonNullable<Awaited<ReturnType<typeof storage.getCustomer>>>;
 
@@ -208,7 +209,7 @@ async function copyRolePermissions(userId: string, role: string): Promise<void> 
 }
 
 function newUserId(): string {
-  return `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+  return `user_${randomUUID()}`;
 }
 
 /**
@@ -363,7 +364,7 @@ export async function refreshContactUsers(provider: "salesforce" | "hubspot"): P
       result.flagged += counts.flagged;
     } catch (error) {
       result.failed++;
-      console.error(`[CRM contacts] refresh of account ${customerId} failed:`, error);
+      console.error("[CRM contacts] refresh of account %s failed:", customerId, error);
     }
   }
   return result;

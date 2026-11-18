@@ -13,6 +13,7 @@
 //
 // Behavior preserved verbatim. No demo isolation here — security
 // reference data is global across all tenants.
+import { randomInt } from "crypto";
 import { db } from "../db";
 import { eq, and, or, desc, count, sql, lt } from "drizzle-orm";
 import {
@@ -448,7 +449,7 @@ export class SecurityStorageMixin {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let code = '';
     for (let i = 0; i < length; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
+      code += chars.charAt(randomInt(chars.length));
     }
     return `${prefix}-${code}`;
   }

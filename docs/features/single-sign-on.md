@@ -260,6 +260,7 @@ generic "Authentication failed". Reasons handled:
 | Token redaction | `code`, `id_token`, `access_token`, `refresh_token` scrubbed from log lines |
 | Encrypted secrets at rest | `clientSecretEnc` AES-256-GCM via the existing `ENCRYPTION_KEY` helper |
 | Per-IP rate limiting | `/api/auth/sso/login` 30/15min; `/api/auth/sso/callback` 10/15min (failed exchanges) |
+| Password-guess limiting on linking | `/api/auth/sso/link-confirm` shares the `/api/login` per-account (10/15min) and per-IP (30/15min) failed-attempt budgets |
 | Sub-keyed identity | `(ssoProvider, ssoExternalId)` is the join key; email is mutable and never used |
 | Required `email_verified` | JIT-create and link refuse unless the IdP asserts the email is verified |
 | Internal-role enforcement | Customer-facing roles are rejected at the callback even if Okta authenticated them |

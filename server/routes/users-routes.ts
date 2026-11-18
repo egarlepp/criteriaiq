@@ -496,7 +496,7 @@ export function registerUsersRoutes(app: Express) {
       // STEP 3: Invite Code - Validate and use access code (auto-approve)
       if (!isAutoApproved && accessCode && accessCode.trim()) {
         // Generate a temporary user ID for tracking
-        const tempUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const tempUserId = `user_${crypto.randomUUID()}`;
         
         const codeValidation = await storage.validateAndUseAccessCode(
           accessCode.trim(), 
@@ -525,7 +525,7 @@ export function registerUsersRoutes(app: Express) {
       // If not auto-approved, user will have isApproved = false
 
       // Generate unique ID for the user (timestamp + random)
-      const uniqueId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const uniqueId = `user_${crypto.randomUUID()}`;
 
       // Hash password if provided (admin functionality)
       let hashedPassword = undefined;
@@ -685,7 +685,7 @@ export function registerUsersRoutes(app: Express) {
         return res.status(400).json({ message: "Maximum 200 users can be imported at once" });
       }
 
-      const defaultPassword = `CrIQ_${Date.now().toString(36)}_${Math.random().toString(36).substr(2, 6)}!`;
+      const defaultPassword = `CrIQ_${crypto.randomBytes(12).toString('base64url')}!`;
       const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
       // Resolve and validate access code if one was provided
@@ -735,7 +735,7 @@ export function registerUsersRoutes(app: Express) {
           const isDomainAllowed = await storage.checkDomainAllowed(emailDomain);
           const isAutoApproved = isDomainAllowed || isInternalDomain;
 
-          const uniqueId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          const uniqueId = `user_${crypto.randomUUID()}`;
 
           // Apply access code approval for users not on the domain allow list
           let isApproved = isAutoApproved;
@@ -750,7 +750,7 @@ export function registerUsersRoutes(app: Express) {
                 isApproved = true;
               }
             } catch (codeErr) {
-              console.error(`[import] Failed to apply access code for ${email}:`, codeErr);
+              console.error("[import] Failed to apply access code for %s:", email, codeErr);
             }
           }
 
@@ -794,7 +794,7 @@ export function registerUsersRoutes(app: Express) {
                 }
               );
             } catch (emailError) {
-              console.error(`Failed to send welcome email to ${email}:`, emailError);
+              console.error("Failed to send welcome email to %s:", email, emailError);
             }
           }
 
@@ -805,7 +805,7 @@ export function registerUsersRoutes(app: Express) {
             await new Promise(resolve => setTimeout(resolve, 50));
           }
         } catch (error: any) {
-          console.error(`Error importing user ${email}:`, error);
+          console.error("Error importing user %s:", email, error);
           results.push({ rowNumber, email: email || "unknown", status: "failed", reason: error.message || "Unexpected error" });
           failed++;
         }

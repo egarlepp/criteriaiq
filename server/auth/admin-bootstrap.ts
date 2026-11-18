@@ -8,6 +8,7 @@ import {
   validateAdminInputShared,
   type AdminInputErrorCode as SharedAdminInputErrorCode,
 } from '../../shared/admin-validation';
+import { randomUUID } from "crypto";
 
 export interface BootstrapAdminInput {
   email: string;
@@ -137,7 +138,7 @@ export async function createBootstrapAdmin(
   db?: AdminBootstrapDb,
 ): Promise<{ id: string; email: string }> {
   const passwordHash = await bcrypt.hash(input.password, 10);
-  const id = `user_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+  const id = `user_${randomUUID()}`;
   const email = input.email.toLowerCase().trim();
   const firstName = input.firstName.trim();
   const lastName = (input.lastName || '').trim();
