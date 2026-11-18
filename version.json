@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.1",
+  "version": "v0.12.2",
   "release": "v0.12.0",
-  "buildDate": "2026-11-18T16:54:44Z",
-  "gitCommit": "6252235",
+  "buildDate": "2026-11-18T18:03:35Z",
+  "gitCommit": "fb2cd1c",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.2",
+      "date": "2026-11-18",
+      "pr": 1,
+      "title": "Bump croner from 11.0.0 to 11.0.1 in the npm-minor-and-patch group",
+      "category": "security"
+    },
     {
       "version": "v0.12.1",
       "date": "2026-11-18",
