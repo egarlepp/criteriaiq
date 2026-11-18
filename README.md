@@ -1,12 +1,12 @@
 # CriteriaIQ Technical Validation
 
-> A full-stack platform for Solution Engineers to run structured technical validation projects, align customers to outcomes, and produce defensible Technical Clearance to Close (TCC) recommendations.
+> A full-stack platform for  Presales | Sales | Solution Engineers to run structured technical validation projects (POx), align customers to outcomes, and produce defensible Technical Clearance to Close (TCC) recommendations.
 
 ---
 
 ## Overview
 
-CriteriaIQ is a purpose-built workspace for Solution Engineers managing enterprise cybersecurity technical validation projects. It replaces fragmented spreadsheets, email threads, and manual tracking with a unified platform that automates workflows, surfaces AI-driven risk insights, and keeps every stakeholder — internal and external — aligned in real time.
+CriteriaIQ is a purpose-built workspace for Presales | Sales | Solution Engineers managing enterprise cybersecurity technical validation projects. It replaces fragmented spreadsheets, email threads, and manual tracking with a unified platform that automates workflows, surfaces AI-driven risk insights, and keeps every stakeholder — internal and external — aligned in real time.
 
 The platform follows the **5A Framework** (Attach → Assess → Affect → Align → Acquaint) and the **Clear2Close validation lifecycle**, guiding engineers through every stage from initial project scoping and success criteria definition, through mutual action planning, proof execution, and gap analysis, to closure intelligence and handoff.
 
@@ -16,7 +16,7 @@ The platform follows the **5A Framework** (Attach → Assess → Affect → Alig
 
 | Stakeholder | How CriteriaIQ Helps |
 |-------------|----------------------|
-| **Solution Engineers** | Primary Workspace — manage validation projects with structured workflows, AI analysis, and real-time tracking |
+| **Sales/Solution Engineers** | Primary Workspace — manage validation projects with structured workflows, AI analysis, and real-time tracking |
 | **Specialist Engineers** | Collaborative execution on assigned projects with full criteria and artifact access |
 | **Opportunity Owners / Sales** | Real-time project status, pipeline visibility, and customer engagement metrics |
 | **Customer Success** | Validation outcome visibility, handoff quality tracking, and expansion signal data |
