@@ -25,6 +25,7 @@ import { z } from "zod";
 import { storage } from "../storage";
 import { isAuthenticated } from "../auth/simpleAuth";
 import { insertComplianceRegulationSchema } from "@shared/schema";
+import { quarantinedUploadPath, discardQuarantinedUpload } from "../lib/upload-config";
 
 interface ComplianceRouteOptions {
   upload: Multer;
@@ -108,6 +109,10 @@ export function registerComplianceRoutes(
       if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
       }
+      const uploadedPath = quarantinedUploadPath(req.file.path);
+      if (!uploadedPath) {
+        return res.status(400).json({ error: 'Invalid upload' });
+      }
 
       const fs = await import('fs');
       const csv = await import('csv-parser');
@@ -118,7 +123,7 @@ export function registerComplianceRoutes(
 
       // Read and parse CSV file
       await new Promise((resolve, reject) => {
-        fs.createReadStream(req.file.path)
+        fs.createReadStream(uploadedPath)
           .pipe(csv.default())
           .on('data', (data) => results.push(data))
           .on('end', resolve)
@@ -164,7 +169,7 @@ export function registerComplianceRoutes(
       }
 
       // Clean up uploaded file
-      fs.unlinkSync(req.file.path);
+      discardQuarantinedUpload(uploadedPath);
 
       res.json({
         message: 'Import completed successfully',
@@ -174,14 +179,7 @@ export function registerComplianceRoutes(
       });
     } catch (error: any) {
       // Clean up uploaded file in case of error
-      if (req.file?.path) {
-        try {
-          const fs = await import('fs');
-          fs.unlinkSync(req.file.path);
-        } catch (cleanupError) {
-          console.error('Error cleaning up uploaded file:', cleanupError);
-        }
-      }
+      discardQuarantinedUpload(req.file?.path);
 
       console.error('Error importing compliance regulations:', error);
       res.status(500).json({ message: 'Failed to import regulations' });

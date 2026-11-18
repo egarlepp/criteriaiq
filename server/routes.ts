@@ -284,39 +284,6 @@ const supportUpload = multer({
   },
 });
 
-// Configure multer for CSV imports with memory storage
-const csvUpload = multer({
-  storage: multer.memoryStorage(), // Keep file in memory for buffer access
-  limits: { 
-    fileSize: 5 * 1024 * 1024, // 5MB limit for CSV files
-    files: 1 // Allow only 1 file per upload
-  },
-  fileFilter: (_req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-    console.log('CSV file filter - processing file:', {
-      originalname: file.originalname,
-      mimetype: file.mimetype
-    });
-    
-    // Sanitize original filename to prevent path traversal
-    if (file.originalname.includes('..') || file.originalname.includes('/') || file.originalname.includes('\\')) {
-      const error: any = new Error('Filename contains invalid characters');
-      error.code = 'INVALID_FILENAME';
-      return cb(error);
-    }
-    
-    // Only allow CSV files for CSV imports
-    const allowedTypes = ['text/csv', 'application/csv'];
-    
-    if (allowedTypes.includes(file.mimetype) || file.originalname.toLowerCase().endsWith('.csv')) {
-      cb(null, true);
-    } else {
-      const error: any = new Error(`Only CSV files are allowed for data imports. Received: ${file.mimetype}`);
-      error.code = 'UNSUPPORTED_FILE_TYPE';
-      cb(error);
-    }
-  },
-});
-
 // Centralized multer error handling middleware
 const handleMulterError = (err: any, req: any, res: any, next: any) => {
   if (err) {
@@ -528,7 +495,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // initialize, dashboard metrics/projects, automation-config (global +
   // per-project). Pure storage + db. The remaining MAP surface
   // (templates, project-map, phases/steps/tasks, assignments,
-  // management, import-csv, analytics) involves WebSocket broadcasts
+  // management, analytics) involves WebSocket broadcasts
   // and a multer instance and will move in subsequent slices.
   registerMapRoutes(app);
 
@@ -547,10 +514,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // 5n. MAP management/import/analytics routes (Phase 8 extraction
   // #9e) — final live MAP slice. /api/map/management aggregated view,
-  // /api/map/import-csv (admin-only, csvUpload DI),
   // /api/projects/:projectId/map/assignment-analytics, plus the four
   // backward-compat deprecated assignment stubs.
-  registerMapManagementRoutes(app, { csvUpload });
+  registerMapManagementRoutes(app);
 
   // 5o. Archive routes (Phase 8 extraction #10) — admin-only soft-
   // delete UI surface. 17 handlers covering list/get/restore/dependency-

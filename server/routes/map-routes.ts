@@ -2,7 +2,7 @@
 //
 // The full MAP surface in routes.ts is ~2,400 lines spread across multiple
 // scattered blocks (initialize, dashboard, automation-config, templates,
-// project map, phases/steps/tasks, assignments, management, import-csv,
+// project map, phases/steps/tasks, assignments, management,
 // analytics) and includes WebSocket broadcasts and a multer instance for
 // CSV upload. To keep risk small, this first slice only takes the pieces
 // that are pure storage + db reads:
