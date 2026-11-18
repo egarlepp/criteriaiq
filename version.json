@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.4",
+  "version": "v0.12.5",
   "release": "v0.12.0",
-  "buildDate": "2026-11-18T19:33:39Z",
-  "gitCommit": "d383cb8",
+  "buildDate": "2026-11-18T19:47:31Z",
+  "gitCommit": "b6da0d9",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.5",
+      "date": "2026-11-18",
+      "pr": 4,
+      "title": "Use GitHub's default CodeQL setup instead of a workflow file",
+      "category": "improvement"
+    },
     {
       "version": "v0.12.4",
       "date": "2026-11-18",
