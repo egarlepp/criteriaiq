@@ -499,6 +499,13 @@ export function registerAdminSalesforceRoutes(app: Express) {
     }
   });
 
+  // Salesforce picklist values are at most 255 characters. The caps keep
+  // the fuzzy matcher's pairwise Levenshtein work bounded.
+  const suggestTranslationsSchema = z.object({
+    cqiValues: z.array(z.string().max(255)).max(500),
+    sfPicklistValues: z.array(z.string().max(255)).max(500),
+  });
+
   // POST /api/admin/salesforce/mappings/:id/suggest-translations - Get fuzzy match suggestions for value translations
   // This is for CONFIG UI only - suggests potential matches for admin to approve
   app.post("/api/admin/salesforce/mappings/:id/suggest-translations", isAuthenticated, async (req: any, res) => {
@@ -508,11 +515,11 @@ export function registerAdminSalesforceRoutes(app: Express) {
       }
 
       const { id } = req.params;
-      const { cqiValues, sfPicklistValues } = req.body;
-
-      if (!cqiValues || !sfPicklistValues) {
-        return res.status(400).json({ message: "Both CQI values and SF picklist values are required" });
+      const parsed = suggestTranslationsSchema.safeParse(req.body);
+      if (!parsed.success) {
+        return res.status(400).json({ message: "Both CQI values and SF picklist values are required, as lists of up to 500 values of at most 255 characters" });
       }
+      const { cqiValues, sfPicklistValues } = parsed.data;
 
       const { salesforceMappingService } = await import('../salesforce/index.js');
       const { getBestSuggestions } = await import('../salesforce/fuzzy-matcher.js');

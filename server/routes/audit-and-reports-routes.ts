@@ -1193,48 +1193,6 @@ export async function registerAuditAndReportsRoutes(
     }
   });
 
-
-
-  // Debug route for asset serving
-  app.get(['/debug/assets', '/debug/assets/:folder', '/debug/assets/:folder/:file'], async (req, res) => {
-    const { folder, file } = req.params;
-    let assetsPath = path.join(process.cwd(), 'attached_assets');
-
-    if (folder) {
-      assetsPath = path.join(assetsPath, folder as string);
-    }
-
-    try {
-      if (file) {
-        const filePath = path.join(assetsPath, file as string);
-        const exists = fs.existsSync(filePath);
-        const stats = exists ? fs.statSync(filePath) : null;
-
-        res.json({
-          filePath,
-          exists,
-          isFile: stats?.isFile(),
-          size: stats?.size,
-          mtime: stats?.mtime,
-          requestedUrl: req.originalUrl,
-          fullPath: filePath
-        });
-      } else {
-        const exists = fs.existsSync(assetsPath);
-        const files = exists ? fs.readdirSync(assetsPath) : [];
-
-        res.json({
-          directory: assetsPath,
-          exists,
-          files,
-          requestedUrl: req.originalUrl
-        });
-      }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  });
-
   // The old /api/assets list/upload routes were removed: nothing called them
   // and the folder parameter allowed reading and writing outside uploads.
 

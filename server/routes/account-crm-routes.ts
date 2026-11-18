@@ -108,7 +108,7 @@ export function registerAccountCrmRoutes(app: Express): void {
       // Nothing to suggest is an answer, not an error: the dialog shows nothing.
       res.json(result.status === "ok" ? result : { status: result.status, suggestions: [] });
     } catch (error) {
-      console.error(`[accounts] CRM suggestions for account ${req.params.id} failed:`, error);
+      console.error("[accounts] CRM suggestions for account %s failed:", req.params.id, error);
       res.status(502).json({ message: "The CRM could not be reached", errorCode: "crm_unreachable" });
     }
   });
@@ -132,7 +132,7 @@ export function registerAccountCrmRoutes(app: Express): void {
         if (outcome === "invalid_id") return res.status(400).json({ message: "Not a record id for this CRM", errorCode: outcome });
         res.status(204).end();
       } catch (error) {
-        console.error(`[accounts] dismissing a CRM match for account ${req.params.id} failed:`, error);
+        console.error("[accounts] dismissing a CRM match for account %s failed:", req.params.id, error);
         res.status(500).json({ message: "Failed to dismiss the suggestion" });
       }
     },
@@ -154,7 +154,7 @@ export function registerAccountCrmRoutes(app: Express): void {
       const refusal = REFRESH_REFUSALS[outcome.status];
       res.status(refusal.status).json({ message: refusal.message, errorCode: outcome.status });
     } catch (error) {
-      console.error(`[accounts] CRM refresh of account ${req.params.id} failed:`, error);
+      console.error("[accounts] CRM refresh of account %s failed:", req.params.id, error);
       res.status(502).json({ message: "The CRM could not be reached", errorCode: "crm_unreachable" });
     }
   });

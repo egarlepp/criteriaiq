@@ -55,7 +55,7 @@ export class InfrastructureStorageMixin {
           type: path.extname(file).slice(1).toLowerCase()
         }));
 
-      console.log(`Found ${assets.length} assets in ${folder || 'root'} folder:`, assets.map(a => a.name));
+      console.log("Found %s assets in %s folder:", assets.length, folder || 'root', assets.map(a => a.name));
 
       // Log specific folder path for debugging
       if (folder === 'uploads_email') {
@@ -144,7 +144,7 @@ export class InfrastructureStorageMixin {
       
       console.log(`Template usage incremented for template ID: ${templateId}`);
     } catch (error) {
-      console.error(`Failed to increment template usage for ID ${templateId}:`, error);
+      console.error("Failed to increment template usage for ID %s:", templateId, error);
     }
   }
 
@@ -213,14 +213,14 @@ export class InfrastructureStorageMixin {
 
       console.log(`Database: Template ${templateId} deleted successfully`);
     } catch (error) {
-      console.error(`Database: Failed to delete template ${templateId}:`, error);
+      console.error("Database: Failed to delete template %s:", templateId, error);
       throw error;
     }
   }
 
   async updateProjectTemplate(templateId: string, updateData: any): Promise<any> {
     try {
-      console.log(`Updating template ${templateId}:`, Object.keys(updateData).join(', '));
+      console.log("Updating template %s:", templateId, Object.keys(updateData).join(', '));
       
       // Prepare update object with safe type conversions
       const updateFields: any = {
@@ -277,7 +277,7 @@ export class InfrastructureStorageMixin {
       console.log(`Template "${updatedTemplate.name}" updated successfully`);
       return updatedTemplate;
     } catch (error) {
-      console.error(`Failed to update template for ID ${templateId}:`, error);
+      console.error("Failed to update template for ID %s:", templateId, error);
       console.error(`Error details:`, error);
       throw error;
     }

@@ -302,7 +302,9 @@ export function sortRows<T>(
   accessors: SortAccessors<T> = {},
 ): T[] {
   if (!sortConfig) return [...rows];
-  const accessor = accessors[sortConfig.key];
+  // The key comes from the URL, so only the table's own accessors count
+  // (`?sort=constructor` must not pick up an Object.prototype method).
+  const accessor = Object.hasOwn(accessors, sortConfig.key) ? accessors[sortConfig.key] : undefined;
   if (!accessor) return stableSort([...rows], makeComparator<T>(sortConfig));
   const sign = sortConfig.direction === 'desc' ? -1 : 1;
   return stableSort([...rows], (x, y) => {

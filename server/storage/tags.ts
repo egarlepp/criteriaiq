@@ -132,7 +132,7 @@ export class TagsStorageMixin {
 
     // Note: Since system tags are defined in code, we don't actually update a database record
     // This would require updating the SYSTEM_TAGS object in tagUtils.ts
-    console.log(`System tag "${oldName}" would be updated to:`, updates);
+    console.log("System tag \"%s\" would be updated to:", oldName, updates);
   }
 
   async deleteSystemTag(tagName: string): Promise<void> {

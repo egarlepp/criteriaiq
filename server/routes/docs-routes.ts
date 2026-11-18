@@ -740,6 +740,10 @@ export function registerDocsRoutes(app: Express) {
   }
 
   app.post("/api/docs/fetch-product-config", isAuthenticated, async (req: Request, res: Response) => {
+    const userRole = (req as any).session?.user?.role;
+    if (userRole?.toLowerCase() !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
     try {
       const { repoOwner, repoName, branch, configPath } = req.body;
       if (!repoOwner || !repoName || !branch) {
@@ -805,97 +809,6 @@ export function registerDocsRoutes(app: Express) {
       }
 
       res.json({ products: productsList, entries });
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-  app.post("/api/docs/parse-github-url", isAuthenticated, async (req: Request, res: Response) => {
-    try {
-      const { url } = req.body;
-      if (!url || typeof url !== 'string' || url.length > 500) {
-        return res.status(400).json({ message: "url is required and must be under 500 characters" });
-      }
-
-      const cleanUrl = url.trim().replace(/\/+$/, "");
-
-      const patterns = [
-        /^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/(?:tree|blob)\/([^\/]+)\/(.+)$/,
-        /^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/(?:tree|blob)\/([^\/]+)\/?$/,
-        /^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/?$/,
-      ];
-
-      let repoOwner = "";
-      let repoName = "";
-      let branch = "main";
-      let docsPath = "";
-      let matched = false;
-
-      for (const pattern of patterns) {
-        const m = cleanUrl.match(pattern);
-        if (m) {
-          repoOwner = m[1];
-          repoName = m[2];
-          if (m[3]) branch = m[3];
-          if (m[4]) docsPath = m[4].replace(/\/+$/, "");
-          matched = true;
-          break;
-        }
-      }
-
-      if (!matched) {
-        return res.status(400).json({ message: "Could not parse GitHub URL. Try: https://github.com/owner/repo/tree/branch/path" });
-      }
-
-      const result: any = { repoOwner, repoName, branch, docsPath };
-
-      try {
-        const productsUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branch}/src/config/products.js`;
-        const resp = await fetch(productsUrl);
-        if (resp.ok) {
-          const jsContent = await resp.text();
-          const productMatches = parseProductsJsContent(jsContent);
-          result.products = productMatches;
-
-          if (docsPath) {
-            const cleanPath = docsPath.replace(/\/+$/, "");
-            const matchedProduct = productMatches.find(p =>
-              cleanPath === p.path || cleanPath.startsWith(p.path + "/")
-            );
-            if (matchedProduct) {
-              result.matchedProduct = matchedProduct;
-              const pathAfterProduct = cleanPath.substring(matchedProduct.path.length + 1);
-              if (pathAfterProduct) {
-                const matchedVersion = matchedProduct.versions?.find((v: any) => v.version === pathAfterProduct);
-                if (matchedVersion) {
-                  result.matchedVersion = matchedVersion;
-                  result.docsPath = cleanPath;
-                  result.version = matchedVersion.version;
-                  result.sidebarPath = matchedVersion.sidebarFile?.replace(/^\.\//, "") || "";
-                } else {
-                  result.docsPath = cleanPath;
-                }
-              } else {
-                const latestVersion = matchedProduct.versions?.find((v: any) => v.isLatest);
-                if (latestVersion) {
-                  result.matchedVersion = latestVersion;
-                  result.docsPath = matchedProduct.path + (latestVersion.version !== "current" ? `/${latestVersion.version}` : "");
-                  result.version = latestVersion.version !== "current" ? latestVersion.version : "";
-                  result.sidebarPath = latestVersion.sidebarFile?.replace(/^\.\//, "") || "";
-                } else {
-                  result.docsPath = cleanPath;
-                }
-              }
-            }
-          }
-        } else {
-          result.productsNote = "Could not fetch repository config — fill in fields manually";
-        }
-      } catch (fetchErr) {
-        result.productsNote = "Could not fetch repository config — fill in fields manually";
-      }
-
-      res.json(result);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
