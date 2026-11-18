@@ -1,6 +1,6 @@
-# CriteriaIQ Technical Validation
+# Greater Good: CriteriaIQ - Technical Validation Workspace
 
-> A full-stack platform for  Presales | Sales | Solution Engineers to run structured technical validation projects (POx), align customers to outcomes, and produce defensible Technical Clearance to Close (TCC) recommendations.
+> A full-stack workspace platform for Presales | Sales | Solution Engineers to run structured technical validation projects (POx), align customers to outcomes, and produce defensible Technical Clearance to Close (TCC) recommendations.
 
 ---
 
