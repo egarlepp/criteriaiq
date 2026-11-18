@@ -18,5 +18,7 @@ export function stripScriptTags(html: string): string {
     previous = current;
     current = current.replace(SCRIPT_BLOCK_RE, "").replace(SCRIPT_TAG_RE, "");
   } while (current !== previous);
-  return current;
+  // The loop leaves no script tag behind; escaping any `<` that would
+  // open one is a last guard that a regex-only pass can't get wrong.
+  return current.replace(/<(?=\/?script)/gi, "&lt;");
 }

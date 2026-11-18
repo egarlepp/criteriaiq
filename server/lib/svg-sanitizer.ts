@@ -158,6 +158,18 @@ export function sanitizeSvg(input: string): SanitizeSvgResult {
     });
   } while (cleaned !== previous);
 
+  // Last guards: escape any `<` that would still open a script tag, and
+  // refuse the file outright if an event handler somehow survived.
+  cleaned = cleaned.replace(/<(?=\/?script)/gi, '&lt;');
+  if (/\son[a-z]+\s*=/i.test(cleaned)) {
+    return {
+      ok: false,
+      content: '',
+      reason: 'SVG contains an event handler that could not be removed safely.',
+      removed,
+    };
+  }
+
   // 5. For `<use>` tags, only allow same-document references
   //    (`href="#path"` / `xlink:href="#path"`). Anything else gets
   //    its href stripped — the tag stays but renders nothing,
