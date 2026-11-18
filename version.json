@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.2",
+  "version": "v0.12.3",
   "release": "v0.12.0",
-  "buildDate": "2026-11-18T18:03:35Z",
-  "gitCommit": "fb2cd1c",
+  "buildDate": "2026-11-18T19:32:07Z",
+  "gitCommit": "cefb4ce",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.3",
+      "date": "2026-11-18",
+      "pr": null,
+      "title": "Update README to include Presales and Sales roles",
+      "category": "improvement"
+    },
     {
       "version": "v0.12.2",
       "date": "2026-11-18",
