@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.6",
+  "version": "v0.12.7",
   "release": "v0.12.0",
-  "buildDate": "2026-11-18T20:04:36Z",
-  "gitCommit": "003f5d7",
+  "buildDate": "2026-11-18T22:11:37Z",
+  "gitCommit": "b5d6902",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.7",
+      "date": "2026-11-18",
+      "pr": 7,
+      "title": "Demo logins: shared Demo Admin and Demo Engineer accounts for visitors",
+      "category": "feature"
+    },
     {
       "version": "v0.12.6",
       "date": "2026-11-18",
