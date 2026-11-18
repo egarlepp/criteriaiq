@@ -5,7 +5,7 @@ description: Wrap hardcoded English strings in CriteriaIQ React components with 
 
 # i18n-extract — convert hardcoded English to react-i18next keys
 
-CriteriaIQ supports **6 languages** (en-US, pt-BR, fr-FR, es-ES, de-DE, it-IT) via i18next + react-i18next. Strict-checked adoption is currently ~2.4% of components (7 of 297) per the `.i18n-allowlist.txt` ratchet — run `npm run lint:i18n` for the live number. This skill helps close that gap one component at a time.
+CriteriaIQ supports **6 languages** (en-US, pt-BR, fr-FR, es-ES, de-DE, it-IT) via i18next + react-i18next. Strict-checked adoption is currently ~42% of components (188 of 452) per the `.i18n-allowlist.txt` ratchet — run `npm run lint:i18n` for the live number. This skill helps close that gap one component at a time.
 
 ## Inputs
 
