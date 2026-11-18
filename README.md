@@ -26,6 +26,20 @@ The platform follows the **5A Framework** (Attach → Assess → Affect → Alig
 
 ---
 
+## Screenshots
+
+**Dashboard:** KPIs, MAP progress, project and support metrics, and fiscal trends across your validation pipeline.
+
+![CriteriaIQ dashboard](docs/images/screenshots/dashboard.png)
+
+**Manage Projects:** every validation project with risk, ranking, status, solution, team, engineers and due dates in one sortable, filterable table.
+
+![CriteriaIQ Manage Projects table](docs/images/screenshots/manage-projects.png)
+
+> Screenshots show Demo Mode data.
+
+---
+
 ## Key Features
 
 ### Project & Workflow Management
