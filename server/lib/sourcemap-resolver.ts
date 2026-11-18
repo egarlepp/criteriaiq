@@ -43,6 +43,7 @@ function loadSourceMap(jsFileName: string): SourceMap | null {
 // Frames look like:
 //   at fn (https://host/assets/config-DGP6sHOc.js:1:15033)
 //   at https://host/assets/config-DGP6sHOc.js:1:15033
+const MAX_FRAME_LINE_LENGTH = 1024;
 const FRAME_RE = /(https?:\/\/[^\s)]+\/assets\/([A-Za-z0-9._-]+\.js)):(\d+):(\d+)/g;
 
 /**
@@ -54,31 +55,38 @@ export function resolveMinifiedStack(stack?: string | null): string | null {
   if (!stack || typeof stack !== "string") return null;
   let resolvedAny = false;
 
-  const out = stack.replace(FRAME_RE, (whole, _url, jsFile, lineStr, colStr) => {
-    const sm = loadSourceMap(jsFile);
-    if (!sm) return whole;
-    try {
-      // V8 stack line/column are 1-based; SourceMap.findEntry expects 0-based.
-      // findEntry returns `{} | SourceMapping`; narrow to the fields we read.
-      const entry = sm.findEntry(Number(lineStr) - 1, Number(colStr) - 1) as {
-        originalSource?: string;
-        originalLine?: number;
-        originalColumn?: number;
-      };
-      if (entry && entry.originalSource != null) {
-        resolvedAny = true;
-        // Trim the long file:// / webpack-style prefix down to the repo-relative
-        // path (e.g. "client/src/pages/config.tsx").
-        const src = String(entry.originalSource).replace(/^.*?((?:client\/)?src\/.*)$/, "$1");
-        const ol = (entry.originalLine ?? 0) + 1;
-        const oc = (entry.originalColumn ?? 0) + 1;
-        return `${src}:${ol}:${oc}  [${jsFile}]`;
+  // The stack arrives from the browser, so it is untrusted. FRAME_RE
+  // backtracks on long unbroken tokens, so it only runs on lines of a
+  // realistic length; anything longer is kept as it is.
+  const resolveLine = (line: string): string => {
+    if (line.length > MAX_FRAME_LINE_LENGTH) return line;
+    return line.replace(FRAME_RE, (whole, _url, jsFile, lineStr, colStr) => {
+      const sm = loadSourceMap(jsFile);
+      if (!sm) return whole;
+      try {
+        // V8 stack line/column are 1-based; SourceMap.findEntry expects 0-based.
+        // findEntry returns `{} | SourceMapping`; narrow to the fields we read.
+        const entry = sm.findEntry(Number(lineStr) - 1, Number(colStr) - 1) as {
+          originalSource?: string;
+          originalLine?: number;
+          originalColumn?: number;
+        };
+        if (entry && entry.originalSource != null) {
+          resolvedAny = true;
+          // Trim the long file:// / webpack-style prefix down to the repo-relative
+          // path (e.g. "client/src/pages/config.tsx").
+          const src = String(entry.originalSource).replace(/^.*?((?:client\/)?src\/.*)$/, "$1");
+          const ol = (entry.originalLine ?? 0) + 1;
+          const oc = (entry.originalColumn ?? 0) + 1;
+          return `${src}:${ol}:${oc}  [${jsFile}]`;
+        }
+      } catch {
+        /* fall through, keep original frame */
       }
-    } catch {
-      /* fall through, keep original frame */
-    }
-    return whole;
-  });
+      return whole;
+    });
+  };
 
+  const out = stack.split("\n").map(resolveLine).join("\n");
   return resolvedAny ? out : null;
 }

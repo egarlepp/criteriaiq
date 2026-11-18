@@ -30,6 +30,7 @@ import { emailTemplates, insertEmailTemplateSchema } from "@shared/schema";
 import { isAuthenticated } from "../auth/simpleAuth";
 import { sendEmail, wrapEmailContent } from "../email/email";
 import { getPublicAppUrl } from "../lib/app-config";
+import { stripScriptTags } from "../lib/strip-script-tags";
 
 export function registerEmailTemplatesRoutes(app: Express) {
   // Email Template preview with design merge
@@ -179,7 +180,7 @@ export function registerEmailTemplatesRoutes(app: Express) {
 
       // Sanitize HTML content
       if (templateData.htmlContent) {
-        templateData.htmlContent = templateData.htmlContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+        templateData.htmlContent = stripScriptTags(templateData.htmlContent);
       }
 
       const template = await storage.createEmailTemplate(templateData);
@@ -215,7 +216,7 @@ export function registerEmailTemplatesRoutes(app: Express) {
 
       // Sanitize HTML content
       if (updates.htmlContent) {
-        updates.htmlContent = updates.htmlContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+        updates.htmlContent = stripScriptTags(updates.htmlContent);
       }
 
       const template = await storage.updateEmailTemplate(parseInt(req.params.id as string), updates);

@@ -170,7 +170,9 @@ export function adminErrorFallback(code: AdminInputErrorCode): string {
 }
 
 export function validateAdminEmailField(email: string): AdminInputErrorCode | null {
-  if (!email || !ADMIN_EMAIL_RULE.test(email)) return 'adminEmailInvalid';
+  // 254 is the longest valid address; the cap also keeps the regex
+  // from backtracking on oversized input.
+  if (!email || email.length > 254 || !ADMIN_EMAIL_RULE.test(email)) return 'adminEmailInvalid';
   return null;
 }
 

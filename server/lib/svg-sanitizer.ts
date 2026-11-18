@@ -39,9 +39,8 @@
 // `svg-sanitizer` / `sanitize-svg` packages use under the hood for
 // their core logic.
 
-const SCRIPT_TAG_RE = /<script\b[^>]*>[\s\S]*?<\/script\s*>/gi;
-// Catches self-closing or unclosed `<script />` too.
-const SCRIPT_SELF_CLOSING_RE = /<script\b[^>]*\/?>/gi;
+// The `<` that opens any `<script` or `</script` tag, however written.
+const SCRIPT_TAG_OPEN_RE = /<(?=\/?script)/gi;
 // Match any `on*` attribute (event handler) regardless of quote style
 // or absence. We capture the leading space so we keep tag structure
 // readable, but the replacement just drops the entire attribute.
@@ -58,7 +57,7 @@ const JAVASCRIPT_URI_ATTR_RE =
 // `<foreignObject>` embeds arbitrary HTML — including <script> tags
 // the regex above wouldn't reach because they're nested under a
 // different element. Drop the whole block.
-const FOREIGN_OBJECT_RE = /<foreignObject\b[\s\S]*?<\/foreignObject\s*>/gi;
+const FOREIGN_OBJECT_RE = /<foreignObject\b[\s\S]*?<\/foreignObject\b[^>]*>/gi;
 const FOREIGN_OBJECT_SELF_CLOSING_RE = /<foreignObject\b[^>]*\/>/gi;
 // External `<use href="https://...">` / `<use xlink:href="...">`
 // refs fetch arbitrary URLs at render time. Allow only same-document
@@ -116,40 +115,56 @@ export function sanitizeSvg(input: string): SanitizeSvgResult {
   }
 
   let cleaned = input;
+  // Removing one match can join the text around it into a new one
+  // (`<scr<script></script>ipt>`, `o<x onload=1>nclick=`), so steps 1-4
+  // repeat until a pass changes nothing.
+  let previous: string;
+  do {
+    previous = cleaned;
 
-  // 1. Strip `<script>` blocks (including self-closing variants).
-  cleaned = cleaned.replace(SCRIPT_TAG_RE, () => {
-    removed.scripts++;
-    return '';
-  });
-  cleaned = cleaned.replace(SCRIPT_SELF_CLOSING_RE, () => {
-    removed.scripts++;
-    return '';
-  });
+    // 1. Escape the `<` of every `<script>` / `</script>` tag. Escaping
+    //    a single character can't join text into a new tag the way
+    //    deleting a match can; the script becomes inert text.
+    cleaned = cleaned.replace(SCRIPT_TAG_OPEN_RE, () => {
+      removed.scripts++;
+      return '&lt;';
+    });
 
-  // 2. Strip inline event-handler attributes (onclick / onload / …).
-  cleaned = cleaned.replace(EVENT_HANDLER_ATTR_RE, () => {
-    removed.eventHandlers++;
-    return '';
-  });
+    // 2. Replace inline event-handler attributes (onclick / onload / …)
+    //    with an inert placeholder attribute.
+    cleaned = cleaned.replace(EVENT_HANDLER_ATTR_RE, () => {
+      removed.eventHandlers++;
+      return ' data-removed-handler=""';
+    });
 
-  // 3. Neutralise `javascript:` URIs in href/xlink:href/src/action.
-  //    Rewrite the whole attribute value to `#` (fragment to current
-  //    document) so the link still renders but navigates nowhere.
-  cleaned = cleaned.replace(JAVASCRIPT_URI_ATTR_RE, (_match, attrName: string) => {
-    removed.javascriptUris++;
-    return `${attrName}="#"`;
-  });
+    // 3. Neutralise `javascript:` URIs in href/xlink:href/src/action.
+    //    Rewrite the whole attribute value to `#` (fragment to current
+    //    document) so the link still renders but navigates nowhere.
+    cleaned = cleaned.replace(JAVASCRIPT_URI_ATTR_RE, (_match, attrName: string) => {
+      removed.javascriptUris++;
+      return `${attrName}="#"`;
+    });
 
-  // 4. Drop `<foreignObject>` blocks entirely.
-  cleaned = cleaned.replace(FOREIGN_OBJECT_RE, () => {
-    removed.foreignObjects++;
-    return '';
-  });
-  cleaned = cleaned.replace(FOREIGN_OBJECT_SELF_CLOSING_RE, () => {
-    removed.foreignObjects++;
-    return '';
-  });
+    // 4. Drop `<foreignObject>` blocks entirely.
+    cleaned = cleaned.replace(FOREIGN_OBJECT_RE, () => {
+      removed.foreignObjects++;
+      return '';
+    });
+    cleaned = cleaned.replace(FOREIGN_OBJECT_SELF_CLOSING_RE, () => {
+      removed.foreignObjects++;
+      return '';
+    });
+  } while (cleaned !== previous);
+
+  // Last guard: refuse the file outright if an event handler survived.
+  if (/\son[a-z]+\s*=/i.test(cleaned)) {
+    return {
+      ok: false,
+      content: '',
+      reason: 'SVG contains an event handler that could not be removed safely.',
+      removed,
+    };
+  }
 
   // 5. For `<use>` tags, only allow same-document references
   //    (`href="#path"` / `xlink:href="#path"`). Anything else gets

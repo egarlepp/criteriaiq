@@ -399,6 +399,17 @@ export async function registerMiscRoutes(
     return isAuthenticated(req, res, next);
   };
 
+  // Stored files are user uploads. nosniff stops the browser guessing a
+  // script type, and an SVG opened directly gets a CSP with no script
+  // and a sandbox, so a script that slipped past the upload-time SVG
+  // sanitizer still can't run on the app's origin.
+  const setStoredFileSafetyHeaders = (res: any, contentType: string) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    if (contentType.startsWith('image/svg+xml')) {
+      res.setHeader('Content-Security-Policy', "default-src 'none'; img-src data:; style-src 'unsafe-inline'; sandbox");
+    }
+  };
+
   app.get('/api/files/*key', filesAuthGate, async (req: any, res) => {
     try {
       const rawKey = Array.isArray(req.params.key) ? req.params.key.join('/') : (req.params.key || '');
@@ -426,7 +437,9 @@ export async function registerMiscRoutes(
               '.pdf': 'application/pdf', '.txt': 'text/plain; charset=utf-8',
               '.csv': 'text/csv; charset=utf-8', '.json': 'application/json; charset=utf-8',
             };
-            res.setHeader('Content-Type', blob.mimeType || mimeDb[extDb] || 'application/octet-stream');
+            const dbContentType = blob.mimeType || mimeDb[extDb] || 'application/octet-stream';
+            res.setHeader('Content-Type', dbContentType);
+            setStoredFileSafetyHeaders(res, dbContentType);
             res.setHeader('Content-Length', String(blob.data.length));
             res.setHeader('Cache-Control', 'private, max-age=300');
             return res.end(blob.data);
@@ -513,7 +526,9 @@ export async function registerMiscRoutes(
         '.csv':  'text/csv; charset=utf-8',
         '.json': 'application/json; charset=utf-8',
       };
-      res.setHeader('Content-Type', mime[ext] ?? 'application/octet-stream');
+      const diskContentType = mime[ext] ?? 'application/octet-stream';
+      res.setHeader('Content-Type', diskContentType);
+      setStoredFileSafetyHeaders(res, diskContentType);
       res.setHeader('Content-Length', String(stat.size));
       res.setHeader('Cache-Control', 'private, max-age=300');
       const stream = fs.createReadStream(localPath);
