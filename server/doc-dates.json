@@ -1,0 +1,266 @@
+{
+  "PROJECT_REFERENCE.md": {
+    "updated": "2026-11-13T17:05:21Z",
+    "posted": "2026-02-14T21:37:04Z"
+  },
+  "docs/admin/demo-mode.md": {
+    "updated": "2026-11-17T20:11:38Z",
+    "posted": "2026-05-02T19:42:27Z"
+  },
+  "docs/architecture/application-startup-routing.md": {
+    "updated": "2026-11-05T18:50:00Z",
+    "posted": "2026-02-28T19:52:46Z"
+  },
+  "docs/architecture/database-connection-architecture.md": {
+    "updated": "2026-11-16T16:44:59Z",
+    "posted": "2026-02-26T16:24:50Z"
+  },
+  "docs/architecture/design-document.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2026-10-08T15:34:03Z"
+  },
+  "docs/architecture/navigation-sitemap.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2025-12-29T16:55:58Z"
+  },
+  "docs/architecture/project-overview.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2026-10-08T15:34:03Z"
+  },
+  "docs/architecture/workflow-diagram.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2025-08-18T15:46:27Z"
+  },
+  "docs/features/account-user-management.md": {
+    "updated": "2026-11-02T19:57:43Z",
+    "posted": "2025-12-17T15:08:01Z"
+  },
+  "docs/features/ai-assessment-system.md": {
+    "updated": "2026-11-17T18:54:27Z",
+    "posted": "2026-02-11T19:01:50Z"
+  },
+  "docs/features/approved-email-domains.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2026-06-04T16:16:27-04:00"
+  },
+  "docs/features/archive-management-system.md": {
+    "updated": "2026-10-28T19:26:41Z",
+    "posted": "2026-01-30T22:36:27Z"
+  },
+  "docs/features/backup-restore.md": {
+    "updated": "2026-10-28T19:26:41Z",
+    "posted": "2026-10-26T22:10:54Z"
+  },
+  "docs/features/color-picker-system.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2025-12-29T17:34:59Z"
+  },
+  "docs/features/database-connection-manager.md": {
+    "updated": "2026-11-16T16:44:59Z",
+    "posted": "2026-02-26T16:24:50Z"
+  },
+  "docs/features/email-graph-sending.md": {
+    "updated": "2026-10-28T21:32:39Z",
+    "posted": "2026-06-04T21:33:43-04:00"
+  },
+  "docs/features/email-triggers-reference.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2025-11-26T23:22:07Z"
+  },
+  "docs/features/encryption-key-rotation.md": {
+    "updated": "2026-11-16T16:44:59Z",
+    "posted": "2026-06-04T15:00:48-04:00"
+  },
+  "docs/features/file-upload-system.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2026-03-31T14:25:06Z"
+  },
+  "docs/features/first-run-setup.md": {
+    "updated": "2026-11-16T16:44:59Z",
+    "posted": "2026-04-23T22:15:40Z"
+  },
+  "docs/features/flight-deck.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2025-12-05T21:31:04Z"
+  },
+  "docs/features/gap-analysis-system.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2025-12-08T23:00:24Z"
+  },
+  "docs/features/global-search-system.md": {
+    "updated": "2026-11-05T18:50:00Z",
+    "posted": "2025-12-01T17:42:45Z"
+  },
+  "docs/features/icon-picker-system.md": {
+    "updated": "2026-11-14T19:37:58Z",
+    "posted": "2025-09-30T17:27:59Z"
+  },
+  "docs/features/map-system-architecture.md": {
+    "updated": "2026-11-12T15:15:56Z",
+    "posted": "2025-11-05T19:03:20Z"
+  },
+  "docs/features/mcp-server.md": {
+    "updated": "2026-10-20T17:46:51Z",
+    "posted": "2026-10-20T17:46:51Z"
+  },
+  "docs/features/metric-history-system.md": {
+    "updated": "2026-11-16T16:44:59Z",
+    "posted": "2026-01-21T22:01:09Z"
+  },
+  "docs/features/n8n-integration.md": {
+    "updated": "2026-10-29T19:03:22Z",
+    "posted": "2026-05-12T12:45:12-04:00"
+  },
+  "docs/features/outcome-intelligence-system.md": {
+    "updated": "2026-10-29T20:36:49Z",
+    "posted": "2025-12-14T23:44:04Z"
+  },
+  "docs/features/report-builder.md": {
+    "updated": "2026-11-11T18:04:28Z",
+    "posted": "2026-06-04T15:00:48-04:00"
+  },
+  "docs/features/salesforce-system.md": {
+    "updated": "2026-10-26T21:52:24Z",
+    "posted": "2025-11-28T20:06:34Z"
+  },
+  "docs/features/single-sign-on.md": {
+    "updated": "2026-10-30T18:37:27Z",
+    "posted": "2026-06-27T18:16:32-04:00"
+  },
+  "docs/features/standard-table-pattern.md": {
+    "updated": "2026-10-27T20:28:03Z",
+    "posted": "2026-06-04T16:16:27-04:00"
+  },
+  "docs/features/system-announcements.md": {
+    "updated": "2026-10-29T20:36:49Z",
+    "posted": "2025-12-02T17:18:56Z"
+  },
+  "docs/features/system-health-dashboard.md": {
+    "updated": "2026-10-28T18:55:51Z",
+    "posted": "2026-06-04T15:00:48-04:00"
+  },
+  "docs/features/tiptap-editor-system.md": {
+    "updated": "2026-11-12T15:15:56Z",
+    "posted": "2026-04-21T18:49:43Z"
+  },
+  "docs/features/toast-notification-system.md": {
+    "updated": "2026-04-27T13:32:23Z",
+    "posted": "2025-10-10T17:56:48Z"
+  },
+  "docs/features/webhook-reference.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2025-11-28T18:31:30Z"
+  },
+  "docs/features/workflow-automation-system.md": {
+    "updated": "2026-11-17T18:54:27Z",
+    "posted": "2025-10-23T18:27:52Z"
+  },
+  "docs/features/workflow-automation-triggers.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2025-10-23T17:36:23Z"
+  },
+  "docs/guides/adding-a-new-language.md": {
+    "updated": "2026-10-26T15:42:29Z",
+    "posted": "2026-05-07T04:02:44Z"
+  },
+  "docs/guides/ai-provider-webhook.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2026-06-12T16:25:03-04:00"
+  },
+  "docs/guides/api-reference.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2025-11-26T23:22:07Z"
+  },
+  "docs/guides/azure-sso-setup.md": {
+    "updated": "2026-10-20T17:36:04Z",
+    "posted": "2026-10-20T17:36:04Z"
+  },
+  "docs/guides/csv-import-guide.md": {
+    "updated": "2026-10-07T16:02:37-04:00",
+    "posted": "2025-11-10T03:24:01Z"
+  },
+  "docs/guides/deployment.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2025-08-18T15:46:27Z"
+  },
+  "docs/guides/dokploy-traefik-timeouts.md": {
+    "updated": "2026-04-29T14:30:36Z",
+    "posted": "2026-04-27T23:02:42Z"
+  },
+  "docs/guides/entra-app-registration.md": {
+    "updated": "2026-10-28T21:32:39Z",
+    "posted": "2026-06-04T21:57:29-04:00"
+  },
+  "docs/guides/error-handling-debug-guide.md": {
+    "updated": "2026-02-14T20:02:39Z",
+    "posted": "2025-08-31T23:25:25Z"
+  },
+  "docs/guides/language-translation.md": {
+    "updated": "2026-11-16T16:44:59Z",
+    "posted": "2025-08-19T00:08:11Z"
+  },
+  "docs/guides/local-dev-setup.md": {
+    "updated": "2026-10-04T23:49:10-04:00",
+    "posted": "2026-05-11T13:17:52-04:00"
+  },
+  "docs/guides/memory-management-guide.md": {
+    "updated": "2026-02-14T20:02:39Z",
+    "posted": "2025-09-02T23:57:26Z"
+  },
+  "docs/guides/mfa-system.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2025-09-12T04:02:52Z"
+  },
+  "docs/guides/migration-strategy.md": {
+    "updated": "2026-11-16T16:44:59Z",
+    "posted": "2026-05-01T15:22:02-04:00"
+  },
+  "docs/guides/modern-card-styling-system.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2026-01-03T16:46:59Z"
+  },
+  "docs/guides/native-install/README.md": {
+    "updated": "2026-10-04T23:49:10-04:00",
+    "posted": "2026-05-08T17:52:51Z"
+  },
+  "docs/guides/okta-setup.md": {
+    "updated": "2026-10-20T17:36:04Z",
+    "posted": "2026-06-27T18:16:32-04:00"
+  },
+  "docs/guides/performance-monitoring-guide.md": {
+    "updated": "2026-02-14T20:02:39Z",
+    "posted": "2025-09-02T23:57:26Z"
+  },
+  "docs/guides/secrets-management.md": {
+    "updated": "2026-10-08T15:34:03Z",
+    "posted": "2026-06-04T16:16:27-04:00"
+  },
+  "docs/guides/self-hosting.md": {
+    "updated": "2026-11-14T02:28:05Z",
+    "posted": "2026-04-23T22:15:40Z"
+  },
+  "docs/guides/sorting-docs.md": {
+    "updated": "2026-05-14T15:35:24-04:00",
+    "posted": "2025-08-28T00:52:57Z"
+  },
+  "docs/guides/storage-mixin-architecture.md": {
+    "updated": "2026-11-13T17:05:21Z",
+    "posted": "2026-06-04T16:16:27-04:00"
+  },
+  "docs/guides/version-update-guide.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2026-01-12T22:31:18Z"
+  },
+  "docs/guides/websocket-stability-guide.md": {
+    "updated": "2026-02-14T20:02:39Z",
+    "posted": "2025-09-02T23:57:26Z"
+  },
+  "docs/plans/backlog.md": {
+    "updated": "2026-11-17T21:12:51Z",
+    "posted": "2026-10-26T21:59:54Z"
+  },
+  "migrations/db_refactor/README.md": {
+    "updated": "2026-02-24T21:02:24Z",
+    "posted": "2026-02-24T20:06:37Z"
+  }
+}

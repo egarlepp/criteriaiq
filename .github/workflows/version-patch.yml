@@ -1,0 +1,63 @@
+# Raise the patch number in version.json after every merge to main.
+#
+# The version the app shows is the last release cut by /version-bump plus
+# the number of commits merged to main since (v0.10.0 -> v0.10.1 -> ...).
+# PRs never edit version.json, so PRs open at the same time can't conflict
+# over it. This job only writes version.json: "version" plus the "updates"
+# list (one row per merge since the release, titled by the PR title and filed
+# under a Change Log category, see scripts/version-patch.mjs), which
+# the sidebar version link and About → Introduction show. The Major Release
+# Change Log and the Recent Updates highlights are written by /version-bump
+# alone.
+#
+# `./update-version.sh --patch` counts commits rather than adding one, so a
+# skipped or raced run is corrected by the next. Pushes made with
+# GITHUB_TOKEN don't trigger workflows, so this job never re-runs itself.
+name: Version patch
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: version-patch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  bump-patch:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(version):') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          # Full history: --patch counts commits since the last release.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Recompute and push the patch version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            ./update-version.sh --patch
+            if git diff --quiet -- version.json; then
+              exit 0
+            fi
+            VERSION=$(node -p "require('./version.json').version")
+            git commit -m "chore(version): $VERSION" -- version.json
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "main moved during the push; retrying ($attempt)"
+          done
+          exit 1

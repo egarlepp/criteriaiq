@@ -1,0 +1,81 @@
+######################################################################
+# Build context exclusions for the Docker image.
+#
+# Anything matched here is NOT sent to the Docker daemon, which makes
+# `transferring context` faster and prevents stale local artifacts from
+# leaking into the image.
+######################################################################
+
+# --- VCS / editor metadata -----------------------------------------------
+.git
+.gitattributes
+.gitignore
+.github
+.vscode
+.idea
+.history
+*.swp
+
+# --- Local Node / build output (rebuilt inside the image) ---------------
+node_modules
+**/node_modules
+dist
+build
+coverage
+.cache
+.turbo
+.parcel-cache
+.next
+.vite
+
+# --- Logs / runtime junk ------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.yarn
+.pnpm-store
+
+# --- Environment / secrets ---------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Agent metadata ----------------------------------------------------
+.local
+.agents
+attached_assets/Pasted-*
+attached_assets/image_*
+attached_assets/screenshots
+attached_assets/quarantine
+
+# --- Test artefacts not needed in the runtime image --------------------
+# NOTE: docs/ and *.md are intentionally NOT excluded here. The Docker
+# `builder` stage runs `npm run build`, which chains
+# `npm run lint:version` (task-465 / task-467). That lint walks the
+# repo to verify every @managed-version doc marker matches version.json
+# AND that update-version.sh's MANAGED_DOCS array still corresponds to
+# files that exist on disk. Excluding docs from the builder context
+# made the lint report 10 MANAGED_DOCS entries as "missing" inside
+# Docker (task-473), failing the deploy. The runtime stage never does
+# `COPY .` — it cherry-picks dist/, shared/, migrations/, etc. — so
+# letting docs into the builder does NOT add docs to the runtime image.
+#
+# That "runtime stage stays clean" invariant is actively enforced by
+# scripts/verify-no-internal-docs.sh, which the Dockerfile runtime
+# stage runs as a bind-mounted RUN step (task-474). If anyone later
+# adds a `COPY . .` or `COPY docs/` to the runtime stage, the docker
+# build fails with a clear error before the image is published.
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# --- OS junk -----------------------------------------------------------
+.DS_Store
+Thumbs.db

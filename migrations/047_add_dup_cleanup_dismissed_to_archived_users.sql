@@ -1,0 +1,40 @@
+-- 047_add_dup_cleanup_dismissed_to_archived_users.sql
+--
+-- Add `dup_cleanup_notice_dismissed_at` to `archived_users` so the
+-- per-admin "duplicate cleanup notice dismissed" marker survives an
+-- archive → restore round-trip (Task #721).
+--
+-- Background -----------------------------------------------------------
+-- Migration 035 introduced the case-insensitive email uniqueness
+-- constraint and a per-admin dismissal marker on `users` —
+-- `users.dup_cleanup_notice_dismissed_at`. The matching column on
+-- `archived_users` was never added.
+--
+-- `archiveUser()` in `server/storage.ts` does
+--
+--   await tx.insert(archivedUsers).values({
+--     ...userToArchive,
+--     archivedBy,
+--     archivedAt: new Date(),
+--     archivedReason: reason ?? null,
+--   });
+--
+-- and Drizzle silently drops object keys that are not declared on the
+-- destination schema. The dismissal timestamp was therefore lost on
+-- archive: when `restoreUser()` later spreads the archived row back
+-- into `users`, the column is NULL and the admin re-sees a duplicate
+-- cleanup notice they had already dismissed.
+--
+-- This migration adds the column to existing databases. The Drizzle
+-- schema (`shared/schema/archive.ts`) is updated in the same change so
+-- the field flows automatically through both the archive insert
+-- (`...userToArchive`) and the restore insert (`...userData` after
+-- destructuring out `archivedAt` / `archivedBy`).
+--
+-- Idempotent --------------------------------------------------------
+-- Uses `ADD COLUMN IF NOT EXISTS`, so re-running after the column is
+-- present is a no-op. Safe to ship through the boot-time
+-- advisory-locked migration runner.
+
+ALTER TABLE archived_users
+  ADD COLUMN IF NOT EXISTS dup_cleanup_notice_dismissed_at timestamp;

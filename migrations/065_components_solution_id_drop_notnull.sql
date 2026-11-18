@@ -1,0 +1,22 @@
+-- Migration 065: Drop the legacy NOT NULL constraint on components.solution_id
+--
+-- Context: components.solution_id was the original single-product association.
+-- It has been superseded by the product_components link table (many-to-many),
+-- and createComponent() in server/storage/criteria.ts now always inserts
+-- solution_id = NULL, recording product associations in product_components
+-- instead.
+--
+-- The column, however, was still declared NOT NULL in the live database (the
+-- refactor to the link table never dropped the constraint). As a result EVERY
+-- "create component" request from the Validation Criteria builder failed with a
+-- NOT NULL violation, surfacing to users as a generic 500 "Failed to create
+-- component" (prod error err_1780950501879_bwj9ylarn, /success-criteria?tab=components).
+--
+-- This relaxes the constraint so the deprecated column accepts NULL. The column
+-- is retained (now nullable) for backward compatibility with any rows/queries
+-- still referencing it; a future migration may drop it entirely once all reads
+-- are migrated to product_components.
+--
+-- Idempotent: DROP NOT NULL is a no-op if the constraint is already absent.
+
+ALTER TABLE components ALTER COLUMN solution_id DROP NOT NULL;

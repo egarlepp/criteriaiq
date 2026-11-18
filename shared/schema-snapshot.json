@@ -1,0 +1,3541 @@
+{
+  "access_code_audit_log": {
+    "columns": {
+      "access_code_id": "integer",
+      "action": "varchar(20) NOT NULL",
+      "code": "varchar(50) NOT NULL",
+      "details": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "performed_at": "timestamp DEFAULT",
+      "performed_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "access_code_usage": {
+    "columns": {
+      "access_code_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "used_at": "timestamp DEFAULT",
+      "user_email": "varchar(255) NOT NULL",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "access_codes": {
+    "columns": {
+      "assigned_role": "varchar(100)",
+      "associated_account_id": "integer",
+      "associated_account_name": "varchar(255)",
+      "bypass_limits": "boolean NOT NULL DEFAULT",
+      "code": "varchar(50) NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "domains": "text[]",
+      "expires_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean NOT NULL DEFAULT",
+      "max_uses": "integer NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "uses_count": "integer NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "account_crm_dismissals": {
+    "columns": {
+      "crm_account_id": "varchar(64) NOT NULL",
+      "crm_provider": "varchar(32) NOT NULL",
+      "customer_id": "integer NOT NULL",
+      "dismissed_at": "timestamp NOT NULL DEFAULT",
+      "dismissed_by": "varchar",
+      "id": "serial NOT NULL DEFAULT PK"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "account_holiday_calendars": {
+    "columns": {
+      "account_id": "integer NOT NULL",
+      "calendar_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": [
+      "account_holiday_calendars_account_id_calendar_id_pk(account_id,calendar_id)"
+    ]
+  },
+  "action_items": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_all_solutions": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "activity_logs": {
+    "columns": {
+      "action": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "details": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "project_id": "integer NOT NULL",
+      "target_id": "integer",
+      "target_type": "varchar",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "ai_provider_configs": {
+    "columns": {
+      "api_endpoint": "varchar",
+      "api_key": "text NOT NULL",
+      "available_models": "jsonb DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "default_model": "varchar",
+      "display_name": "varchar NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_default": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "last_test_error": "text",
+      "last_test_result": "varchar",
+      "last_tested_at": "timestamp",
+      "max_tokens": "integer DEFAULT",
+      "organization_id": "varchar",
+      "provider": "varchar NOT NULL",
+      "temperature": "numeric(3, 2) DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "allowed_domains": {
+    "columns": {
+      "account_id": "integer",
+      "added_by": "varchar",
+      "auto_approve": "boolean NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "domain": "varchar(255) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "announcement_reads": {
+    "columns": {
+      "announcement_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "read_at": "timestamp DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_user_announcement_read(user_id,announcement_id)"
+    ],
+    "primaryKeys": []
+  },
+  "api_keys": {
+    "columns": {
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "created_by": "varchar NOT NULL",
+      "expires_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean NOT NULL DEFAULT",
+      "key_hash": "varchar(255) NOT NULL",
+      "key_prefix": "varchar(12) NOT NULL",
+      "label": "varchar(255) NOT NULL",
+      "last_used_at": "timestamp",
+      "scopes": "jsonb NOT NULL DEFAULT",
+      "updated_at": "timestamp NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "app_state": {
+    "columns": {
+      "id": "integer NOT NULL DEFAULT PK",
+      "setup_completed_at": "timestamp with time zone",
+      "updated_at": "timestamp with time zone DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "app_themes": {
+    "columns": {
+      "colors": "jsonb NOT NULL",
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "created_by": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean NOT NULL DEFAULT",
+      "logo_variant_dark": "varchar(20)",
+      "logo_variant_light": "varchar(20)",
+      "name": "varchar(200) NOT NULL",
+      "updated_at": "timestamp NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archive_log": {
+    "columns": {
+      "archived_at": "timestamp DEFAULT",
+      "archived_by": "varchar NOT NULL",
+      "entity_id": "varchar NOT NULL",
+      "entity_name": "varchar NOT NULL",
+      "entity_type": "varchar NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "reason": "text",
+      "user_email": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archived_activity_logs": {
+    "columns": {
+      "action": "varchar NOT NULL",
+      "archived_at": "timestamp DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "details": "text",
+      "id": "integer NOT NULL PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "project_id": "integer NOT NULL",
+      "target_id": "integer",
+      "target_type": "varchar",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archived_customer_access": {
+    "columns": {
+      "archived_at": "timestamp DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "id": "integer NOT NULL PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "permission": "varchar(10) NOT NULL",
+      "project_id": "integer NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "user_email": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archived_customers": {
+    "columns": {
+      "abbreviation": "varchar(20)",
+      "account_engineer_id": "text",
+      "account_name": "varchar(255) NOT NULL",
+      "account_representative_id": "text",
+      "approved_email_domains": "text[]",
+      "archived_at": "timestamp DEFAULT",
+      "archived_by": "text",
+      "archived_reason": "text",
+      "contact_users": "jsonb",
+      "created_at": "timestamp DEFAULT",
+      "crm_account_id": "varchar(64)",
+      "crm_link_exception_at": "timestamp",
+      "crm_link_exception_by": "varchar",
+      "crm_link_exception_reason": "text",
+      "crm_linked_by": "varchar",
+      "crm_managed_fields": "text[]",
+      "crm_provider": "varchar(32)",
+      "crm_record_missing_at": "timestamp",
+      "crm_synced_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "industry_id": "integer",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_internal": "boolean NOT NULL DEFAULT",
+      "is_partner": "boolean DEFAULT",
+      "logo_size": "integer",
+      "logo_url": "text",
+      "product_interests": "text[]",
+      "region": "varchar(100)",
+      "salesforce_account_url": "varchar(500)",
+      "updated_at": "timestamp DEFAULT",
+      "website": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archived_project_audits": {
+    "columns": {
+      "archived_at": "timestamp DEFAULT",
+      "change_type": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "field_name": "varchar NOT NULL",
+      "id": "integer NOT NULL PK",
+      "new_value": "text",
+      "old_value": "text",
+      "project_id": "integer NOT NULL",
+      "user_email": "varchar NOT NULL",
+      "user_id": "varchar NOT NULL",
+      "user_name": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archived_projects": {
+    "columns": {
+      "account_representative_id": "text",
+      "additional_access": "jsonb",
+      "additional_supporting_team": "text[]",
+      "archived_at": "timestamp DEFAULT",
+      "archived_by": "varchar NOT NULL",
+      "archived_reason": "text",
+      "business_problem": "text",
+      "completed_date": "timestamp",
+      "compliance_regulations": "integer[]",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "crm_account_id": "varchar(64)",
+      "crm_opportunity_id": "varchar(64)",
+      "crm_provider": "varchar(32)",
+      "current_situation": "text",
+      "customer_access_level": "varchar DEFAULT",
+      "customer_artifacts": "jsonb",
+      "customer_id": "integer",
+      "customer_logo": "text",
+      "customer_name": "varchar NOT NULL",
+      "customer_objective": "text",
+      "customer_stakeholder": "varchar",
+      "customer_status": "varchar DEFAULT",
+      "customer_user_id": "varchar",
+      "customer_users": "jsonb",
+      "deliverables_visibility": "jsonb",
+      "enable_gap_analysis": "boolean DEFAULT",
+      "end_date": "timestamp",
+      "engineer_notes": "text",
+      "environment": "varchar(100)",
+      "feedback_comments": "text",
+      "forecast_category": "varchar(100)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "industry": "varchar(255)",
+      "infrastructure_profile_id": "integer",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "last_risk_analysis": "timestamp",
+      "map_template_id": "integer",
+      "map_template_name": "varchar(255)",
+      "mgmt_notes": "text",
+      "name": "varchar(100)",
+      "notes": "text",
+      "opportunity_acv_value": "text",
+      "opportunity_engineer_id": "text",
+      "opportunity_name": "text",
+      "policy_considerations": "text",
+      "primary_engineer_id": "varchar",
+      "project_links": "jsonb",
+      "ranking": "varchar DEFAULT",
+      "risk": "varchar DEFAULT",
+      "risk_prediction_data": "jsonb",
+      "risk_score": "numeric(5, 2)",
+      "sales_stage": "varchar(100)",
+      "salesforce_evaluation_link": "varchar(500)",
+      "schedule_by_task_owner": "boolean NOT NULL DEFAULT",
+      "solution_description": "text",
+      "solution_name": "varchar NOT NULL",
+      "specialist_engineer_id": "varchar",
+      "start_date": "timestamp",
+      "status": "varchar DEFAULT",
+      "subteam_id": "integer",
+      "supporting_engineers": "text[]",
+      "tags": "text[]",
+      "tap_tcc_approved": "boolean",
+      "tcc_committee_approval": "boolean",
+      "tcc_first_name": "varchar",
+      "tcc_last_name": "varchar",
+      "tcc_use_project_user": "boolean",
+      "tcc_user_id": "varchar",
+      "team_id": "integer",
+      "template_id": "varchar",
+      "type": "varchar(100)",
+      "updated_at": "timestamp DEFAULT",
+      "validation_criteria_template_id": "integer"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archived_success_criteria": {
+    "columns": {
+      "action_item": "text",
+      "archived_at": "timestamp DEFAULT",
+      "component_name": "text",
+      "created_at": "timestamp DEFAULT",
+      "criterion": "text",
+      "expected_outcome": "text",
+      "id": "integer NOT NULL PK",
+      "is_active": "boolean DEFAULT",
+      "line_number": "integer",
+      "map_phase_id": "integer",
+      "notes": "text",
+      "priority": "varchar(20) NOT NULL DEFAULT",
+      "product_name": "varchar(255)",
+      "project_id": "integer NOT NULL",
+      "status": "varchar(50) DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "value_mapping_name": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "archived_users": {
+    "columns": {
+      "account_id": "integer",
+      "all_accounts_access": "boolean DEFAULT",
+      "allowed_login_methods": "varchar NOT NULL DEFAULT",
+      "approved_at": "timestamp",
+      "approved_by": "varchar",
+      "archived_at": "timestamp DEFAULT",
+      "archived_by": "varchar NOT NULL",
+      "archived_reason": "text",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "crm_contact_id": "varchar(64)",
+      "crm_contact_missing_at": "timestamp",
+      "crm_email": "varchar",
+      "crm_provider": "varchar(32)",
+      "crm_synced_at": "timestamp",
+      "demo_mode_forced_on": "boolean NOT NULL DEFAULT",
+      "department": "varchar",
+      "dup_cleanup_notice_dismissed_at": "timestamp",
+      "email": "varchar",
+      "first_name": "varchar",
+      "flight_deck_last_shown_at": "timestamp",
+      "force_password_change": "boolean DEFAULT",
+      "id": "varchar NOT NULL PK",
+      "is_active": "boolean DEFAULT",
+      "is_approved": "boolean DEFAULT",
+      "is_protected": "boolean DEFAULT",
+      "last_accessed_project_id": "integer",
+      "last_login": "timestamp",
+      "last_name": "varchar",
+      "login_count": "integer DEFAULT",
+      "manager_id": "varchar",
+      "mfa_enabled": "boolean DEFAULT",
+      "mfa_enrolled_at": "timestamp",
+      "mfa_method": "varchar",
+      "password": "varchar",
+      "password_history": "text[] NOT NULL DEFAULT",
+      "preferred_locale": "varchar DEFAULT",
+      "profile_image_url": "varchar",
+      "receive_emails": "boolean DEFAULT",
+      "region": "varchar",
+      "reset_token": "varchar",
+      "reset_token_expiry": "timestamp",
+      "role": "varchar DEFAULT",
+      "security_setup_required": "boolean DEFAULT",
+      "sf_access_token": "text",
+      "sf_connected_at": "timestamp",
+      "sf_instance_url": "text",
+      "sf_refresh_token": "text",
+      "show_flight_deck": "boolean DEFAULT",
+      "sidebar_collapsed": "boolean DEFAULT",
+      "skip_welcome_email": "boolean DEFAULT",
+      "specialties": "text[]",
+      "sso_external_id": "varchar",
+      "sso_last_login_at": "timestamp",
+      "sso_link_prompt_dismissed_at": "timestamp",
+      "sso_provider": "varchar",
+      "stakeholder_types": "text[]",
+      "theme": "varchar DEFAULT",
+      "timezone": "varchar DEFAULT",
+      "title": "varchar",
+      "totp_secret_enc": "text",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "assessment_jobs": {
+    "columns": {
+      "completed_at": "timestamp",
+      "created_at": "timestamp DEFAULT",
+      "error_message": "text",
+      "failed_count": "integer DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "project_ids": "jsonb",
+      "results": "jsonb",
+      "ruleset_id": "integer",
+      "ruleset_name": "varchar",
+      "schedule_id": "integer",
+      "started_at": "timestamp",
+      "status": "varchar(20) NOT NULL DEFAULT",
+      "success_count": "integer DEFAULT",
+      "total_projects": "integer DEFAULT",
+      "triggered_by": "varchar",
+      "type": "varchar(20) NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "assessment_rulesets": {
+    "columns": {
+      "additional_instructions": "text",
+      "category": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "default_ai_model": "varchar",
+      "default_ai_provider": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_default": "boolean DEFAULT",
+      "last_used_at": "timestamp",
+      "name": "varchar NOT NULL",
+      "output_format_template": "text",
+      "run_count": "integer DEFAULT",
+      "total_weight": "numeric(5, 2) DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "assumption_categories": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "icon": "varchar(100)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "assumptions": {
+    "columns": {
+      "category_id": "integer",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "notes": "text",
+      "solution_id": "integer",
+      "solution_ids": "integer[]",
+      "title": "varchar(500) NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "validation_check": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "audit_logins": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "event_subject": "varchar",
+      "event_type": "varchar NOT NULL DEFAULT",
+      "failure_reason": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "ip_address": "varchar",
+      "login_method": "varchar DEFAULT",
+      "login_time": "timestamp DEFAULT",
+      "session_id": "varchar",
+      "success": "boolean DEFAULT",
+      "user_agent": "varchar",
+      "user_email": "varchar NOT NULL",
+      "user_id": "varchar NOT NULL",
+      "user_name": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "audit_logins_cleanup_state": {
+    "columns": {
+      "id": "integer NOT NULL DEFAULT PK",
+      "last_removed": "integer",
+      "last_run_at": "timestamp with time zone",
+      "updated_at": "timestamp with time zone DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "auth_rate_limits": {
+    "columns": {
+      "bucket_key": "varchar NOT NULL PK",
+      "failed_count": "integer NOT NULL DEFAULT",
+      "reset_at": "timestamp with time zone NOT NULL",
+      "updated_at": "timestamp with time zone DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "automation_run_logs": {
+    "columns": {
+      "action_type": "varchar NOT NULL",
+      "completed_at": "timestamp",
+      "duration_ms": "integer",
+      "id": "serial NOT NULL DEFAULT PK",
+      "message": "text",
+      "raw_output": "jsonb",
+      "schedule_id": "integer NOT NULL",
+      "started_at": "timestamp NOT NULL DEFAULT",
+      "status": "varchar NOT NULL",
+      "triggered_by": "varchar NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "branding_assets": {
+    "columns": {
+      "id": "serial NOT NULL DEFAULT PK",
+      "mime": "varchar(64) NOT NULL",
+      "mode": "varchar(8) NOT NULL",
+      "opacity": "smallint",
+      "size_bytes": "integer NOT NULL",
+      "slot": "varchar(64) NOT NULL",
+      "storage_key": "text NOT NULL",
+      "uploaded_at": "timestamp NOT NULL DEFAULT",
+      "uploaded_by": "varchar",
+      "url": "text NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "client_error_logs": {
+    "columns": {
+      "app_version": "varchar(50)",
+      "context": "varchar(500)",
+      "details": "jsonb",
+      "error_hash": "varchar(64)",
+      "error_id": "varchar(255) NOT NULL",
+      "http_status": "integer",
+      "id": "serial NOT NULL DEFAULT PK",
+      "message": "text",
+      "stack": "text",
+      "timestamp": "timestamp DEFAULT",
+      "url": "text",
+      "user_agent": "text",
+      "user_id": "varchar(255)"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "code_scripts": {
+    "columns": {
+      "account_ids": "integer[]",
+      "content": "text NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "owner": "varchar(100) NOT NULL",
+      "owner_id": "varchar NOT NULL",
+      "project_id": "integer",
+      "script_type": "varchar(100) NOT NULL",
+      "solution_ids": "integer[]",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "competitor_activity": {
+    "columns": {
+      "activity_type": "varchar(100)",
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by_user_id": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "message": "text",
+      "project_id": "integer"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "competitor_documents": {
+    "columns": {
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by_user_id": "varchar",
+      "document_type": "varchar(100)",
+      "file_url": "varchar(500)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "notes": "text",
+      "title": "varchar(255) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "competitor_links": {
+    "columns": {
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "link_type": "varchar(100)",
+      "title": "varchar(255) NOT NULL",
+      "url": "varchar(500) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "competitor_solutions": {
+    "columns": {
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "notes": "text",
+      "solution_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "competitor_spaces": {
+    "columns": {
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_primary": "boolean DEFAULT",
+      "notes": "text",
+      "space_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "competitor_tags": {
+    "columns": {
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "tag_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "competitors": {
+    "columns": {
+      "common_loss_themes": "text",
+      "common_win_themes": "text",
+      "company_size_band": "varchar(100)",
+      "counter_positioning": "text",
+      "created_at": "timestamp DEFAULT",
+      "created_by_user_id": "varchar",
+      "deployment_model": "varchar(100)",
+      "description": "text",
+      "differentiators": "text",
+      "hq_region": "varchar(255)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "last_reviewed_at": "timestamp",
+      "logo_url": "varchar(500)",
+      "name": "varchar(255) NOT NULL",
+      "notes": "text",
+      "pricing_position": "varchar(100)",
+      "reviewed_by_user_id": "varchar",
+      "slug": "varchar(255) NOT NULL",
+      "strengths": "text",
+      "summary": "text",
+      "updated_at": "timestamp DEFAULT",
+      "vendor_type": "varchar(100)",
+      "weaknesses": "text",
+      "website_url": "varchar(500)"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "compliance_regulations": {
+    "columns": {
+      "applicable_regions": "varchar",
+      "category": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "effective_date": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "industry": "varchar",
+      "is_active": "boolean DEFAULT",
+      "key_requirements": "text",
+      "long_name": "varchar",
+      "name": "varchar NOT NULL",
+      "objective": "text",
+      "priority": "varchar DEFAULT",
+      "status": "varchar DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "components": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_all_solutions": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "solution_id": "integer",
+      "updated_at": "timestamp",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "criteria_agreements": {
+    "columns": {
+      "agreed_at": "timestamp",
+      "agreed_by_name": "varchar(255)",
+      "agreed_by_title": "varchar(255)",
+      "agreed_by_user_id": "varchar",
+      "created_at": "timestamp DEFAULT",
+      "criteria_snapshot": "jsonb",
+      "id": "serial NOT NULL DEFAULT PK",
+      "project_id": "integer NOT NULL",
+      "recipient_user_ids": "jsonb NOT NULL DEFAULT",
+      "requested_at": "timestamp NOT NULL DEFAULT",
+      "requested_by_user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "criteria_library": {
+    "columns": {
+      "component_id": "integer",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_all_solutions": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "criteria_outcomes": {
+    "columns": {
+      "criteria_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "outcome_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "criteria_value_mappings": {
+    "columns": {
+      "criteria_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "value_mapping_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "custom_reports": {
+    "columns": {
+      "chart_type": "varchar(50)",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar NOT NULL",
+      "data_source": "varchar(100) NOT NULL",
+      "description": "text",
+      "filters": "jsonb",
+      "group_by": "varchar(100)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_shared": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "report_type": "varchar(50) NOT NULL",
+      "selected_fields": "jsonb NOT NULL",
+      "sort_by": "varchar(100)",
+      "sort_order": "varchar(10) DEFAULT",
+      "tags": "text[]",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "customer_access": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "permission": "varchar(10) NOT NULL",
+      "project_id": "integer NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "user_email": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "customer_competitors": {
+    "columns": {
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "customer_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "relationship": "varchar(50)",
+      "space_id": "integer"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "customer_status_configs": {
+    "columns": {
+      "color": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "icon": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "customers": {
+    "columns": {
+      "abbreviation": "varchar(20)",
+      "account_engineer_id": "text",
+      "account_name": "text NOT NULL",
+      "account_representative_id": "text",
+      "approved_email_domains": "text[]",
+      "contact_users": "jsonb DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "crm_account_id": "varchar(64)",
+      "crm_link_exception_at": "timestamp",
+      "crm_link_exception_by": "varchar",
+      "crm_link_exception_reason": "text",
+      "crm_linked_by": "varchar",
+      "crm_managed_fields": "text[]",
+      "crm_provider": "varchar(32)",
+      "crm_record_missing_at": "timestamp",
+      "crm_synced_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "industry_id": "integer",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_internal": "boolean NOT NULL DEFAULT",
+      "is_partner": "boolean DEFAULT",
+      "logo_size": "integer",
+      "logo_url": "text",
+      "product_interests": "text[]",
+      "region": "text",
+      "salesforce_account_url": "text",
+      "updated_at": "timestamp DEFAULT",
+      "website": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "dashboard_configs": {
+    "columns": {
+      "config": "jsonb NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "role": "text DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "dashboard_layouts": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_default": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_global": "boolean DEFAULT",
+      "is_protected": "boolean NOT NULL DEFAULT",
+      "layout_config": "jsonb NOT NULL",
+      "name": "varchar(255) NOT NULL",
+      "page_key": "varchar(50) NOT NULL DEFAULT",
+      "role": "varchar(50) NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "dashboard_metrics": {
+    "columns": {
+      "category": "text",
+      "config": "jsonb NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_system": "boolean DEFAULT",
+      "name": "text NOT NULL",
+      "type": "text NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "db_connections": {
+    "columns": {
+      "branch": "varchar(50) NOT NULL DEFAULT",
+      "connection_url": "text NOT NULL",
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean NOT NULL DEFAULT",
+      "is_default": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean NOT NULL DEFAULT",
+      "last_test_latency_ms": "integer",
+      "last_test_success": "boolean",
+      "last_tested_at": "timestamp",
+      "name": "varchar(100) NOT NULL",
+      "notes": "text",
+      "updated_at": "timestamp NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "demo_mode_events": {
+    "columns": {
+      "action": "varchar(64) NOT NULL",
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "details": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "dependencies": {
+    "columns": {
+      "category_id": "integer",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_all_solutions": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "notes": "text",
+      "solution_id": "integer",
+      "solution_ids": "integer[]",
+      "title": "varchar(500) NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "validation_check": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "dependency_categories": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "icon": "varchar(100)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "docs_content_cache": {
+    "columns": {
+      "content": "text",
+      "content_hash": "varchar(64)",
+      "created_at": "timestamp DEFAULT",
+      "fetched_at": "timestamp DEFAULT",
+      "file_path": "varchar(500) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "last_commit_sha": "varchar(40)",
+      "last_modified_at": "timestamp",
+      "repo_config_id": "integer NOT NULL",
+      "title": "varchar(500)",
+      "token_estimate": "integer DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [
+      "unique_repo_file(repo_config_id,file_path)"
+    ],
+    "primaryKeys": []
+  },
+  "docs_repository_configs": {
+    "columns": {
+      "branch": "varchar(255) NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "docs_path": "varchar(500) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "last_sync_at": "timestamp",
+      "last_sync_message": "text",
+      "last_sync_status": "varchar(50)",
+      "product_id": "integer NOT NULL",
+      "repo_name": "varchar(255) NOT NULL DEFAULT",
+      "repo_owner": "varchar(255) NOT NULL DEFAULT",
+      "sidebar_path": "varchar(500)",
+      "total_pages": "integer DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "version": "varchar(50)"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "docs_sidebar_structure": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "depth": "integer DEFAULT",
+      "doc_path": "varchar(500)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "label": "varchar(500) NOT NULL",
+      "node_key": "varchar(500) NOT NULL",
+      "node_type": "varchar(50) NOT NULL DEFAULT",
+      "parent_key": "varchar(500)",
+      "position": "integer DEFAULT",
+      "repo_config_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "docs_sync_schedule": {
+    "columns": {
+      "configured_by": "varchar",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_enabled": "boolean DEFAULT",
+      "last_run_at": "timestamp",
+      "last_run_message": "text",
+      "last_run_status": "varchar(50)",
+      "next_run_at": "timestamp",
+      "sync_interval_hours": "integer NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "documents": {
+    "columns": {
+      "account_ids": "integer[]",
+      "competitor_id": "integer",
+      "created_at": "timestamp DEFAULT",
+      "customer_id": "integer",
+      "deleted_at": "timestamp",
+      "description": "text",
+      "document_type": "varchar(100)",
+      "file_hash": "varchar(64)",
+      "file_name": "varchar(255) NOT NULL",
+      "file_size": "integer NOT NULL",
+      "file_type": "varchar(100)",
+      "gcs_path": "varchar(500)",
+      "given_name": "varchar(255) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "mime_type": "varchar(100) NOT NULL",
+      "original_name": "varchar(255) NOT NULL",
+      "owner": "varchar(100)",
+      "owner_id": "varchar",
+      "project_id": "integer",
+      "quarantine_reason": "text",
+      "scan_status": "varchar(20) DEFAULT",
+      "scanned_at": "timestamp",
+      "sensitivity_label": "varchar(50) DEFAULT",
+      "solution_ids": "integer[]",
+      "stored_path": "varchar(500)",
+      "updated_at": "timestamp DEFAULT",
+      "uploaded_at": "timestamp DEFAULT",
+      "uploaded_by_user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "domain_audit_log": {
+    "columns": {
+      "action": "varchar(20) NOT NULL",
+      "details": "text",
+      "domain": "varchar(255) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "performed_at": "timestamp DEFAULT",
+      "performed_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_automation_config": {
+    "columns": {
+      "default_quiet_hours_end": "integer DEFAULT",
+      "default_quiet_hours_start": "integer DEFAULT",
+      "default_suppress_window_minutes": "integer DEFAULT",
+      "enable_digest_aggregation": "boolean DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "max_emails_per_hour": "integer DEFAULT",
+      "quiet_hours_enabled": "boolean NOT NULL DEFAULT",
+      "quiet_hours_scope": "varchar NOT NULL DEFAULT",
+      "send_window_timezone": "varchar",
+      "test_email_addresses": "text[]",
+      "test_mode_enabled": "boolean DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_configuration": {
+    "columns": {
+      "auth_type": "varchar NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "enabled": "boolean DEFAULT",
+      "from_address": "varchar NOT NULL",
+      "graph_certificate_pem": "text",
+      "graph_certificate_thumbprint": "varchar",
+      "graph_client_id": "varchar",
+      "graph_client_secret": "text",
+      "graph_credential_type": "varchar DEFAULT",
+      "graph_sender_email": "varchar",
+      "graph_tenant_id": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "max_retries": "integer DEFAULT",
+      "password": "text",
+      "port": "integer NOT NULL DEFAULT",
+      "provider": "varchar NOT NULL",
+      "rate_limit": "integer DEFAULT",
+      "reply_to_address": "varchar",
+      "retry_delay": "integer DEFAULT",
+      "server": "varchar",
+      "startTLS": "boolean DEFAULT",
+      "tls": "boolean DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "username": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_designs": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "design_variables": "jsonb DEFAULT",
+      "html_raw": "text NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_default": "boolean DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_hourly_send_counts": {
+    "columns": {
+      "hour_start": "timestamp with time zone NOT NULL PK",
+      "sent_count": "integer NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_logs": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "email_type": "varchar DEFAULT",
+      "error": "text",
+      "from_email": "varchar NOT NULL",
+      "html_content": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "message_id": "varchar",
+      "project_id": "integer",
+      "sent_at": "timestamp DEFAULT",
+      "subject": "varchar NOT NULL",
+      "success": "boolean DEFAULT",
+      "text_content": "text",
+      "to_email": "varchar NOT NULL",
+      "user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_rule_actions": {
+    "columns": {
+      "action": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "order_index": "integer DEFAULT",
+      "params": "jsonb NOT NULL",
+      "rule_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_rule_audits": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "decision": "varchar NOT NULL",
+      "email_log_id": "integer",
+      "event_key": "varchar NOT NULL",
+      "execution_time_ms": "integer",
+      "id": "serial NOT NULL DEFAULT PK",
+      "input": "jsonb NOT NULL",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "metadata": "jsonb",
+      "reason": "text",
+      "rule_id": "integer"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_rule_conditions": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "kind": "varchar NOT NULL",
+      "operator": "varchar NOT NULL",
+      "order_index": "integer DEFAULT",
+      "rule_id": "integer NOT NULL",
+      "value": "jsonb NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_rules": {
+    "columns": {
+      "continue_on_match": "boolean DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "enabled": "boolean DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar NOT NULL",
+      "priority": "integer DEFAULT",
+      "trigger_keys": "jsonb NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_schedules": {
+    "columns": {
+      "action_config": "jsonb",
+      "action_type": "varchar NOT NULL DEFAULT",
+      "active": "boolean DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "cron": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "last_run_at": "timestamp",
+      "metadata": "jsonb",
+      "next_run_at": "timestamp",
+      "rrule": "text",
+      "rule_id": "integer",
+      "timezone": "varchar DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_templates": {
+    "columns": {
+      "bcc_recipients": "text",
+      "category": "varchar NOT NULL",
+      "cc_recipients": "text",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "design_id": "integer",
+      "email_content": "text",
+      "email_safe_mode": "boolean DEFAULT",
+      "email_type": "varchar NOT NULL",
+      "html_content": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "include_project_pdf": "boolean DEFAULT",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "recipient_type": "varchar NOT NULL",
+      "subject": "varchar NOT NULL",
+      "template_key": "varchar NOT NULL",
+      "text_content": "text",
+      "to_recipients": "text",
+      "trigger_events": "text[]",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "variables": "jsonb"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "email_triggers": {
+    "columns": {
+      "category": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "default_enabled": "boolean DEFAULT",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "key": "varchar NOT NULL",
+      "metadata_schema": "jsonb",
+      "origin": "varchar NOT NULL",
+      "source": "varchar NOT NULL DEFAULT",
+      "type": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "end_date_flags": {
+    "columns": {
+      "badge_color": "varchar NOT NULL DEFAULT",
+      "badge_text": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "icon": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "priority": "integer DEFAULT",
+      "project_statuses": "text[]",
+      "target_field": "varchar NOT NULL DEFAULT",
+      "trigger_type": "varchar NOT NULL",
+      "trigger_value": "integer NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "working_days": "boolean NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "evaluation_request_products": {
+    "columns": {
+      "evaluation_request_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "product_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_evaluation_request_product(evaluation_request_id,product_id)"
+    ],
+    "primaryKeys": []
+  },
+  "evaluation_requests": {
+    "columns": {
+      "compelling_event": "text NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "customer_id": "integer NOT NULL",
+      "end_date": "timestamp NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "start_date": "timestamp NOT NULL",
+      "status": "varchar(50) NOT NULL DEFAULT",
+      "top_reasons": "text NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "expected_outcomes": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_all_solutions": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "flight_deck_configs": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "enabled_widgets": "jsonb DEFAULT",
+      "end_date": "timestamp",
+      "footer_image_alignment": "varchar DEFAULT",
+      "footer_image_url": "text",
+      "header_image_alignment": "varchar DEFAULT",
+      "header_image_url": "text",
+      "header_text": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_enabled": "boolean DEFAULT",
+      "name": "text NOT NULL",
+      "priority": "integer DEFAULT",
+      "scenario": "varchar NOT NULL DEFAULT",
+      "selected_days": "jsonb DEFAULT",
+      "start_date": "timestamp",
+      "target_role": "varchar",
+      "tip_display_location": "varchar DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "use_default_footer_image": "boolean DEFAULT",
+      "use_default_header_image": "boolean DEFAULT",
+      "widget_settings": "jsonb DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "flight_deck_tips": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "display_order": "integer DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "tip_text": "text NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "holiday_calendars": {
+    "columns": {
+      "code": "varchar(40) NOT NULL",
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_default": "boolean NOT NULL DEFAULT",
+      "last_refreshed_at": "timestamp",
+      "name": "varchar(120) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "holiday_dates": {
+    "columns": {
+      "calendar_id": "integer NOT NULL",
+      "date": "date NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "name": "varchar(200) NOT NULL"
+    },
+    "uniqueConstraints": [
+      "holiday_dates_calendar_date_unique(calendar_id,date)"
+    ],
+    "primaryKeys": []
+  },
+  "hubspot_connection": {
+    "columns": {
+      "access_token": "text NOT NULL",
+      "account_type": "varchar",
+      "id": "integer NOT NULL DEFAULT PK",
+      "last_check": "jsonb",
+      "portal_id": "varchar(32)",
+      "portal_name": "varchar",
+      "ui_domain": "varchar",
+      "updated_at": "timestamp NOT NULL DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "hubspot_owners": {
+    "columns": {
+      "archived": "boolean NOT NULL DEFAULT",
+      "email": "varchar",
+      "first_name": "varchar",
+      "hubspot_user_id": "varchar(32)",
+      "id": "varchar(32) NOT NULL PK",
+      "last_name": "varchar",
+      "last_synced_at": "timestamp NOT NULL DEFAULT",
+      "teams": "jsonb NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "impactiq_connection": {
+    "columns": {
+      "api_key": "text NOT NULL",
+      "base_url": "varchar(500) NOT NULL",
+      "enabled": "boolean NOT NULL DEFAULT",
+      "id": "integer NOT NULL DEFAULT PK",
+      "last_check": "jsonb",
+      "updated_at": "timestamp NOT NULL DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "industries": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "icon": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "industry_compliance_regulations": {
+    "columns": {
+      "compliance_regulation_id": "integer",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "industry_id": "integer NOT NULL",
+      "is_all": "boolean DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [
+      "industry_compliance_regulations_industry_regulation_unique(industry_id,compliance_regulation_id) NND"
+    ],
+    "primaryKeys": []
+  },
+  "infrastructure_profiles": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar NOT NULL",
+      "customer_id": "integer NOT NULL",
+      "discovery_data": "jsonb",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_default": "boolean DEFAULT",
+      "profile_name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "job_config": {
+    "columns": {
+      "enabled": "boolean NOT NULL DEFAULT",
+      "interval_ms": "bigint",
+      "job_key": "varchar NOT NULL PK",
+      "last_error_email_at": "timestamp",
+      "last_slot_at": "timestamp",
+      "notify_on_error": "boolean NOT NULL DEFAULT",
+      "schedule_hour": "smallint",
+      "schedule_minute": "smallint",
+      "timezone": "varchar",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "job_runs": {
+    "columns": {
+      "duration_ms": "integer NOT NULL",
+      "finished_at": "timestamp NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "items_processed": "integer",
+      "job_key": "varchar NOT NULL",
+      "message": "text",
+      "source": "varchar NOT NULL DEFAULT",
+      "started_at": "timestamp NOT NULL",
+      "status": "varchar NOT NULL",
+      "triggered_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "journey_stages": {
+    "columns": {
+      "agreement_gate": "boolean NOT NULL DEFAULT",
+      "color": "varchar(50) NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "icon_name": "varchar(100) NOT NULL DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "name": "varchar(100) NOT NULL",
+      "order_index": "integer NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "kanban_audit_events": {
+    "columns": {
+      "column_order": "jsonb",
+      "created_at": "timestamp DEFAULT",
+      "dimension": "varchar",
+      "event_type": "varchar NOT NULL",
+      "from_status": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "meta_patch": "jsonb",
+      "ordered_ids": "jsonb",
+      "project_id": "integer",
+      "status_id": "varchar",
+      "to_status": "varchar",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "links": {
+    "columns": {
+      "account_ids": "integer[]",
+      "competitor_id": "integer",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "link_type": "varchar(100) NOT NULL",
+      "name": "varchar(255) NOT NULL",
+      "owner": "varchar(100) NOT NULL",
+      "owner_id": "varchar NOT NULL",
+      "project_id": "integer",
+      "solution_ids": "integer[]",
+      "updated_at": "timestamp DEFAULT",
+      "url": "text NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_assignment_overrides": {
+    "columns": {
+      "entity_id": "integer NOT NULL",
+      "entity_type": "varchar(50) NOT NULL",
+      "field_name": "varchar(100) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "overridden_at": "timestamp DEFAULT",
+      "overridden_by_user_id": "varchar",
+      "project_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_map_assignment_override(entity_type,entity_id,field_name)"
+    ],
+    "primaryKeys": []
+  },
+  "map_automation_config": {
+    "columns": {
+      "auto_at_risk_enabled": "boolean NOT NULL DEFAULT",
+      "auto_at_risk_threshold": "integer NOT NULL DEFAULT",
+      "auto_complete_phases_enabled": "boolean NOT NULL DEFAULT",
+      "auto_complete_phases_threshold": "integer NOT NULL DEFAULT",
+      "auto_complete_steps_enabled": "boolean NOT NULL DEFAULT",
+      "auto_complete_steps_threshold": "integer NOT NULL DEFAULT",
+      "auto_in_progress_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_additional_internal_behavior": "varchar(50) NOT NULL DEFAULT",
+      "cascade_additional_internal_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_additional_internal_phases_to_steps": "boolean NOT NULL DEFAULT",
+      "cascade_additional_internal_steps_to_tasks": "boolean NOT NULL DEFAULT",
+      "cascade_at_risk_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_blocked_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_cancelled_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_complete_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_customer_user_behavior": "varchar(50) NOT NULL DEFAULT",
+      "cascade_customer_user_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_customer_user_phases_to_steps": "boolean NOT NULL DEFAULT",
+      "cascade_customer_user_steps_to_tasks": "boolean NOT NULL DEFAULT",
+      "cascade_deferred_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_internal_user_behavior": "varchar(50) NOT NULL DEFAULT",
+      "cascade_internal_user_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_internal_user_phases_to_steps": "boolean NOT NULL DEFAULT",
+      "cascade_internal_user_steps_to_tasks": "boolean NOT NULL DEFAULT",
+      "cascade_not_started_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_stalled_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_team_owned_behavior": "varchar(50) NOT NULL DEFAULT",
+      "cascade_team_owned_enabled": "boolean NOT NULL DEFAULT",
+      "cascade_team_owned_phases_to_steps": "boolean NOT NULL DEFAULT",
+      "cascade_team_owned_steps_to_tasks": "boolean NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "project_id": "integer",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_links": {
+    "columns": {
+      "entity_id": "integer NOT NULL",
+      "entity_type": "varchar(50) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "label": "varchar(255)",
+      "project_id": "integer NOT NULL",
+      "target_id_or_url": "text NOT NULL",
+      "target_type": "varchar(50) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_phases": {
+    "columns": {
+      "additional_internal_user_id": "varchar",
+      "assigned_to_customer_user_id": "varchar",
+      "assigned_to_team_id": "integer",
+      "assigned_to_user_id": "varchar",
+      "completed_date": "timestamp",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "due_date": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "order_index": "integer NOT NULL DEFAULT",
+      "project_id": "integer NOT NULL",
+      "send_external_emails": "boolean NOT NULL DEFAULT",
+      "stage_id": "integer",
+      "start_date": "timestamp",
+      "status": "varchar(50) NOT NULL DEFAULT",
+      "team_owned": "varchar(100) DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_steps": {
+    "columns": {
+      "additional_internal_user_id": "varchar",
+      "assigned_to_customer_user_id": "varchar",
+      "assigned_to_team_id": "integer",
+      "assigned_to_user_id": "varchar",
+      "completed_date": "timestamp",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "due_date": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "order_index": "integer NOT NULL DEFAULT",
+      "phase_id": "integer NOT NULL",
+      "project_id": "integer NOT NULL",
+      "send_external_emails": "boolean NOT NULL DEFAULT",
+      "start_date": "timestamp",
+      "status": "varchar(50) NOT NULL DEFAULT",
+      "team_owned": "varchar(100) DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_task_criteria": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "criterion_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "project_id": "integer NOT NULL",
+      "task_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [
+      "uq_map_task_criterion(task_id,criterion_id)"
+    ],
+    "primaryKeys": []
+  },
+  "map_tasks": {
+    "columns": {
+      "additional_internal_user_id": "varchar",
+      "assigned_to_customer_user_id": "varchar",
+      "assigned_to_team_id": "integer",
+      "assigned_to_user_id": "varchar",
+      "completed_date": "timestamp",
+      "created_at": "timestamp DEFAULT",
+      "depends_on_task_id": "integer",
+      "description": "text",
+      "due_date": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "order_index": "integer NOT NULL DEFAULT",
+      "phase_id": "integer NOT NULL",
+      "project_id": "integer NOT NULL",
+      "send_external_emails": "boolean NOT NULL DEFAULT",
+      "start_date": "timestamp",
+      "status": "varchar(50) NOT NULL DEFAULT",
+      "step_id": "integer NOT NULL",
+      "team_owned": "varchar(100) DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_template_applications": {
+    "columns": {
+      "applied_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "mode": "varchar(50) NOT NULL DEFAULT",
+      "project_id": "integer NOT NULL",
+      "template_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_template_phases": {
+    "columns": {
+      "default_due_offset_days": "integer DEFAULT",
+      "default_start_offset_days": "integer DEFAULT",
+      "description": "text",
+      "expected_days": "integer DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "local_key": "varchar(100) NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "order_index": "integer NOT NULL DEFAULT",
+      "send_external_emails": "boolean NOT NULL DEFAULT",
+      "stage_id": "integer",
+      "template_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [
+      "uq_template_phase_local_key(template_id,local_key)"
+    ],
+    "primaryKeys": []
+  },
+  "map_template_steps": {
+    "columns": {
+      "default_due_offset_days": "integer DEFAULT",
+      "default_start_offset_days": "integer DEFAULT",
+      "default_status": "varchar(50) NOT NULL DEFAULT",
+      "description": "text",
+      "expected_days": "integer DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "local_key": "varchar(100) NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "order_index": "integer NOT NULL DEFAULT",
+      "phase_local_key": "varchar(100) NOT NULL",
+      "send_external_emails": "boolean NOT NULL DEFAULT",
+      "team_owned": "varchar(100) DEFAULT",
+      "template_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [
+      "uq_template_step_local_key(template_id,local_key)"
+    ],
+    "primaryKeys": []
+  },
+  "map_template_tasks": {
+    "columns": {
+      "default_due_offset_days": "integer DEFAULT",
+      "default_start_offset_days": "integer DEFAULT",
+      "default_status": "varchar(50) NOT NULL DEFAULT",
+      "description": "text",
+      "expected_hours": "numeric(5, 2) DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "order_index": "integer NOT NULL DEFAULT",
+      "phase_local_key": "varchar(100) NOT NULL",
+      "send_external_emails": "boolean NOT NULL DEFAULT",
+      "step_local_key": "varchar(100) NOT NULL",
+      "team_owned": "varchar(100) DEFAULT",
+      "template_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "map_templates": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by_user_id": "varchar",
+      "customer_id": "integer",
+      "description": "text",
+      "icon": "varchar(100)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "scope": "varchar(50) NOT NULL DEFAULT",
+      "solution_ids": "jsonb",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by_user_id": "varchar",
+      "visibility": "varchar(50) NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "mcp_tool_calls": {
+    "columns": {
+      "api_key_id": "integer",
+      "args_hash": "varchar(64)",
+      "called_at": "timestamp NOT NULL DEFAULT",
+      "error": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "latency_ms": "integer",
+      "status": "varchar(16) NOT NULL",
+      "tool": "varchar(128) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "metric_snapshots": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "metadata": "jsonb",
+      "metric_key": "varchar NOT NULL",
+      "snapshot_date": "timestamp NOT NULL",
+      "snapshot_week": "varchar",
+      "value": "numeric(20, 4) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "mfa_events": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "event_type": "varchar NOT NULL",
+      "id": "varchar NOT NULL DEFAULT PK",
+      "meta": "jsonb",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "mfa_recovery_codes": {
+    "columns": {
+      "code_hash": "text NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "varchar NOT NULL DEFAULT PK",
+      "used_at": "timestamp",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "n8n_config": {
+    "columns": {
+      "api_key_enc": "text",
+      "host_url": "varchar(500)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_enabled": "boolean NOT NULL DEFAULT",
+      "last_test_error": "text",
+      "last_test_result": "varchar(50)",
+      "last_tested_at": "timestamp",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "outcome_actions": {
+    "columns": {
+      "action_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "outcome_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "outcome_config": {
+    "columns": {
+      "acv_threshold": "numeric(15, 2)",
+      "cancelled_rule": "varchar(20) NOT NULL DEFAULT",
+      "cancelled_statuses": "text[] NOT NULL DEFAULT",
+      "closure_counter": "integer NOT NULL DEFAULT",
+      "enabled": "boolean NOT NULL DEFAULT",
+      "enforcement": "varchar(20) NOT NULL DEFAULT",
+      "escalate_after_days": "integer",
+      "frequency_interval": "integer",
+      "grace_days": "integer NOT NULL DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "logic_mode": "varchar(30) NOT NULL DEFAULT",
+      "lost_rule": "varchar(20) NOT NULL DEFAULT",
+      "lost_statuses": "text[] NOT NULL DEFAULT",
+      "trigger_source": "varchar(20) NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "won_rule": "varchar(20) NOT NULL DEFAULT",
+      "won_statuses": "text[] NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "outcome_requests": {
+    "columns": {
+      "captured_at": "timestamp",
+      "closed_at": "timestamp NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "escalated_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "outcome_type": "varchar(20) NOT NULL",
+      "project_id": "integer NOT NULL",
+      "reason": "text",
+      "reminded_at": "timestamp",
+      "required": "boolean NOT NULL DEFAULT",
+      "source": "varchar(20) NOT NULL DEFAULT",
+      "status": "varchar(20) NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [
+      "outcome_requests_project_id_unique(project_id)"
+    ],
+    "primaryKeys": []
+  },
+  "outlook_map_events": {
+    "columns": {
+      "due_date": "varchar(10) NOT NULL",
+      "graph_event_id": "text NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "item_id": "integer NOT NULL",
+      "item_type": "varchar(8) NOT NULL",
+      "project_id": "integer NOT NULL",
+      "subject": "text NOT NULL",
+      "synced_at": "timestamp NOT NULL DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "outlook_map_events_user_item(user_id,item_type,item_id)"
+    ],
+    "primaryKeys": []
+  },
+  "outlook_signin_config": {
+    "columns": {
+      "client_id": "varchar(64) NOT NULL",
+      "client_secret": "text NOT NULL",
+      "enabled": "boolean NOT NULL DEFAULT",
+      "id": "integer NOT NULL DEFAULT PK",
+      "read_working_hours": "boolean NOT NULL DEFAULT",
+      "tenant_id": "varchar(100) NOT NULL",
+      "updated_at": "timestamp NOT NULL DEFAULT",
+      "updated_by": "varchar",
+      "write_map_due_dates": "boolean NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "page_view_daily": {
+    "columns": {
+      "day": "date NOT NULL",
+      "last_viewed_at": "timestamp NOT NULL DEFAULT",
+      "page_key": "varchar(100) NOT NULL",
+      "user_id": "varchar NOT NULL",
+      "views": "integer NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": [
+      "page_view_daily_day_page_key_user_id_pk(day,page_key,user_id)"
+    ]
+  },
+  "portal_resources": {
+    "columns": {
+      "card": "varchar(20) NOT NULL",
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "description": "text NOT NULL DEFAULT",
+      "icon": "varchar(60) NOT NULL",
+      "icon_color": "varchar(7) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean NOT NULL DEFAULT",
+      "link_type": "varchar(10) NOT NULL",
+      "owner_id": "varchar",
+      "portal_position": "integer",
+      "system_key": "varchar(60)",
+      "title": "varchar(120) NOT NULL",
+      "updated_at": "timestamp NOT NULL DEFAULT",
+      "url": "text NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "product_actions": {
+    "columns": {
+      "action_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "product_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "product_components": {
+    "columns": {
+      "component_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "product_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "product_criteria": {
+    "columns": {
+      "criteria_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "product_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "product_outcomes": {
+    "columns": {
+      "id": "serial NOT NULL DEFAULT PK",
+      "outcome_id": "integer NOT NULL",
+      "product_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "product_value_mappings": {
+    "columns": {
+      "id": "serial NOT NULL DEFAULT PK",
+      "product_id": "integer NOT NULL",
+      "value_mapping_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "products": {
+    "columns": {
+      "abbreviation": "varchar(50) DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "docs_repo_config_id": "integer",
+      "documentation_link_id": "integer",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "solution_icon": "varchar(255)",
+      "solution_icon_name": "varchar(64)",
+      "solution_type": "varchar(255)",
+      "tags": "text[]",
+      "updated_at": "timestamp",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_assumptions": {
+    "columns": {
+      "assumption_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "notes": "text",
+      "project_id": "integer NOT NULL",
+      "solution_id": "integer",
+      "solution_ids": "integer[]",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "validation_check": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_audits": {
+    "columns": {
+      "change_type": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "field_name": "varchar NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "new_value": "text",
+      "old_value": "text",
+      "project_id": "integer NOT NULL",
+      "user_email": "varchar NOT NULL",
+      "user_id": "varchar NOT NULL",
+      "user_name": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_competitors": {
+    "columns": {
+      "competitive_stage": "varchar(100)",
+      "competitor_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_customer_incumbent": "boolean DEFAULT",
+      "is_replacement_target": "boolean DEFAULT",
+      "notes": "text",
+      "outcome_notes": "text",
+      "owner_user_id": "varchar",
+      "pricing_pressure": "varchar(100)",
+      "project_id": "integer NOT NULL",
+      "relationship_type": "varchar(100)",
+      "solution_id": "integer",
+      "space_id": "integer",
+      "threat_level": "varchar(50)",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_crm_close_state": {
+    "columns": {
+      "checked_at": "timestamp NOT NULL DEFAULT",
+      "crm_provider": "varchar(32) NOT NULL",
+      "is_closed": "boolean NOT NULL DEFAULT",
+      "is_won": "boolean NOT NULL DEFAULT",
+      "project_id": "integer NOT NULL PK"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_dependencies": {
+    "columns": {
+      "assigned_customer_emails": "text[]",
+      "assigned_teams": "text[]",
+      "assigned_user_ids": "text[]",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "dependency_id": "integer NOT NULL",
+      "description": "text",
+      "due_date": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "notes": "text",
+      "owner": "varchar(255)",
+      "project_id": "integer NOT NULL",
+      "show_on_success_criteria": "boolean DEFAULT",
+      "solution_id": "integer",
+      "solution_ids": "integer[]",
+      "status": "varchar(50) DEFAULT",
+      "success_criteria_id": "integer",
+      "success_criteria_ids": "integer[]",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "validation_check": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_gap_links": {
+    "columns": {
+      "gap_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "linked_at": "timestamp DEFAULT",
+      "linked_by": "varchar",
+      "project_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_gap_project_link(gap_id,project_id)"
+    ],
+    "primaryKeys": []
+  },
+  "project_gaps": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "criticality": "text NOT NULL",
+      "customer_id": "integer",
+      "description": "text NOT NULL",
+      "final_disposition_date": "timestamp",
+      "gap_name": "text NOT NULL",
+      "gap_type": "text NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "impacted_component": "text",
+      "impacted_solution": "text NOT NULL",
+      "project_id": "integer",
+      "reported_by": "varchar",
+      "resolution_owner": "text",
+      "status": "text NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "workaround_detail": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_handoff_contacts": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "order_index": "integer NOT NULL DEFAULT",
+      "project_id": "integer NOT NULL",
+      "responsibility": "varchar(100)",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "uq_project_handoff_contact(project_id,user_id)"
+    ],
+    "primaryKeys": []
+  },
+  "project_map_notification_settings": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "phases_settings": "text[] DEFAULT",
+      "project_id": "integer NOT NULL",
+      "steps_settings": "text[] DEFAULT",
+      "tasks_settings": "text[] DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_project_user_notif(project_id,user_id)"
+    ],
+    "primaryKeys": []
+  },
+  "project_maps": {
+    "columns": {
+      "assignment_roles": "text[]",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "map_name": "varchar(500) NOT NULL",
+      "project_id": "integer NOT NULL",
+      "template_name": "varchar(255)",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_message_reads": {
+    "columns": {
+      "id": "serial NOT NULL DEFAULT PK",
+      "last_read_message_id": "integer NOT NULL",
+      "project_id": "integer NOT NULL",
+      "read_at": "timestamp NOT NULL DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "project_message_reads_user_project_unique(user_id,project_id)"
+    ],
+    "primaryKeys": []
+  },
+  "project_messages": {
+    "columns": {
+      "author_user_id": "varchar",
+      "body": "text NOT NULL",
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "deleted_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "project_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_outcomes": {
+    "columns": {
+      "competitors": "text[]",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "executive_summary": "text",
+      "external_system_id": "varchar(100)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "linked_gap_ids": "integer[]",
+      "outcome_type": "varchar(20) NOT NULL",
+      "pain_rating": "integer",
+      "political_alignment_score": "integer",
+      "primary_gap_id": "integer",
+      "primary_reason_code": "varchar(100) NOT NULL",
+      "project_id": "integer NOT NULL",
+      "tcc_approved": "boolean DEFAULT",
+      "technical_fit_score": "integer",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [
+      "unique_project_outcome(project_id)"
+    ],
+    "primaryKeys": []
+  },
+  "project_risk_predictions": {
+    "columns": {
+      "ai_model": "varchar",
+      "ai_provider": "varchar",
+      "alerts_sent": "boolean DEFAULT",
+      "analysis_results": "jsonb",
+      "confidence": "numeric(3, 2)",
+      "created_at": "timestamp DEFAULT",
+      "criteria_scores": "jsonb",
+      "id": "serial NOT NULL DEFAULT PK",
+      "overall_risk_score": "numeric(5, 2) NOT NULL",
+      "project_id": "integer",
+      "raw_prompt": "text",
+      "raw_response": "text",
+      "recommendations": "text[]",
+      "risk_level": "varchar NOT NULL",
+      "ruleset_id": "integer",
+      "trigger_reasons": "text[]"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "project_templates": {
+    "columns": {
+      "artifacts_not_applicable": "boolean DEFAULT",
+      "business_problem": "text",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "customer_objective": "text",
+      "description": "text",
+      "duration_working_days": "integer",
+      "estimated_duration": "varchar(100)",
+      "id": "varchar NOT NULL PK",
+      "industry": "varchar(255)",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_starred": "boolean DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "map_template_id": "integer",
+      "map_template_name": "varchar(255)",
+      "name": "varchar(255) NOT NULL",
+      "policy_considerations": "text",
+      "project_documents": "jsonb",
+      "project_links": "jsonb",
+      "solution_description": "text",
+      "solution_name": "text[]",
+      "solution_type": "varchar(255)",
+      "success_criteria_templates": "jsonb",
+      "tags": "text[]",
+      "type": "varchar(100)",
+      "typical_competitors": "jsonb",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "usage_count": "integer DEFAULT",
+      "validation_criteria_template_id": "integer",
+      "validation_criteria_template_name": "varchar(255)"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "projects": {
+    "columns": {
+      "account_representative_id": "text",
+      "additional_access": "jsonb",
+      "additional_supporting_team": "text[]",
+      "business_problem": "text",
+      "completed_date": "timestamp",
+      "compliance_regulations": "integer[]",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "crm_account_id": "varchar(64)",
+      "crm_opportunity_id": "varchar(64)",
+      "crm_provider": "varchar(32)",
+      "current_situation": "text",
+      "customer_access_level": "varchar DEFAULT",
+      "customer_artifacts": "jsonb",
+      "customer_id": "integer",
+      "customer_logo": "text",
+      "customer_name": "varchar NOT NULL",
+      "customer_objective": "text",
+      "customer_stakeholder": "varchar",
+      "customer_status": "varchar DEFAULT",
+      "customer_user_id": "varchar",
+      "customer_users": "jsonb",
+      "deliverables_visibility": "jsonb DEFAULT",
+      "enable_gap_analysis": "boolean DEFAULT",
+      "end_date": "timestamp",
+      "engineer_notes": "text",
+      "environment": "varchar(100)",
+      "feedback_comments": "text",
+      "forecast_category": "varchar(100)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "industry": "varchar(255)",
+      "infrastructure_profile_id": "integer",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "last_risk_analysis": "timestamp",
+      "map_template_id": "integer",
+      "map_template_name": "varchar(255)",
+      "mgmt_notes": "text",
+      "name": "varchar(100)",
+      "notes": "text",
+      "opportunity_acv_value": "text",
+      "opportunity_engineer_id": "text",
+      "opportunity_name": "text",
+      "policy_considerations": "text",
+      "primary_engineer_id": "varchar",
+      "project_links": "jsonb",
+      "ranking": "varchar DEFAULT",
+      "risk": "varchar DEFAULT",
+      "risk_prediction_data": "jsonb",
+      "risk_score": "numeric(5, 2)",
+      "sales_stage": "varchar(100)",
+      "salesforce_evaluation_link": "varchar(500)",
+      "schedule_by_task_owner": "boolean NOT NULL DEFAULT",
+      "solution_description": "text",
+      "solution_name": "varchar NOT NULL",
+      "specialist_engineer_id": "varchar",
+      "start_date": "timestamp",
+      "status": "varchar DEFAULT",
+      "subteam_id": "integer",
+      "supporting_engineers": "text[]",
+      "tags": "text[]",
+      "tap_tcc_approved": "boolean",
+      "tcc_committee_approval": "boolean",
+      "tcc_first_name": "varchar",
+      "tcc_last_name": "varchar",
+      "tcc_use_project_user": "boolean",
+      "tcc_user_id": "varchar",
+      "team_id": "integer",
+      "template_id": "varchar",
+      "type": "varchar(100)",
+      "updated_at": "timestamp DEFAULT",
+      "validation_criteria_template_id": "integer"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "ranking_configs": {
+    "columns": {
+      "color": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "icon": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "report_executions": {
+    "columns": {
+      "error_message": "text",
+      "executed_by": "varchar NOT NULL",
+      "execution_status": "varchar(20) DEFAULT",
+      "execution_time": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "record_count": "integer",
+      "report_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "risk_alerts": {
+    "columns": {
+      "acknowledged": "boolean DEFAULT",
+      "acknowledged_at": "timestamp",
+      "acknowledged_by": "varchar",
+      "alert_type": "varchar NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "message": "text NOT NULL",
+      "project_id": "integer",
+      "recipients": "text[]",
+      "risk_prediction_id": "integer",
+      "sent_at": "timestamp DEFAULT",
+      "severity": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "risk_criteria": {
+    "columns": {
+      "category": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "data_sources": "jsonb",
+      "description": "text",
+      "doc_sections": "jsonb",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "ruleset_id": "integer",
+      "severity": "varchar DEFAULT",
+      "trigger_conditions": "jsonb",
+      "updated_at": "timestamp DEFAULT",
+      "weight_factor": "numeric(3, 2) DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "risk_level_configs": {
+    "columns": {
+      "color": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "icon": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "role_permissions": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "permission": "varchar NOT NULL",
+      "role_id": "integer NOT NULL",
+      "section": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "roles": {
+    "columns": {
+      "color": "varchar NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "display_name": "varchar NOT NULL",
+      "icon": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "salesforce_describe_cache": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "expires_at": "timestamp NOT NULL",
+      "fields": "jsonb NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_custom_object": "boolean DEFAULT",
+      "key_prefix": "varchar",
+      "last_refreshed_at": "timestamp DEFAULT",
+      "object_api_name": "varchar NOT NULL",
+      "object_label": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "salesforce_field_mappings": {
+    "columns": {
+      "cqi_entity": "varchar NOT NULL",
+      "cqi_field_key": "varchar NOT NULL",
+      "cqi_field_label": "varchar NOT NULL",
+      "cqi_field_type": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "crm_provider": "varchar NOT NULL DEFAULT",
+      "default_value": "text",
+      "direction": "varchar NOT NULL DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_case_insensitive": "boolean DEFAULT",
+      "is_required": "boolean DEFAULT",
+      "order_index": "integer DEFAULT",
+      "sf_field_api_name": "varchar NOT NULL",
+      "sf_field_label": "varchar",
+      "sf_field_type": "varchar NOT NULL",
+      "sf_object_api_name": "varchar NOT NULL",
+      "sf_object_label": "varchar",
+      "transform_key": "varchar",
+      "unmapped_behavior": "varchar NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [
+      "unique_sf_mapping(cqi_entity,cqi_field_key,sf_object_api_name,sf_field_api_name)"
+    ],
+    "primaryKeys": []
+  },
+  "salesforce_oauth_config": {
+    "columns": {
+      "client_id": "text NOT NULL",
+      "client_secret": "text NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "custom_domain": "varchar",
+      "environment": "varchar NOT NULL DEFAULT",
+      "evaluation_object_api_name": "varchar DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_mock_mode": "boolean DEFAULT",
+      "last_test_error": "text",
+      "last_test_result": "varchar",
+      "last_tested_at": "timestamp",
+      "login_url": "varchar NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "salesforce_record_links": {
+    "columns": {
+      "cqi_entity_type": "varchar NOT NULL",
+      "cqi_record_id": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "crm_provider": "varchar NOT NULL DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "last_inbound_sync": "timestamp",
+      "last_outbound_sync": "timestamp",
+      "link_status": "varchar NOT NULL DEFAULT",
+      "link_status_reason": "text",
+      "linked_at": "timestamp DEFAULT",
+      "linked_by": "varchar",
+      "sf_object_type": "varchar NOT NULL",
+      "sf_record_id": "varchar(32) NOT NULL",
+      "sf_record_name": "varchar",
+      "sync_hash": "text",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [
+      "unique_sf_record_link_cqi(cqi_entity_type,cqi_record_id)",
+      "unique_sf_record_link_sf(sf_record_id)"
+    ],
+    "primaryKeys": []
+  },
+  "salesforce_sync_policies": {
+    "columns": {
+      "backoff_seconds": "integer DEFAULT",
+      "batch_size": "integer DEFAULT",
+      "conflict_strategy": "varchar NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "crm_provider": "varchar NOT NULL DEFAULT",
+      "debounce_seconds": "integer DEFAULT",
+      "entity": "varchar NOT NULL",
+      "event_enabled": "boolean DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "manual_enabled": "boolean DEFAULT",
+      "notify_on_conflict": "boolean DEFAULT",
+      "notify_on_error": "boolean DEFAULT",
+      "retry_limit": "integer DEFAULT",
+      "scheduled_cron": "varchar",
+      "scheduled_enabled": "boolean DEFAULT",
+      "scheduled_timezone": "varchar DEFAULT",
+      "sf_object": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [
+      "unique_sf_sync_policy_entity_object(entity,sf_object)"
+    ],
+    "primaryKeys": []
+  },
+  "salesforce_sync_queue": {
+    "columns": {
+      "batch_id": "varchar",
+      "cqi_entity_type": "varchar NOT NULL",
+      "cqi_record_id": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "direction": "varchar NOT NULL",
+      "error_message": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "priority": "integer DEFAULT",
+      "process_after": "timestamp",
+      "processed_at": "timestamp",
+      "queued_at": "timestamp DEFAULT",
+      "retry_count": "integer DEFAULT",
+      "status": "varchar NOT NULL DEFAULT",
+      "triggered_by_user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "salesforce_sync_run_items": {
+    "columns": {
+      "changes_applied": "jsonb",
+      "conflict_acknowledged": "boolean DEFAULT",
+      "conflict_acknowledged_at": "timestamp",
+      "conflict_acknowledged_by": "varchar",
+      "conflict_snapshot": "jsonb",
+      "cqi_entity_type": "varchar NOT NULL",
+      "cqi_record_id": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "direction": "varchar NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "message": "text",
+      "resolved_at": "timestamp",
+      "resolved_by": "varchar",
+      "run_id": "integer NOT NULL",
+      "sf_object_type": "varchar",
+      "sf_record_id": "varchar",
+      "status": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "salesforce_sync_runs": {
+    "columns": {
+      "batch_id": "varchar",
+      "completed_at": "timestamp",
+      "conflict_count": "integer DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "crm_provider": "varchar NOT NULL DEFAULT",
+      "direction": "varchar NOT NULL",
+      "duration_ms": "integer",
+      "entity": "varchar NOT NULL",
+      "error_count": "integer DEFAULT",
+      "error_summary": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "metadata": "jsonb",
+      "mode": "varchar NOT NULL",
+      "oauth_mode": "varchar",
+      "sf_object": "varchar",
+      "skipped_count": "integer DEFAULT",
+      "started_at": "timestamp",
+      "status": "varchar NOT NULL DEFAULT",
+      "success_count": "integer DEFAULT",
+      "total_records": "integer DEFAULT",
+      "triggered_by_user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "salesforce_value_maps": {
+    "columns": {
+      "cqi_value": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_default": "boolean DEFAULT",
+      "is_primary_outbound": "boolean DEFAULT",
+      "mapping_id": "integer NOT NULL",
+      "sf_value": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [
+      "unique_sf_value_map(mapping_id,cqi_value,sf_value)"
+    ],
+    "primaryKeys": []
+  },
+  "schema_migration_audit": {
+    "columns": {
+      "applied_at": "timestamp with time zone NOT NULL DEFAULT",
+      "error_message": "text",
+      "filename": "text NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "sql_state": "varchar(16)",
+      "success": "boolean NOT NULL",
+      "user_email": "varchar(255)",
+      "user_id": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "sessions": {
+    "columns": {
+      "expire": "timestamp NOT NULL",
+      "sess": "jsonb NOT NULL",
+      "sid": "varchar NOT NULL PK"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "solution_icon_metadata": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "display_name": "varchar(255)",
+      "filename": "varchar(255) NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "sso_config": {
+    "columns": {
+      "allow_jit": "boolean NOT NULL DEFAULT",
+      "client_id": "varchar",
+      "client_secret_enc": "text",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "default_role_for_unmapped": "varchar NOT NULL DEFAULT",
+      "enabled": "boolean NOT NULL DEFAULT",
+      "group_claim_name": "varchar NOT NULL DEFAULT",
+      "id": "integer NOT NULL DEFAULT PK",
+      "issuer_url": "varchar",
+      "last_test_error": "text",
+      "last_test_result": "varchar",
+      "last_tested_at": "timestamp",
+      "provider": "varchar NOT NULL DEFAULT",
+      "redirect_uri": "varchar",
+      "require_mfa_trust": "boolean NOT NULL DEFAULT",
+      "role_mapping": "jsonb NOT NULL DEFAULT",
+      "rp_initiated_logout": "boolean NOT NULL DEFAULT",
+      "scopes": "varchar NOT NULL DEFAULT",
+      "sync_role_on_every_login": "boolean NOT NULL DEFAULT",
+      "team_mapping": "jsonb NOT NULL DEFAULT",
+      "tenant_id": "varchar",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "status_configs": {
+    "columns": {
+      "color": "varchar NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "icon": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "name": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "storage_configuration": {
+    "columns": {
+      "aws_access_key_id": "text",
+      "aws_bucket_name": "text",
+      "aws_region": "text",
+      "aws_secret_access_key": "text",
+      "azure_account_key": "text",
+      "azure_account_name": "text",
+      "azure_container_name": "text",
+      "azure_sas_token": "text",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "enabled": "boolean DEFAULT",
+      "gcs_bucket_name": "text",
+      "gcs_key_json": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "provider": "varchar NOT NULL DEFAULT",
+      "singleton_key": "boolean NOT NULL DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "subteam_members": {
+    "columns": {
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "role": "varchar(10) NOT NULL DEFAULT",
+      "source": "varchar(10) NOT NULL DEFAULT",
+      "subteam_id": "integer NOT NULL",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": [
+      "subteam_members_subteam_id_user_id_pk(subteam_id,user_id)"
+    ]
+  },
+  "subteams": {
+    "columns": {
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "crm_departments": "text[] NOT NULL DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean NOT NULL DEFAULT",
+      "kind": "varchar(20)",
+      "name": "varchar(120) NOT NULL",
+      "parent_subteam_id": "integer",
+      "team_id": "integer NOT NULL",
+      "updated_at": "timestamp NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "success_criteria": {
+    "columns": {
+      "action_item": "text",
+      "component_name": "text",
+      "created_at": "timestamp DEFAULT",
+      "criterion": "text",
+      "expected_outcome": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "line_number": "integer",
+      "map_phase_id": "integer",
+      "notes": "text",
+      "priority": "varchar(20) NOT NULL DEFAULT",
+      "product_name": "varchar(255)",
+      "project_id": "integer NOT NULL",
+      "status": "varchar(50) DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "value_mapping_name": "text"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "support_requests": {
+    "columns": {
+      "actual_behavior": "text",
+      "alternatives_tried": "text",
+      "application_page": "varchar NOT NULL",
+      "assigned_to_user_id": "varchar",
+      "attachment_document_id": "integer",
+      "browser": "varchar",
+      "created_at": "timestamp DEFAULT",
+      "customer_id": "integer",
+      "description": "text NOT NULL",
+      "desired_location": "varchar",
+      "expected_behavior": "text",
+      "frequency": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "internal_notes": "text",
+      "is_blocking": "boolean",
+      "os": "varchar",
+      "priority": "varchar NOT NULL DEFAULT",
+      "priority_hint": "varchar",
+      "problem_to_solve": "text",
+      "proposed_behavior": "text",
+      "status": "varchar NOT NULL DEFAULT",
+      "steps_to_reproduce": "text",
+      "submitted_by_email": "varchar NOT NULL",
+      "submitted_by_name": "varchar NOT NULL",
+      "submitted_by_user_id": "varchar NOT NULL",
+      "submitted_date": "timestamp NOT NULL DEFAULT",
+      "title": "varchar(255) NOT NULL",
+      "type": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "system_announcements": {
+    "columns": {
+      "celebration_config": "jsonb",
+      "celebration_effect": "varchar",
+      "celebration_on_click": "varchar DEFAULT",
+      "celebration_on_login": "varchar DEFAULT",
+      "content": "text NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar NOT NULL",
+      "email_template_id": "integer",
+      "end_date": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "send_email": "boolean DEFAULT",
+      "severity": "varchar NOT NULL DEFAULT",
+      "show_in_footer": "boolean DEFAULT",
+      "show_in_header": "boolean DEFAULT",
+      "start_date": "timestamp NOT NULL",
+      "target_roles": "jsonb",
+      "target_subteam_ids": "jsonb",
+      "target_team_ids": "jsonb",
+      "target_user_ids": "jsonb",
+      "title": "text NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "system_settings": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "key": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar",
+      "value": "jsonb NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "tags": {
+    "columns": {
+      "color": "varchar(7) DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar NOT NULL",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar(100) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "team_members": {
+    "columns": {
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "is_default": "boolean NOT NULL DEFAULT",
+      "source": "varchar(10) NOT NULL DEFAULT",
+      "team_id": "integer NOT NULL",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": [
+      "team_members_team_id_user_id_pk(team_id,user_id)"
+    ]
+  },
+  "teams": {
+    "columns": {
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "crm_departments": "text[] NOT NULL DEFAULT",
+      "description": "text",
+      "icon": "varchar(60)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean NOT NULL DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "manager_user_id": "varchar",
+      "name": "varchar(120) NOT NULL",
+      "slug": "varchar(120) NOT NULL",
+      "updated_at": "timestamp NOT NULL DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "technology_spaces": {
+    "columns": {
+      "code": "varchar(10) NOT NULL",
+      "color": "varchar(50) DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "description": "text",
+      "display_order": "integer DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "trusted_devices": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "expires_at": "timestamp NOT NULL",
+      "id": "varchar NOT NULL DEFAULT PK",
+      "ip": "text",
+      "token_hash": "text NOT NULL",
+      "user_agent": "text",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "user_accounts": {
+    "columns": {
+      "account_id": "integer NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "id": "serial NOT NULL DEFAULT PK",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_user_account(user_id,account_id)"
+    ],
+    "primaryKeys": []
+  },
+  "user_board_preferences": {
+    "columns": {
+      "column_order": "jsonb NOT NULL",
+      "created_at": "timestamp DEFAULT",
+      "dimension": "varchar NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_user_dimension(user_id,dimension)"
+    ],
+    "primaryKeys": []
+  },
+  "user_email_preferences": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "notification_digest": "varchar(16) NOT NULL DEFAULT",
+      "overall_preference": "varchar DEFAULT",
+      "phases_preference": "varchar DEFAULT",
+      "quiet_hours_end": "integer",
+      "quiet_hours_start": "integer",
+      "steps_preference": "varchar DEFAULT",
+      "tasks_preference": "varchar DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "user_holiday_calendars": {
+    "columns": {
+      "calendar_id": "integer NOT NULL",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": [
+      "user_holiday_calendars_user_id_calendar_id_pk(user_id,calendar_id)"
+    ]
+  },
+  "user_integrations": {
+    "columns": {
+      "access_token": "text",
+      "account_label": "varchar(320)",
+      "connected_at": "timestamp DEFAULT",
+      "expires_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "instance_url": "text",
+      "provider": "varchar NOT NULL",
+      "refresh_token": "text",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_user_integration(user_id,provider)"
+    ],
+    "primaryKeys": []
+  },
+  "user_notifications": {
+    "columns": {
+      "actor_user_id": "varchar",
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "emailed_at": "timestamp",
+      "id": "serial NOT NULL DEFAULT PK",
+      "kind": "varchar(64) NOT NULL",
+      "link_path": "varchar(512)",
+      "params": "jsonb NOT NULL DEFAULT",
+      "project_id": "integer",
+      "read_at": "timestamp",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "user_permissions": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "permission": "varchar NOT NULL",
+      "section": "varchar NOT NULL",
+      "updated_at": "timestamp DEFAULT",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "user_report_favorites": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "report_id": "integer NOT NULL",
+      "report_type": "varchar(50) NOT NULL",
+      "system_report_id": "varchar(100)",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "user_sessions": {
+    "columns": {
+      "browser": "varchar",
+      "created_at": "timestamp DEFAULT",
+      "device_name": "varchar",
+      "id": "varchar NOT NULL DEFAULT PK",
+      "ip_address": "varchar",
+      "last_active": "timestamp DEFAULT",
+      "os": "varchar",
+      "session_id": "varchar NOT NULL",
+      "user_agent": "text",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "user_time_off": {
+    "columns": {
+      "created_at": "timestamp NOT NULL DEFAULT",
+      "created_by": "varchar",
+      "end_date": "date NOT NULL",
+      "external_id": "varchar(512)",
+      "id": "serial NOT NULL DEFAULT PK",
+      "note": "varchar(200)",
+      "source": "varchar(20) NOT NULL DEFAULT",
+      "start_date": "date NOT NULL",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [
+      "user_time_off_user_external_unique(user_id,external_id)"
+    ],
+    "primaryKeys": []
+  },
+  "user_work_schedules": {
+    "columns": {
+      "source": "varchar(20) NOT NULL DEFAULT",
+      "updated_at": "timestamp NOT NULL DEFAULT",
+      "updated_by": "varchar",
+      "user_id": "varchar NOT NULL PK",
+      "work_days": "smallint[] NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "users": {
+    "columns": {
+      "account_id": "integer",
+      "all_accounts_access": "boolean DEFAULT",
+      "allowed_login_methods": "varchar NOT NULL DEFAULT",
+      "approved_at": "timestamp",
+      "approved_by": "varchar",
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "crm_contact_id": "varchar(64)",
+      "crm_contact_missing_at": "timestamp",
+      "crm_email": "varchar",
+      "crm_provider": "varchar(32)",
+      "crm_synced_at": "timestamp",
+      "demo_mode_forced_on": "boolean NOT NULL DEFAULT",
+      "department": "varchar",
+      "dup_cleanup_notice_dismissed_at": "timestamp",
+      "email": "varchar",
+      "first_name": "varchar",
+      "flight_deck_last_shown_at": "timestamp",
+      "force_password_change": "boolean DEFAULT",
+      "id": "varchar NOT NULL PK",
+      "is_active": "boolean DEFAULT",
+      "is_approved": "boolean DEFAULT",
+      "is_protected": "boolean DEFAULT",
+      "last_accessed_project_id": "integer",
+      "last_login": "timestamp",
+      "last_name": "varchar",
+      "login_count": "integer DEFAULT",
+      "manager_id": "varchar",
+      "mfa_enabled": "boolean DEFAULT",
+      "mfa_enrolled_at": "timestamp",
+      "mfa_method": "varchar",
+      "password": "varchar",
+      "password_history": "text[] NOT NULL DEFAULT",
+      "preferred_locale": "varchar DEFAULT",
+      "profile_image_url": "varchar",
+      "receive_emails": "boolean DEFAULT",
+      "region": "varchar",
+      "reset_token": "varchar",
+      "reset_token_expiry": "timestamp",
+      "role": "varchar DEFAULT",
+      "security_setup_required": "boolean DEFAULT",
+      "sf_access_token": "text",
+      "sf_connected_at": "timestamp",
+      "sf_instance_url": "text",
+      "sf_refresh_token": "text",
+      "show_flight_deck": "boolean DEFAULT",
+      "sidebar_collapsed": "boolean DEFAULT",
+      "skip_welcome_email": "boolean DEFAULT",
+      "specialties": "text[]",
+      "sso_external_id": "varchar",
+      "sso_last_login_at": "timestamp",
+      "sso_link_prompt_dismissed_at": "timestamp",
+      "sso_provider": "varchar",
+      "stakeholder_types": "text[]",
+      "theme": "varchar DEFAULT",
+      "timezone": "varchar DEFAULT",
+      "title": "varchar",
+      "totp_secret_enc": "text",
+      "updated_at": "timestamp DEFAULT"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "validation_criteria_template_links": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "from_id": "integer NOT NULL",
+      "id": "serial NOT NULL DEFAULT PK",
+      "link_type": "varchar(50) NOT NULL",
+      "template_id": "integer NOT NULL",
+      "to_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [
+      "unique_template_link(template_id,from_id,to_id,link_type)"
+    ],
+    "primaryKeys": []
+  },
+  "validation_criteria_templates": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar NOT NULL",
+      "description": "text",
+      "icon": "varchar(100) DEFAULT",
+      "id": "serial NOT NULL DEFAULT PK",
+      "instance_entities": "jsonb DEFAULT",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_starred": "boolean DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "root_solution_id": "integer",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "value_mappings": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_all_solutions": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "is_system": "boolean DEFAULT",
+      "name": "varchar(255) NOT NULL",
+      "updated_at": "timestamp",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "webauthn_credentials": {
+    "columns": {
+      "counter": "integer NOT NULL DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "credential_id": "text NOT NULL",
+      "device_name": "text",
+      "id": "varchar NOT NULL DEFAULT PK",
+      "public_key": "text NOT NULL",
+      "transports": "text",
+      "user_id": "varchar NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "webhook_deliveries": {
+    "columns": {
+      "attempt_number": "integer DEFAULT",
+      "created_at": "timestamp DEFAULT",
+      "delivered_at": "timestamp",
+      "error_message": "text",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "payload_sent": "jsonb",
+      "project_id": "integer",
+      "response_body": "text",
+      "response_time_ms": "integer",
+      "rule_id": "integer",
+      "status_code": "integer",
+      "success": "boolean DEFAULT",
+      "trigger_key": "varchar NOT NULL",
+      "webhook_id": "integer NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "webhooks": {
+    "columns": {
+      "created_at": "timestamp DEFAULT",
+      "created_by": "varchar",
+      "description": "text",
+      "endpoint_url": "text NOT NULL",
+      "headers": "jsonb",
+      "id": "serial NOT NULL DEFAULT PK",
+      "is_active": "boolean DEFAULT",
+      "is_demo": "boolean NOT NULL DEFAULT",
+      "max_retries": "integer DEFAULT",
+      "name": "varchar NOT NULL",
+      "retry_enabled": "boolean DEFAULT",
+      "service_type": "varchar NOT NULL",
+      "signing_secret": "text",
+      "subscribed_events": "jsonb NOT NULL DEFAULT",
+      "template": "jsonb NOT NULL",
+      "timeout_ms": "integer DEFAULT",
+      "updated_at": "timestamp DEFAULT",
+      "updated_by": "varchar"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  },
+  "widget_configs": {
+    "columns": {
+      "config": "jsonb",
+      "created_at": "timestamp DEFAULT",
+      "grid_position": "jsonb",
+      "id": "serial NOT NULL DEFAULT PK",
+      "layout_id": "integer",
+      "title": "varchar(255)",
+      "updated_at": "timestamp DEFAULT",
+      "widget_id": "varchar(100) NOT NULL",
+      "widget_type": "varchar(100) NOT NULL"
+    },
+    "uniqueConstraints": [],
+    "primaryKeys": []
+  }
+}

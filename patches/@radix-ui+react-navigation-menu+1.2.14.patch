@@ -1,0 +1,122 @@
+diff --git a/node_modules/@radix-ui/react-navigation-menu/dist/index.js b/node_modules/@radix-ui/react-navigation-menu/dist/index.js
+index 74b27be..68fa2c3 100644
+--- a/node_modules/@radix-ui/react-navigation-menu/dist/index.js
++++ b/node_modules/@radix-ui/react-navigation-menu/dist/index.js
+@@ -94,7 +94,7 @@ var NavigationMenu = React.forwardRef(
+       ...NavigationMenuProps
+     } = props;
+     const [navigationMenu, setNavigationMenu] = React.useState(null);
+-    const composedRef = (0, import_react_compose_refs.useComposedRefs)(forwardedRef, (node) => setNavigationMenu(node));
++    const composedRef = (0, import_react_compose_refs.useComposedRefs)(forwardedRef, setNavigationMenu);
+     const direction = (0, import_react_direction.useDirection)(dir);
+     const openTimerRef = React.useRef(0);
+     const closeTimerRef = React.useRef(0);
+@@ -711,21 +711,35 @@ var NavigationMenuViewportImpl = React.forwardRef((props, forwardedRef) => {
+       },
+       onPointerEnter: (0, import_primitive.composeEventHandlers)(props.onPointerEnter, context.onContentEnter),
+       onPointerLeave: (0, import_primitive.composeEventHandlers)(props.onPointerLeave, whenMouse(context.onContentLeave)),
+-      children: Array.from(viewportContentContext.items).map(([value, { ref, forceMount, ...props2 }]) => {
+-        const isActive = activeContentValue === value;
+-        return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react_presence.Presence, { present: forceMount || isActive, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+-          NavigationMenuContentImpl,
+-          {
+-            ...props2,
+-            ref: (0, import_react_compose_refs.composeRefs)(ref, (node) => {
+-              if (isActive && node) setContent(node);
+-            })
+-          }
+-        ) }, value);
+-      })
++      children: Array.from(viewportContentContext.items).map(([value, item]) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
++        NavigationMenuViewportItem,
++        {
++          item,
++          isActive: activeContentValue === value,
++          onActiveContentChange: setContent
++        },
++        value
++      ))
+     }
+   );
+ });
++var NavigationMenuViewportItem = ({ item, isActive, onActiveContentChange }) => {
++  const { ref, forceMount, ...props2 } = item;
++  const setActiveContentRef = React.useCallback(
++    (node) => {
++      if (isActive && node) onActiveContentChange(node);
++    },
++    [isActive, onActiveContentChange]
++  );
++  const composedRef = React.useMemo(
++    () => (0, import_react_compose_refs.composeRefs)(ref, setActiveContentRef),
++    [ref, setActiveContentRef]
++  );
++  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_react_presence.Presence, { present: forceMount || isActive, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
++    NavigationMenuContentImpl,
++    { ...props2, ref: composedRef }
++  ) });
++};
+ var FOCUS_GROUP_NAME = "FocusGroup";
+ var FocusGroup = React.forwardRef(
+   (props, forwardedRef) => {
+diff --git a/node_modules/@radix-ui/react-navigation-menu/dist/index.mjs b/node_modules/@radix-ui/react-navigation-menu/dist/index.mjs
+index fb32adb..d95d59c 100644
+--- a/node_modules/@radix-ui/react-navigation-menu/dist/index.mjs
++++ b/node_modules/@radix-ui/react-navigation-menu/dist/index.mjs
+@@ -41,7 +41,7 @@ var NavigationMenu = React.forwardRef(
+       ...NavigationMenuProps
+     } = props;
+     const [navigationMenu, setNavigationMenu] = React.useState(null);
+-    const composedRef = useComposedRefs(forwardedRef, (node) => setNavigationMenu(node));
++    const composedRef = useComposedRefs(forwardedRef, setNavigationMenu);
+     const direction = useDirection(dir);
+     const openTimerRef = React.useRef(0);
+     const closeTimerRef = React.useRef(0);
+@@ -658,21 +658,35 @@ var NavigationMenuViewportImpl = React.forwardRef((props, forwardedRef) => {
+       },
+       onPointerEnter: composeEventHandlers(props.onPointerEnter, context.onContentEnter),
+       onPointerLeave: composeEventHandlers(props.onPointerLeave, whenMouse(context.onContentLeave)),
+-      children: Array.from(viewportContentContext.items).map(([value, { ref, forceMount, ...props2 }]) => {
+-        const isActive = activeContentValue === value;
+-        return /* @__PURE__ */ jsx(Presence, { present: forceMount || isActive, children: /* @__PURE__ */ jsx(
+-          NavigationMenuContentImpl,
+-          {
+-            ...props2,
+-            ref: composeRefs(ref, (node) => {
+-              if (isActive && node) setContent(node);
+-            })
+-          }
+-        ) }, value);
+-      })
++      children: Array.from(viewportContentContext.items).map(([value, item]) => /* @__PURE__ */ jsx(
++        NavigationMenuViewportItem,
++        {
++          item,
++          isActive: activeContentValue === value,
++          onActiveContentChange: setContent
++        },
++        value
++      ))
+     }
+   );
+ });
++var NavigationMenuViewportItem = ({ item, isActive, onActiveContentChange }) => {
++  const { ref, forceMount, ...props2 } = item;
++  const setActiveContentRef = React.useCallback(
++    (node) => {
++      if (isActive && node) onActiveContentChange(node);
++    },
++    [isActive, onActiveContentChange]
++  );
++  const composedRef = React.useMemo(
++    () => composeRefs(ref, setActiveContentRef),
++    [ref, setActiveContentRef]
++  );
++  return /* @__PURE__ */ jsx(Presence, { present: forceMount || isActive, children: /* @__PURE__ */ jsx(
++    NavigationMenuContentImpl,
++    { ...props2, ref: composedRef }
++  ) });
++};
+ var FOCUS_GROUP_NAME = "FocusGroup";
+ var FocusGroup = React.forwardRef(
+   (props, forwardedRef) => {

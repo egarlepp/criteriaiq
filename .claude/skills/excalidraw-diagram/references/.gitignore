@@ -1,0 +1,15 @@
+# Renderer dependencies — don't commit these. Reproducible from
+# package.json + lockfile via `npm install --legacy-peer-deps`.
+node_modules/
+package-lock.json
+
+# Python virtualenv for the Playwright renderer (alternative path).
+.venv/
+__pycache__/
+*.pyc
+
+# Test outputs and accidental on-the-fly renders inside the references
+# folder — actual diagram outputs belong in /docs/diagrams/.
+*.svg
+*.png
+!render_template_screenshot.png

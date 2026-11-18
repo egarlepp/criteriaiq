@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# Run TypeScript type-check before allowing a push.
+#
+# Why: The production `npm run build` chain (see package.json) intentionally
+# does NOT run `tsc` — it would consume ~2.4 GB of working memory and turn a
+# 3-minute deploy into a 14-minute one on the 4 GB Hostinger VPS (task #567).
+# To prevent broken types from ever reaching the deploy host, this hook
+# enforces the type-check at push time, where the developer's machine has
+# plenty of headroom and the feedback is fast.
+#
+# Bypass (for legitimate WIP pushes): `git push --no-verify`.
+
+echo "[pre-push] Running TypeScript type-check (npm run check)..."
+npm run check

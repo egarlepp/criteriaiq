@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>CriteriaIQ | Technical Validation</title>
+    <script>
+      (function() {
+        const localeMap = {
+          'en': 'en-US',
+          'es': 'es-ES',
+          'fr': 'fr-FR',
+          'de': 'de-DE',
+          'it': 'it-IT',
+          'pt': 'pt-BR'
+        };
+        
+        const storedTheme = localStorage.getItem("theme") || "light";
+        document.documentElement.classList.add(storedTheme);
+        
+        const storedLocale = localStorage.getItem("preferredLocale") || "en-US";
+        document.documentElement.setAttribute("lang", storedLocale);
+        
+        const simpleLocale = storedLocale.split('-')[0];
+        localStorage.setItem("i18nextLng", simpleLocale);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

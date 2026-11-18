@@ -1,0 +1,63 @@
+[Unit]
+Description=CriteriaIQ Technical Validation Workspace (native)
+Documentation=https://github.com/your-org/criteriaiq
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER_NAME@
+Group=@GROUP_NAME@
+WorkingDirectory=@INSTALL_DIR@
+EnvironmentFile=@ETC_DIR@/env
+ExecStart=/usr/bin/node @INSTALL_DIR@/dist/index.js
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+KillMode=mixed
+KillSignal=SIGTERM
+
+# ---- sandboxing / hardening ----
+# Match the Docker runtime image's posture: unprivileged user, read-only
+# filesystem except for the writable data and uploads volumes, no privilege
+# escalation, kernel-namespace isolation. Adjust ReadWritePaths if you
+# changed DATA_DIR / UPLOADS_DIR in install-ubuntu.sh.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectProc=invisible
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=no
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @reboot @swap @debug
+
+ReadWritePaths=@DATA_DIR@ @UPLOADS_DIR@
+
+# ---- resource limits ----
+# Bump MemoryMax if you run heavy PDF exports or AI batches; the Vite dev
+# build is memory-hungry but the production server stays well under 1G in
+# typical deployments. LimitNOFILE is a generous ceiling for Node's socket + file handles.
+MemoryMax=2G
+TasksMax=4096
+LimitNOFILE=65535
+
+# ---- logging ----
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=criteriaiq
+
+[Install]
+WantedBy=multi-user.target

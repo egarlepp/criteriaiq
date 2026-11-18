@@ -1,0 +1,94 @@
+services:
+  app:
+    build: .
+    image: criteriaiq:latest
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      # Leave SESSION_SECRET / ENCRYPTION_KEY blank to let the wizard generate
+      # and persist them. Set them here for infrastructure-as-code installs.
+      DATABASE_URL: ${DATABASE_URL:-postgresql://criteriaiq:criteriaiq@postgres:5432/criteriaiq}
+      PUBLIC_APP_URL: ${PUBLIC_APP_URL:-http://localhost:5000}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      BOOTSTRAP_ADMIN_NAME: ${BOOTSTRAP_ADMIN_NAME:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - app_data:/app/data
+      # Persists admin uploads — customer logos, branding images, 5A
+      # attachments, doc uploads, etc. WITHOUT this mount, every
+      # redeploy wipes /app/attached_assets/ and orphans every
+      # previously-uploaded file behind /api/files/. The named volume
+      # is auto-seeded from the image's bundled defaults on first
+      # creation, so fresh installs still ship with legacy vendor logos and
+      # other built-in graphics.
+      - app_attached_assets:/app/attached_assets
+      # Legacy mount point kept for backward compat with older
+      # deployments. Nothing in the current codebase writes here.
+      - app_uploads:/app/uploads
+    # ----------------------------------------------------------------------
+    # Recommended Traefik labels for Dokploy / Coolify / generic-Traefik
+    # COMPOSE-TYPE installs. Uncomment the entire block and replace
+    # `your-domain.com` with your real hostname. Leaving the block
+    # commented keeps the plain `docker compose up -d --build` path
+    # (port 5000 published directly) working unchanged for non-Traefik
+    # users.
+    #
+    # If your Dokploy app type is "Application" (Dockerfile build),
+    # do NOT uncomment this block — Dokploy reads labels from its own
+    # UI panel, not from this file. See
+    # docs/guides/dokploy-traefik-timeouts.md →
+    # "Recommended Traefik labels for Dokploy 'Application' (Dockerfile)
+    # app type" for the paste-into-Dokploy version of these labels.
+    #
+    # The `serversTransport` block raises Traefik's upstream
+    # `responseHeaderTimeout` to 60s so admin writes (e.g. saving a Field
+    # Setting) do not get clipped to 504 Gateway Timeout by an aggressive
+    # default. See docs/guides/dokploy-traefik-timeouts.md for the full
+    # rationale.
+    #
+    # Note: `tls.certresolver=letsencrypt` assumes a resolver named
+    # `letsencrypt` exists in your Traefik / Dokploy static config. If your
+    # template uses a different name (e.g. `le`, `cf`, `default`), change
+    # it here to match — otherwise Traefik will not issue a certificate.
+    # ----------------------------------------------------------------------
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.criteriaiq.rule=Host(`your-domain.com`)"
+    #   - "traefik.http.routers.criteriaiq.entrypoints=websecure"
+    #   - "traefik.http.routers.criteriaiq.tls.certresolver=letsencrypt"
+    #   - "traefik.http.routers.criteriaiq.service=criteriaiq"
+    #   - "traefik.http.services.criteriaiq.loadbalancer.server.port=5000"
+    #   - "traefik.http.services.criteriaiq.loadbalancer.healthcheck.path=/api/setup/status"
+    #   - "traefik.http.services.criteriaiq.loadbalancer.healthcheck.interval=30s"
+    #   - "traefik.http.services.criteriaiq.loadbalancer.serversTransport=criteriaiq-transport"
+    #   - "traefik.http.serversTransports.criteriaiq-transport.forwardingTimeouts.responseHeaderTimeout=60s"
+    #   - "traefik.http.serversTransports.criteriaiq-transport.forwardingTimeouts.dialTimeout=30s"
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: criteriaiq
+      POSTGRES_PASSWORD: criteriaiq
+      POSTGRES_DB: criteriaiq
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U criteriaiq"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  app_data:
+  app_attached_assets:
+  app_uploads:
+  postgres_data:

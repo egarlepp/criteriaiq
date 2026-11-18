@@ -1,0 +1,9 @@
+# Pin the generated doc-dates file to LF on all platforms.
+#
+# `scripts/generate-doc-dates.ts` writes LF, and `scripts/check-doc-dates.ts`
+# compares against it. Without this, Windows `core.autocrlf=true`
+# rematerializes the committed file as CRLF in the working tree, and the
+# lint:doc-dates gate would false-fail "stale" on every Windows build.
+# (The gate also normalizes EOLs defensively, but pinning keeps the
+# working copy consistent so the file isn't churned on checkout.)
+server/doc-dates.json text eol=lf

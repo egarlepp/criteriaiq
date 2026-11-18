@@ -1,0 +1,66 @@
+# Build + type-check + unit tests on every PR and every push to main.
+#
+# Mirrors the mandatory pre-push checks in CLAUDE.md:
+#   - `npm run check`  — tsc (developer-time only; NOT part of the deploy build)
+#   - `npm run build`  — the 15 lint gates + Vite/esbuild bundle the Dokploy
+#                        deploy runs
+#   - `npx vitest run` — unit + route tests
+#
+# DB-backed integration suites (fk-drift, archive round-trip, demo wipe, …)
+# skip themselves when DATABASE_URL is unset, which it is here. Wiring a
+# Postgres service container for them is a follow-up.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: CI only reads the repo. Pull requests from forks run with
+# this read-only token and no repository secrets. Never switch this workflow
+# to `pull_request_target`, and never add `runs-on: self-hosted`: on a public
+# repo a fork PR could then run its own code with write access or on a
+# maintainer's machine.
+permissions:
+  contents: read
+
+jobs:
+  build-check-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # The runtime image uses the distro chromium; tests never launch it.
+      PUPPETEER_SKIP_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # Full history: lint:doc-dates regenerates each doc's dates from
+          # `git log --follow` and diffs them against server/doc-dates.json.
+          # The default shallow clone (depth 1) gives every doc HEAD's date,
+          # so the gate would fail on every run.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          # Keep in step with the Dockerfile base image (node:24-bookworm-slim).
+          # jsforce >= 3.10.17 and its undici 8 dependency require Node >= 22.19,
+          # so Node 20 breaks every server/salesforce/* import.
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund --legacy-peer-deps
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Build (lint gates + bundle)
+        run: npm run build
+
+      - name: Unit tests
+        run: npx vitest run

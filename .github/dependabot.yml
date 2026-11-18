@@ -1,0 +1,44 @@
+# Dependabot version updates.
+#
+# Kept deliberately quiet: one npm PR for minor/patch updates and one for
+# majors each month, plus one for GitHub Actions. Security updates are
+# separate (Settings → Code security → Dependabot security updates) and
+# arrive as soon as an advisory is published, regardless of this schedule.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels: ["dependencies"]
+    ignore:
+      # patches/ holds patch-package fixes for these Radix packages, pinned to
+      # exact versions. A version bump makes `npm ci` fail in postinstall, so
+      # Radix is upgraded by hand together with regenerated patches.
+      - dependency-name: "@radix-ui/*"
+      # Types must match the Node runtime (Node 24, see Dockerfile and ci.yml).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # TypeScript 7 (the native compiler) ships no JavaScript API yet, and the
+      # toasts / api-request-json / heavy-imports lint gates import it.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # Recharts 3 changes the chart wrapper (ui/chart.tsx) and every
+      # dashboard widget's tooltip/legend types; tracked in docs/plans/backlog.md.
+      - dependency-name: "recharts"
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm-minor-and-patch:
+        update-types: ["minor", "patch"]
+      npm-major:
+        update-types: ["major"]
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    labels: ["dependencies", "ci"]
+    groups:
+      actions:
+        patterns: ["*"]

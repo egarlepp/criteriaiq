@@ -1,0 +1,1346 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
+
+/* .force-light keeps a subtree in light mode while the app is dark; .force-light-buttons does the same for just the
+   buttons inside it (the sign-in screens, whose cards follow dark mode but whose buttons don't). */
+@custom-variant dark (&:where(.dark, .dark *):not(:where(.force-light, .force-light *, .force-light-buttons button, .force-light-buttons button *)));
+
+@theme inline {
+  /* Custom semantic colors (mapped to CSS variables for dark-mode support) */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Chart colors (defined as space-separated HSL values in :root) */
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  /* Sidebar colors */
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Border radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* Accordion animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+/* Safelist — full color palette matrix for all semantic utility families.
+   Matches the original v3 safelist:
+     (bg|text|border|ring|stroke|fill)-<palette>-<shade>(/<opacity>)?
+     (from|to|via)-<palette>-<shade>(/<opacity>)? with dark: variant
+   Dynamic class construction in the app is now refactored to static lookup
+   maps (QuickJumpDropdown, ScheduleCreatorDialog), so this guards only
+   future dynamic additions and cross-component badge/chart utilities. */
+@source "./tailwind-safelist.ts";
+
+/* ======================================================================== */
+/* 1. THEME & GLOBAL STYLES                                                 */
+/* ======================================================================== */
+
+:root,
+.force-light,
+.force-light-buttons button {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(20 14.3% 4.1%);
+  --muted: hsl(60 4.8% 95.9%);
+  --muted-foreground: hsl(25 5.3% 44.7%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(20 14.3% 4.1%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(20 14.3% 4.1%);
+  --border: hsl(20 5.9% 90%);
+  --input: hsl(20 5.9% 90%);
+  --primary: var(--brand-primary-light, hsl(219 79% 54%));
+  --primary-foreground: var(--brand-primary-foreground-light, hsl(211 100% 99%));
+  --secondary: hsl(60 4.8% 95.9%);
+  --secondary-foreground: hsl(24 9.8% 10%);
+  --accent: hsl(60 4.8% 95.9%);
+  --accent-foreground: hsl(24 9.8% 10%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(60 9.1% 97.8%);
+  --ring: hsl(20 14.3% 4.1%);
+  --radius: 0.5rem;
+  
+  /* Shadcn/ui Chart System - Light */
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+
+  /* Light theme background logos */
+  --sidebar-logo: url('/attached_assets/criteriaiq-logo.png');
+  --page-logo: url('/attached_assets/criteriaiq-logo.png');
+
+  /* Active submenu highlight colors for light mode (brand theme sidebar highlight) */
+  --submenu-active-bg: var(--brand-sidebar-highlight);
+  --submenu-active-text: var(--brand-sidebar-active-text);
+
+  /* Brand theme (Admin → Appearance → Theming). client/src/lib/theme-apply.ts sets
+     --brand-*-light on :root for the active theme; the fallbacks are
+     CriteriaIQ Classic (shared/theme-colors.ts). */
+  --brand-topbar-gradient-from: var(--brand-topbar-gradient-from-light, #050B39);
+  --brand-topbar-gradient-to: var(--brand-topbar-gradient-to-light, #001CAB);
+  --brand-topbar-text: var(--brand-topbar-text-light, #FFFFFF);
+  --brand-sidebar-bg-top: var(--brand-sidebar-bg-top-light, #FFFFFF);
+  --brand-sidebar-bg-bottom: var(--brand-sidebar-bg-bottom-light, #FFFFFF);
+  --brand-sidebar-heading: var(--brand-sidebar-heading-light, #001CAB);
+  --brand-sidebar-text: var(--brand-sidebar-text-light, #374151);
+  --brand-nav-hover-bg: var(--brand-nav-hover-bg-light, #F3F4F6);
+  --brand-sidebar-highlight: var(--brand-sidebar-highlight-light, #DBEAFE);
+  --brand-sidebar-active-text: var(--brand-sidebar-active-text-light, #1D4ED8);
+  --brand-sidebar-border: var(--brand-sidebar-border-light, #E5E7EB);
+  --brand-user-pill-name: var(--brand-user-pill-name-light, #111827);
+  --brand-user-pill-subtitle: var(--brand-user-pill-subtitle-light, #6B7280);
+  --brand-admin-menu-bg: var(--brand-admin-menu-bg-light, #F9FAFB);
+  --brand-admin-menu-heading: var(--brand-admin-menu-heading-light, #111827);
+  --brand-admin-menu-text: var(--brand-admin-menu-text-light, #374151);
+  --brand-admin-menu-hover-bg: var(--brand-admin-menu-hover-bg-light, #F3F4F6);
+  --brand-admin-menu-highlight: var(--brand-admin-menu-highlight-light, #DBEAFE);
+  --brand-admin-menu-active-text: var(--brand-admin-menu-active-text-light, #1D4ED8);
+  --brand-admin-menu-border: var(--brand-admin-menu-border-light, #E5E7EB);
+}
+
+/* Code below is to account for dark mode issues with the icon not showing properly and having to set the original icon to be transparent and set it under/behind the new dark/light mode efficient ready */
+/* Date inputs in Search & Filters — one visible icon, one aligned click target */
+input[type="date"] {
+  position: relative;
+  /* so the indicator can be absolutely positioned */
+  padding-right: 2.25rem;
+  /* reserve space for the icon */
+  background-repeat: no-repeat;
+  background-size: 1rem 1rem;
+  background-position: right .625rem center;
+  /* where the icon draws */
+  /* Light mode icon (neutral gray) */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='3' y='4' width='18' height='18' rx='2' ry='2' fill='none' stroke='%236b7280' stroke-width='2'/><line x1='16' y1='2' x2='16' y2='6' stroke='%236b7280' stroke-width='2'/><line x1='8' y1='2' x2='8' y2='6' stroke='%236b7280' stroke-width='2'/><line x1='3' y1='10' x2='21' y2='10' stroke='%236b7280' stroke-width='2'/></svg>");
+}
+
+/* Move the native picker’s (now invisible) hit area over the white/gray icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  /* anchor to the input’s box */
+  right: .375rem;
+  /* sit on top of our background icon */
+  top: 0;
+  bottom: 0;
+  width: 1.75rem;
+  /* make the hit area generous */
+  height: 100%;
+  opacity: 0 !important;
+  /* hide it; keep it clickable */
+  background: none !important;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+/* Firefox doesn’t let us style/position the indicator; make the popup easy to see */
+input[type="date"]::-moz-focus-inner {
+  border: 0;
+}
+
+input[type="date"] {
+  color-scheme: light;
+}
+
+/* light mode popup */
+
+/* Dark mode: swap to a light icon and dark popup; position stays the same */
+.dark input[type="date"] {
+  color-scheme: dark;
+  /* dark picker UI */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect x='3' y='4' width='18' height='18' rx='2' ry='2' fill='none' stroke='%23f9fafb' stroke-width='2'/><line x1='16' y1='2' x2='16' y2='6' stroke='%23f9fafb' stroke-width='2'/><line x1='8' y1='2' x2='8' y2='6' stroke='%23f9fafb' stroke-width='2'/><line x1='3' y1='10' x2='21' y2='10' stroke='%23f9fafb' stroke-width='2'/></svg>");
+}
+
+.dark {
+  --background: hsl(222.2 47.4% 11.2%);
+  --foreground: hsl(210 40% 96.1%);
+  --card: hsl(222.2 47.4% 11.2%);
+  --card-foreground: hsl(210 40% 96.1%);
+  --popover: hsl(222.2 47.4% 11.2%);
+  --popover-foreground: hsl(210 40% 96.1%);
+  --primary: var(--brand-primary-dark, hsl(217 91% 60%));
+  --primary-foreground: var(--brand-primary-foreground-dark, hsl(210 40% 98%));
+  --secondary: hsl(217 33% 17%);
+  --secondary-foreground: hsl(210 40% 96.1%);
+  --accent: hsl(217 91% 60%);
+  --accent-foreground: hsl(210 40% 98%);
+  --muted: hsl(217 33% 17%);
+  --muted-foreground: hsl(215 20.2% 65.1%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --border: hsl(217 33% 20%);
+  --input: hsl(217 33% 20%);
+  --ring: hsl(212 26.8% 83.9%);
+
+  /* Shadcn/ui Chart System - Dark */
+  --chart-1: 220 70% 50%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 340 75% 55%;
+
+  /* Dark theme background logos */
+  --sidebar-logo: url('/attached_assets/criteriaiq-logo_white.png');
+  --page-logo: url('/attached_assets/criteriaiq-logo_white.png');
+
+  /* Active submenu highlight colors for dark mode (brand theme sidebar highlight) */
+  --submenu-active-bg: var(--brand-sidebar-highlight);
+  --submenu-active-text: var(--brand-sidebar-active-text);
+
+  /* Brand theme (Admin → Appearance → Theming). client/src/lib/theme-apply.ts sets
+     --brand-*-dark on :root for the active theme; the fallbacks are
+     CriteriaIQ Classic (shared/theme-colors.ts). */
+  --brand-topbar-gradient-from: var(--brand-topbar-gradient-from-dark, #050B39);
+  --brand-topbar-gradient-to: var(--brand-topbar-gradient-to-dark, #001CAB);
+  --brand-topbar-text: var(--brand-topbar-text-dark, #FFFFFF);
+  --brand-sidebar-bg-top: var(--brand-sidebar-bg-top-dark, #1F2937);
+  --brand-sidebar-bg-bottom: var(--brand-sidebar-bg-bottom-dark, #1F2937);
+  --brand-sidebar-heading: var(--brand-sidebar-heading-dark, #93C5FD);
+  --brand-sidebar-text: var(--brand-sidebar-text-dark, #D1D5DB);
+  --brand-nav-hover-bg: var(--brand-nav-hover-bg-dark, #374151);
+  --brand-sidebar-highlight: var(--brand-sidebar-highlight-dark, rgba(30, 58, 138, 0.4));
+  --brand-sidebar-active-text: var(--brand-sidebar-active-text-dark, #60A5FA);
+  --brand-sidebar-border: var(--brand-sidebar-border-dark, #374151);
+  --brand-user-pill-name: var(--brand-user-pill-name-dark, #F3F4F6);
+  --brand-user-pill-subtitle: var(--brand-user-pill-subtitle-dark, #9CA3AF);
+  --brand-admin-menu-bg: var(--brand-admin-menu-bg-dark, #111827);
+  --brand-admin-menu-heading: var(--brand-admin-menu-heading-dark, #F3F4F6);
+  --brand-admin-menu-text: var(--brand-admin-menu-text-dark, #D1D5DB);
+  --brand-admin-menu-hover-bg: var(--brand-admin-menu-hover-bg-dark, #374151);
+  --brand-admin-menu-highlight: var(--brand-admin-menu-highlight-dark, rgba(30, 58, 138, 0.4));
+  --brand-admin-menu-active-text: var(--brand-admin-menu-active-text-dark, #60A5FA);
+  --brand-admin-menu-border: var(--brand-admin-menu-border-dark, #374151);
+}
+
+@layer base {
+  /* A light-only button inside a dark card would otherwise inherit the card's light text color. */
+  .force-light-buttons button {
+    color: var(--foreground);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    overflow: hidden;
+    /* Prevent body scrollbar - PageLayout handles scrolling */
+  }
+}
+
+/* Custom minimal scrollbar */
+/* Chrome ignores the 6px ::-webkit-scrollbar styles below whenever the
+   standard scrollbar-width / scrollbar-color are set, and its "thin"
+   scrollbar is wider. Give the standard properties only to browsers
+   without ::-webkit-scrollbar (Firefox). */
+@supports not selector(::-webkit-scrollbar) {
+  .sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  }
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* CriteriaIQ sidebar logo version. The sidebar renders both bundled versions
+   and these rules show one per mode: by default the navy wordmark
+   (dark_text) in light mode and the white one (light_text) in dark mode.
+   data-logo-light / data-logo-dark on <html> (client/src/lib/theme-apply.ts)
+   carry the Media setting or the active theme's override. */
+.criteriaiq-logo { display: none; }
+html:not(.dark):not([data-logo-light="light_text"]) .criteriaiq-logo[data-variant="dark_text"],
+html:not(.dark)[data-logo-light="light_text"] .criteriaiq-logo[data-variant="light_text"],
+html.dark:not([data-logo-dark="dark_text"]) .criteriaiq-logo[data-variant="light_text"],
+html.dark[data-logo-dark="dark_text"] .criteriaiq-logo[data-variant="dark_text"] {
+  display: block;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+  border-radius: 3px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.5);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .dark .sidebar-scroll {
+    scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+  }
+}
+
+.dark .sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(75, 85, 99, 0.5);
+}
+
+.dark .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(75, 85, 99, 0.7);
+}
+
+.sidebar-scroll nav span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Project form custom scrollbar */
+.project-form-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.4) rgba(229, 231, 235, 0.3);
+}
+
+.project-form-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.project-form-scroll::-webkit-scrollbar-track {
+  background: rgba(229, 231, 235, 0.3);
+  border-radius: 5px;
+}
+
+.project-form-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.5), rgba(99, 102, 241, 0.5));
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.project-form-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.7), rgba(99, 102, 241, 0.7));
+  background-clip: padding-box;
+}
+
+.dark .project-form-scroll {
+  scrollbar-color: rgba(59, 130, 246, 0.5) rgba(30, 41, 59, 0.5);
+}
+
+.dark .project-form-scroll::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.dark .project-form-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.6), rgba(99, 102, 241, 0.6));
+}
+
+.dark .project-form-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.8), rgba(99, 102, 241, 0.8));
+}
+
+/* ======================================================================== */
+/* 2. FORM ELEMENTS & INPUTS                                                */
+/* ======================================================================== */
+
+/* Specific rule for UNCHECKED checkboxes to ensure transparent background */
+input[type="checkbox"]:not(:checked),
+[role="checkbox"][data-state="unchecked"],
+[role="checkbox"]:not([data-state="checked"]) {
+  background-color: transparent !important;
+  border-color: hsl(20, 5.9%, 90%) !important;
+}
+
+.dark input[type="checkbox"]:not(:checked),
+.dark [role="checkbox"][data-state="unchecked"],
+.dark [role="checkbox"]:not([data-state="checked"]) {
+  border-color: #4b5563 !important;
+}
+
+input[type="checkbox"]:checked,
+[role="checkbox"][data-state="checked"],
+[aria-checked="true"] {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+input[type="checkbox"],
+[role="checkbox"] {
+  border-radius: 0 !important;
+}
+
+select,
+textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+[role="combobox"],
+[data-radix-select-trigger] {
+  border-radius: 0.375rem !important;
+}
+
+.dark select,
+.dark textarea,
+.dark input:not([type="checkbox"]),
+.dark [role="combobox"],
+.dark [data-radix-select-trigger] {
+  border-radius: 0.375rem !important;
+  background-color: #1f2937 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+/* Universal “filter control” surface (buttons, custom triggers, etc.) */
+[data-filter-control] {
+  border-radius: 0.375rem !important;
+  background-color: var(--background) !important;
+  border-color: var(--input) !important;
+  color: var(--foreground) !important;
+}
+
+.dark [data-filter-control] {
+  background-color: #1f2937 !important;
+  /* match Ranking in dark */
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  display: none !important;
+}
+
+/* Dark mode: make native <input type="date"> calendar icon visible
+Applies to all Search & Filters sections (wrapper has .search-filters-container) */
+.dark input[type="date"] {
+  /* let the UA draw a dark-friendly control (helps Firefox too) */
+  color-scheme: dark;
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  /* Chromium/WebKit: flip the default black icon to light */
+  filter: invert(1) brightness(1.15) contrast(1.05);
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+/* ======================================================================== */
+/* 3. COMPONENT STYLES (Buttons, Tabs, Sidebar, Icons)                      */
+/* ======================================================================== */
+
+/* --- Primary Buttons --- */
+/* Exclude [data-state] elements (Radix toggles/commands) so they can use data-state styling */
+/* Colors follow the theme's Primary (Admin › Appearance › Theming); hover darkens it. */
+button.bg-primary:not([data-state]),
+button[class*="bg-primary"]:not([data-state]) {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  transition: all 0.2s ease !important;
+}
+
+button.bg-primary:not([data-state]):hover,
+button[class*="bg-primary"]:not([data-state]):hover {
+  background-color: color-mix(in srgb, var(--primary) 85%, black) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- Icon Buttons --- */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  background: transparent;
+  border: none;
+}
+
+.icon-button:hover {
+  background-color: #f3f4f6;
+}
+
+/* gray-100 */
+.dark .icon-button:hover {
+  background-color: #374151;
+}
+
+/* gray-700 */
+.icon-button-danger {
+  color: #dc2626;
+}
+
+/* red-600 */
+
+/* --- Card Title Icons --- */
+[data-title-icon],
+[data-title-icon] svg {
+  color: #2563eb !important;
+  stroke: #2563eb !important;
+}
+
+/* --- Tabs --- */
+.tabs-list,
+[role="tablist"] {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  margin: 0;
+}
+
+.dark .tabs-list,
+.dark [role="tablist"] {
+  border-bottom-color: var(--border);
+}
+
+.tabs-list [role="tab"] {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  text-align: center;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tabs-list [role="tab"]:not([data-state="active"]) {
+  color: #4b5563;
+}
+
+.tabs-list [role="tab"]:hover:not([data-state="active"]) {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+.dark .tabs-list [role="tab"]:not([data-state="active"]) {
+  color: #9ca3af;
+}
+
+.dark .tabs-list [role="tab"]:hover:not([data-state="active"]) {
+  background-color: #374151;
+  color: #f9fafb;
+}
+
+.tabs-list [role="tab"][data-state="active"] {
+  color: var(--primary) !important;
+  border-bottom-color: var(--primary) !important;
+  cursor: default;
+}
+
+.dark .tabs-list [role="tab"][data-state="active"] {
+  color: var(--brand-primary-dark, #60a5fa) !important;
+  border-bottom-color: var(--brand-primary-dark, #60a5fa) !important;
+}
+
+/* --- PageTabNav scoped overrides --- */
+.page-tab-nav [role="tablist"] {
+  width: auto;
+  border-bottom: none;
+  background: transparent !important;
+  gap: 0;
+  padding: 0;
+  height: auto;
+  border-radius: 0;
+}
+
+.page-tab-nav [role="tab"] {
+  flex-grow: 0 !important;
+  border-radius: 0 !important;
+  padding: 0.4rem 1rem !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: 0;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  position: relative;
+}
+
+.page-tab-nav [role="tab"][data-state="active"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  color: var(--primary) !important;
+}
+
+.page-tab-nav [role="tab"][data-state="active"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2rem);
+  height: 2px;
+  background-color: var(--primary);
+  border-radius: 0;
+}
+
+.dark .page-tab-nav [role="tab"][data-state="active"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  color: var(--brand-primary-dark, #60a5fa) !important;
+}
+
+.dark .page-tab-nav [role="tab"][data-state="active"]::after {
+  background-color: var(--brand-primary-dark, #60a5fa);
+}
+
+.page-tab-nav [role="tab"]:not([data-state="active"]) {
+  color: #b0b5bf;
+  font-weight: 600 !important;
+}
+
+.page-tab-nav [role="tab"]:hover:not([data-state="active"]) {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  color: #374151;
+}
+
+.dark .page-tab-nav [role="tab"]:not([data-state="active"]) {
+  color: #6b7280;
+  font-weight: 600 !important;
+}
+
+.dark .page-tab-nav [role="tab"]:hover:not([data-state="active"]) {
+  background-color: transparent !important;
+  color: #d1d5db;
+}
+
+/* --- Page scroll content: conditional top spacing ---
+   16px below the header on pages without a top tab bar (the tab bar brings
+   its own mb-4). A zero-height spacer's margin, not padding, so it collapses
+   with a page's own top margin (e.g. TabsContent mt-2) exactly as the tab
+   bar's margin does: the gap is 16px either way. */
+.page-scroll-content > .relative::before {
+  content: "";
+  display: block;
+  margin-bottom: 16px;
+}
+
+.page-scroll-content:has(.page-tab-nav) > .relative::before,
+.page-scroll-content:has(.project-hero) > .relative::before {
+  display: none;
+}
+
+/* The customer workspace pages (project page, Account Portal) are busy card
+   layouts: no page background logo behind them. */
+.page-scroll-content:has(.project-hero) > .page-background-logo {
+  display: none !important;
+}
+
+/* --- Sidebar --- */
+.dark [data-sidebar] {
+  background-color: #111827;
+  border-color: #374151;
+}
+
+[data-sidebar] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.5 !important;
+}
+
+[data-sidebar] a.bg-primary,
+.dark [data-sidebar] a.bg-primary {
+  background-color: #d1d5db !important;
+  color: #111827 !important;
+}
+
+[data-sidebar] a.bg-primary svg,
+.dark [data-sidebar] a.bg-primary svg {
+  color: #111827 !important;
+  stroke: #111827 !important;
+  stroke-width: 2 !important;
+}
+
+/* ======================================================================== */
+/* 4. SIDEBAR SUBMENU STYLES                                                */
+/* ======================================================================== */
+
+/* NEW: Active submenu item style using CSS variables */
+/* Brand-themed chrome. Colors come from the --brand-* tokens above. */
+.brand-topbar {
+  background: linear-gradient(to right, var(--brand-topbar-gradient-from), var(--brand-topbar-gradient-to));
+  color: var(--brand-topbar-text);
+}
+
+.brand-topbar-icon-btn {
+  color: var(--brand-topbar-text);
+  --tw-ring-color: color-mix(in srgb, var(--brand-topbar-text) 30%, transparent);
+}
+
+.brand-topbar-icon-btn:hover {
+  background-color: color-mix(in srgb, var(--brand-topbar-text) 12%, transparent);
+}
+
+.brand-topbar-badge-ring {
+  border-color: var(--brand-topbar-gradient-to);
+}
+
+.brand-sidebar {
+  background-image: linear-gradient(to bottom, var(--brand-sidebar-bg-top), var(--brand-sidebar-bg-bottom));
+  border-color: var(--brand-sidebar-border);
+}
+
+.brand-sidebar-heading {
+  color: var(--brand-sidebar-heading);
+}
+
+.brand-sidebar-link {
+  color: var(--brand-sidebar-text);
+}
+
+.brand-sidebar-link:hover {
+  background-color: var(--brand-nav-hover-bg);
+  color: var(--brand-user-pill-name);
+}
+
+.brand-sidebar-divider {
+  border-color: var(--brand-sidebar-border);
+}
+
+.brand-sidebar-strong {
+  color: var(--brand-user-pill-name);
+}
+
+.brand-sidebar-muted {
+  color: var(--brand-user-pill-subtitle);
+}
+
+.brand-admin-menu {
+  background-color: var(--brand-admin-menu-bg);
+  border-color: var(--brand-admin-menu-border);
+  /* The active Admin page uses the Admin menu's own highlight, not the sidebar's. */
+  --submenu-active-bg: var(--brand-admin-menu-highlight);
+  --submenu-active-text: var(--brand-admin-menu-active-text);
+}
+
+.brand-admin-menu-heading {
+  color: var(--brand-admin-menu-heading);
+}
+
+.brand-admin-menu-link {
+  color: var(--brand-admin-menu-text);
+}
+
+.brand-admin-menu-heading:hover,
+.brand-admin-menu-link:hover {
+  background-color: var(--brand-admin-menu-hover-bg);
+  color: var(--brand-admin-menu-heading);
+}
+
+.submenu-active {
+  background-color: var(--submenu-active-bg);
+  color: var(--submenu-active-text);
+  /*font-weight: 600; /* font-semibold */
+  cursor: default;
+}
+
+.dark nav button[aria-expanded]:not([class*="bg-primary"]) {
+  background-color: transparent !important;
+  color: rgb(209, 213, 219) !important;
+}
+
+.dark nav button[aria-expanded]:not([class*="bg-primary"]):hover {
+  background-color: rgb(55, 65, 81) !important;
+  color: rgb(243, 246) !important;
+}
+
+nav a.bg-blue-100,
+nav button.bg-blue-100 {
+  background-color: #ebf3ff !important;
+  color: #1d4ed8 !important;
+}
+
+.dark nav a.bg-blue-100,
+.dark nav button.bg-blue-100 {
+  background-color: rgba(30, 58, 138, 0.4) !important;
+  color: #60a5fa !important;
+}
+
+/* ======================================================================== */
+/* 5. BACKGROUND LOGOS                                                      */
+/* ======================================================================== */
+
+.logo-background {
+  background-image: var(--sidebar-logo) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: contain !important;
+  opacity: 0.08 !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+  pointer-events: none !important;
+}
+
+.page-background-logo {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 80% !important;
+  height: 80% !important;
+  background-image: var(--page-logo) !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: contain !important;
+  opacity: 0.05 !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+.dark .logo-background {
+  opacity: 0.15 !important;
+}
+
+.dark .page-background-logo {
+  opacity: 0.1 !important;
+}
+
+/* ======================================================================== */
+/* 6. SPECIFIC OVERRIDES & MISC                                             */
+/* ======================================================================== */
+
+header button svg {
+  color: white !important;
+  fill: none !important;
+  stroke: white !important;
+  stroke-width: 2 !important;
+}
+
+.dark header button:not(.bg-primary):hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+/* General Dark Mode Text Color Fixes */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: white;
+}
+
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+.dark .text-muted-foreground {
+  color: #9ca3af !important;
+}
+
+/* ======================================================================== */
+/* 7. MARKDOWN & PROSE STYLES                                               */
+/* ======================================================================== */
+
+/* --- Light Mode (Code Blocks) --- */
+.markdown-content pre,
+.markdown-content pre code,
+.markdown-content code,
+.prose pre,
+.prose pre code,
+.prose code,
+[class*="language-"],
+.hljs,
+pre.hljs {
+  background-color: #f9fafb !important; /* Light gray background */
+  color: #1f2937 !important;           /* Dark text */
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+}
+
+/* Light mode syntax highlighting override */
+.markdown-content pre *,
+.markdown-content pre code *,
+.markdown-content code *,
+.prose pre *,
+.prose pre code *,
+.prose code * {
+  background-color: transparent !important;
+  color: #1f2937 !important; /* Forces all children to be dark text */
+}
+
+/* --- Dark Mode Overrides (Code Blocks) --- */
+.dark .markdown-content pre,
+.dark .markdown-content pre code,
+.dark .markdown-content code,
+.dark .prose pre,
+.dark .prose pre code,
+.dark .prose code,
+.dark [class*="language-"],
+.dark .hljs,
+.dark pre.hljs {
+  background-color: var(--muted) !important;   /* Dark (muted) background */
+  color: var(--foreground) !important;      /* Light text */
+  border-color: var(--border) !important;
+}
+
+/* Dark mode syntax highlighting override */
+.dark .markdown-content pre *,
+.dark .markdown-content pre code *,
+.dark .markdown-content code *,
+.dark .prose pre *,
+.dark .prose pre code *,
+.dark .prose code * {
+  background-color: transparent !important;
+  color: var(--foreground) !important; /* Forces all children to be light text */
+}
+
+/* --- Dark Mode Overrides (General Text, Links, Lists) --- */
+
+/* Fix for invisible list items & paragraphs */
+.dark .markdown-content li,
+.dark .prose li,
+.dark .markdown-content p,
+.dark .prose p {
+  color: var(--foreground) !important; /* Use light text color */
+}
+
+/* Fix for invisible links */
+.dark .markdown-content a,
+.dark .prose a {
+  color: #60a5fa !important; /* Use a light blue for links */
+  text-decoration: underline;
+}
+
+.dark .markdown-content a:hover,
+.dark .prose a:hover {
+  color: #93c5fd !important; /* Lighter blue on hover */
+}
+
+/* Fix for other text elements */
+.dark .markdown-content strong,
+.dark .prose strong,
+.dark .markdown-content em,
+.dark .prose em {
+  color: var(--foreground) !important;
+}
+/* ======================================================================== */
+/* 8. TIPTAP EDITOR STYLES                                                  */
+/* ======================================================================== */
+
+/* Placeholder */
+.tiptap-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
+  height: 0;
+}
+
+/* Tables */
+.tiptap-content table {
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  table-layout: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+.tiptap-content table td,
+.tiptap-content table th {
+  border: 1px solid hsl(var(--border));
+  padding: 6px 8px;
+  vertical-align: top;
+  position: relative;
+}
+.tiptap-content table th {
+  background-color: hsl(var(--muted));
+  font-weight: 600;
+  text-align: left;
+}
+.tiptap-content table .selectedCell {
+  background-color: hsl(var(--accent));
+}
+.tiptap-content .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background-color: var(--primary);
+  pointer-events: none;
+}
+
+/* Task lists */
+.tiptap-content ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+.tiptap-content ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+.tiptap-content ul[data-type="taskList"] li > label {
+  margin-top: 0.25rem;
+  user-select: none;
+}
+.tiptap-content ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+/* Admonitions */
+.tiptap-content .admonition {
+  border-left: 4px solid var(--primary);
+  background-color: hsl(var(--muted) / 0.5);
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  border-radius: 4px;
+}
+.tiptap-content .admonition[data-admonition="warning"] {
+  border-left-color: rgb(234 179 8);
+  background-color: rgb(254 252 232 / 0.5);
+}
+.dark .tiptap-content .admonition[data-admonition="warning"] {
+  background-color: rgb(133 77 14 / 0.2);
+}
+.tiptap-content .admonition[data-admonition="danger"] {
+  border-left-color: rgb(239 68 68);
+  background-color: rgb(254 242 242 / 0.5);
+}
+.dark .tiptap-content .admonition[data-admonition="danger"] {
+  background-color: rgb(127 29 29 / 0.2);
+}
+.tiptap-content .admonition[data-admonition="tip"] {
+  border-left-color: rgb(34 197 94);
+  background-color: rgb(240 253 244 / 0.5);
+}
+.dark .tiptap-content .admonition[data-admonition="tip"] {
+  background-color: rgb(20 83 45 / 0.2);
+}
+.tiptap-content .admonition[data-admonition="info"] {
+  border-left-color: rgb(59 130 246);
+  background-color: rgb(239 246 255 / 0.5);
+}
+.dark .tiptap-content .admonition[data-admonition="info"] {
+  background-color: rgb(30 58 138 / 0.2);
+}
+
+/* Code blocks (syntax highlighting via lowlight) */
+.tiptap-content pre {
+  background-color: rgb(15 23 42);
+  color: rgb(226 232 240);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875em;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+.tiptap-content pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+.tiptap-content code {
+  background-color: hsl(var(--muted));
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-size: 0.875em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Highlight.js token colors (for lowlight) */
+.tiptap-content .hljs-comment,
+.tiptap-content .hljs-quote { color: #94a3b8; font-style: italic; }
+.tiptap-content .hljs-keyword,
+.tiptap-content .hljs-selector-tag { color: #c084fc; }
+.tiptap-content .hljs-string,
+.tiptap-content .hljs-attr { color: #86efac; }
+.tiptap-content .hljs-number,
+.tiptap-content .hljs-literal { color: #fdba74; }
+.tiptap-content .hljs-title,
+.tiptap-content .hljs-section,
+.tiptap-content .hljs-name { color: #93c5fd; }
+.tiptap-content .hljs-built_in,
+.tiptap-content .hljs-type { color: #67e8f9; }
+.tiptap-content .hljs-variable,
+.tiptap-content .hljs-template-variable { color: #fca5a5; }
+.tiptap-content .hljs-meta { color: #fcd34d; }
+
+/* Code mode toolbar — tighter spacing */
+.tiptap-editor-code-mode .tiptap-content {
+  padding: 0.5rem !important;
+}
+.tiptap-editor-code-mode .tiptap-content > * {
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Horizontal rule */
+.tiptap-content hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 1rem 0;
+}
+
+/* Blockquote */
+.tiptap-content blockquote {
+  border-left: 3px solid hsl(var(--border));
+  padding-left: 1rem;
+  color: hsl(var(--muted-foreground));
+  margin: 0.5rem 0;
+}
+/* ======================================================================== */
+/* 9. GLOBAL DROPDOWN (SELECT) POPUP STYLES                                 */
+/* ======================================================================== */
+
+/* Force dark theme on ALL Radix Select popups */
+.dark [data-radix-select-content] {
+  background-color: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+}
+
+/* Style the items inside the popup menu */
+.dark [data-radix-select-item] {
+  color: var(--foreground) !important;
+}
+
+/* Style the item hover/highlight state inside the popup menu */
+.dark [data-radix-select-item][data-highlighted] {
+  background-color: var(--muted) !important;
+  color: var(--foreground) !important;
+}
+
+/* Style for disabled items */
+.dark [data-radix-select-item][data-disabled] {
+  color: var(--muted-foreground) !important;
+  opacity: 0.5;
+}
+
+/* ======================================================================== */
+/* CRITICAL FIX: Force System Cursors for Dragging */
+/* Prevents "White/Transparent" cursor lag by enforcing standard pointers */
+/* ======================================================================== */
+
+.cursor-grab {
+  /* Fallback chain to ensure an icon is always found immediately */
+  cursor: grab !important;
+  cursor: -webkit-grab !important;
+  cursor: move; /* Ultimate fallback if grab fails to load */
+}
+
+.cursor-grabbing, 
+.cursor-grabbing * {
+  cursor: grabbing !important;
+  cursor: -webkit-grabbing !important;
+  cursor: move; /* Ultimate fallback */
+}
+
+/* ======================================================================== */
+/* 10. UI SHOWCASE ANIMATIONS                                               */
+/* ======================================================================== */
+
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200%;
+  animation: gradient-x 3s ease infinite;
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+.animate-confetti {
+  width: 10px;
+  height: 10px;
+  animation: confetti 2s ease-out forwards;
+}
+
+@keyframes spring-bounce {
+  0% { transform: scale(1) translateY(0); }
+  20% { transform: scale(0.95) translateY(4px); }
+  40% { transform: scale(1.1) translateY(-12px); }
+  60% { transform: scale(0.98) translateY(2px); }
+  80% { transform: scale(1.02) translateY(-4px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+@keyframes wobble {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(-12deg); }
+  30% { transform: rotate(9deg); }
+  45% { transform: rotate(-6deg); }
+  60% { transform: rotate(3deg); }
+  75% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-spring-bounce {
+  animation: spring-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-wobble {
+  animation: wobble 0.5s ease-in-out;
+}
+
+@keyframes bell-ring {
+  0%, 70%, 100% { transform: rotate(0deg); }
+  5%  { transform: rotate(-15deg); }
+  10% { transform: rotate(13deg); }
+  15% { transform: rotate(-10deg); }
+  20% { transform: rotate(8deg); }
+  25% { transform: rotate(-5deg); }
+  30% { transform: rotate(3deg); }
+  35% { transform: rotate(0deg); }
+}
+
+.animate-bell-ring {
+  animation: bell-ring 2.4s ease-in-out infinite;
+  transform-origin: 50% 10%;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-primary::-webkit-scrollbar-thumb {
+  background-color: var(--primary);
+  border-radius: 4px;
+}
+
+.scrollbar-track-gray-200::-webkit-scrollbar-track {
+  background-color: #e5e7eb;
+  border-radius: 4px;
+}
+
+.dark .scrollbar-track-gray-200::-webkit-scrollbar-track,
+.scrollbar-track-slate-700::-webkit-scrollbar-track {
+  background-color: #334155;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+/* ======================================================================== */
+/* PRINT                                                                    */
+/* ======================================================================== */
+/* The sidebar, header, menus and banners carry `print:hidden`. These rules
+   let the page's own scroll area grow so every part of a long page prints,
+   not just what was on screen. The dark class comes off <html> while
+   printing (ThemeProvider), so pages always print in light mode. */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  html,
+  body,
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  .page-background-logo,
+  .page-scroll-content > .relative::before {
+    display: none !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

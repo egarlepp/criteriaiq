@@ -1,0 +1,42 @@
+# Label set for this repository. Create these once in Settings → Labels
+# (or with the GitHub CLI); issue templates apply bug, enhancement and
+# needs-triage automatically, and Dependabot applies dependencies and ci.
+- name: bug
+  color: d73a4a
+  description: Something isn't working
+- name: enhancement
+  color: a2eeef
+  description: New feature or improvement
+- name: needs-triage
+  color: fbca04
+  description: Waiting for a maintainer to review
+- name: question
+  color: d876e3
+  description: Usage or setup question
+- name: documentation
+  color: 0075ca
+  description: Docs only
+- name: good first issue
+  color: 7057ff
+  description: Small, well-scoped task for new contributors
+- name: help wanted
+  color: 008672
+  description: Maintainers would welcome a PR
+- name: security
+  color: b60205
+  description: Security hardening (report vulnerabilities privately, not as issues)
+- name: i18n
+  color: c5def5
+  description: Translations and localization
+- name: dependencies
+  color: 0366d6
+  description: Dependency updates
+- name: ci
+  color: ededed
+  description: Build, CI and workflows
+- name: duplicate
+  color: cfd3d7
+  description: Already reported
+- name: wontfix
+  color: ffffff
+  description: Won't be worked on

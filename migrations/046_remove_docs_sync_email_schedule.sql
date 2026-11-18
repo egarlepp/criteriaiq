@@ -1,0 +1,39 @@
+-- 046_remove_docs_sync_email_schedule.sql
+--
+-- Remove the auto-seeded Documentation Sync row from
+-- `email_schedules` (Task #720).
+--
+-- Background -----------------------------------------------------------
+-- Up through commit prior to Task #720, `startDocsSyncScheduler()` in
+-- `server/services/docs-sync-service.ts` UPSERTed an `email_schedules`
+-- row with `action_type = 'docs_sync'` on every server boot. The row
+-- existed only so the internal docs-sync job would appear in the
+-- Configuration → Workflow Automation → Schedules UI — the actual
+-- scheduling lives in `docs_sync_schedule` + a `setInterval` in the
+-- service, not in `email_schedules`.
+--
+-- Operators reported that every fresh install (and every restart) ended
+-- up with one pre-populated "Documentation Sync" row in the Schedules
+-- list, when they expected that list to be empty until they explicitly
+-- add their own schedules. Task #720 removes the boot-time seed.
+--
+-- This migration cleans up existing installs by deleting the legacy
+-- decorative row so the upgrade path matches the fresh-install path
+-- ("blank after install"; extended to "blank after upgrade" for
+-- consistency, per the task spec).
+--
+-- Idempotent: a re-run after the row is gone is a no-op (the WHERE
+-- clause becomes empty). Safe to ship through the boot-time
+-- advisory-locked migration runner.
+--
+-- Scope --------------------------------------------------------------
+--   * Touches only rows where `action_type = 'docs_sync'`. Any other
+--     `email_schedules` rows (digests, custom operator-created
+--     schedules, etc.) are left untouched.
+--   * Does NOT touch `docs_sync_schedule` (the interval config the
+--     internal scheduler still reads from).
+--   * Does NOT change anything about how the docs-sync job runs — only
+--     removes the visibility row.
+
+DELETE FROM email_schedules
+ WHERE action_type = 'docs_sync';

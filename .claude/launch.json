@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "App (full-stack)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--env-file=.env", "--import", "tsx/esm", "server/index.ts"],
+      "port": 5000
+    },
+    {
+      "name": "Vite (frontend only)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite"],
+      "port": 5173
+    }
+  ]
+}
