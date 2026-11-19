@@ -1,8 +1,7 @@
-// MAP management / import / analytics routes (Phase 8 extraction #9e).
+// MAP management / analytics routes (Phase 8 extraction #9e).
 //
-// Final live MAP slice — three operationally-distinct read/write paths:
+// Final live MAP slice — two read paths:
 //   GET  /api/map/management                               (aggregated cross-project view)
-//   POST /api/map/import-csv                               (admin-only bulk CSV import)
 //   GET  /api/projects/:projectId/map/assignment-analytics (workload distribution)
 //
 // Plus the four backward-compatibility stubs that surfaced when the
@@ -12,12 +11,7 @@
 //   DELETE /api/projects/:projectId/map/assignments/bulk
 //   POST   /api/projects/:projectId/map/assignments
 //   GET    /api/projects/:projectId/map/assignments
-//
-// The CSV import path requires a multer instance — it's injected via
-// the existing DI pattern (same shape as compliance / support-requests).
 import type { Express } from "express";
-import type { Multer } from "multer";
-import fs from "fs";
 import { sql, inArray } from "drizzle-orm";
 import { storage } from "../storage";
 import { isAuthenticated } from "../auth/simpleAuth";
@@ -27,10 +21,7 @@ import { requireInternalUser } from "../lib/internal-access";
 import { isUpcoming, upcomingLimits } from "../services/map-scheduling";
 import { isMapItemComplete, mapItemStatusSchema } from "@shared/map-status";
 
-export function registerMapManagementRoutes(
-  app: Express,
-  { csvUpload }: { csvUpload: Multer },
-) {
+export function registerMapManagementRoutes(app: Express) {
   // Backward-compat stubs for the retired mapAssignments table.
   app.post("/api/projects/:projectId/map/assignments/bulk", isAuthenticated, async (req, res) => {
     res.json({ success: true, assignmentsCreated: 0, assignments: [], deprecated: true, message: "Assignments are now managed directly through entity update endpoints" });
@@ -250,201 +241,6 @@ export function registerMapManagementRoutes(
     } catch (error: any) {
       console.error("Error fetching MAP management data:", error);
       res.status(500).json({ message: "Failed to fetch MAP management data" });
-    }
-  });
-
-  // Import MAP data from CSV file (admin only)
-  app.post("/api/map/import-csv", isAuthenticated, csvUpload.single('csvFile'), async (req: any, res) => {
-    try {
-      // Check if user is ADMIN
-      if (req.session.user.role !== 'Admin') {
-        return res.status(403).json({ message: "Only administrators can import MAP data" });
-      }
-
-      if (!req.file) {
-        return res.status(400).json({ message: "No CSV file uploaded" });
-      }
-
-      const csvContent = fs.readFileSync(req.file.path, 'utf-8');
-      try { fs.unlinkSync(req.file.path); } catch {}
-      const lines = csvContent.split('\n').filter(line => line.trim());
-
-      if (lines.length < 2) {
-        return res.status(400).json({ message: "CSV file must contain header and at least one data row" });
-      }
-
-      const headers = lines[0].split(',').map(h => h.replace(/['"]/g, '').trim());
-      const expectedHeaders = ['type', 'templateId', 'name', 'description', 'parentPhase', 'parentStep', 'status', 'dueDate', 'assignedTo', 'orderIndex'];
-
-      // Validate headers
-      const missingHeaders = expectedHeaders.filter(h => !headers.includes(h));
-      if (missingHeaders.length > 0) {
-        return res.status(400).json({
-          message: `Missing required headers: ${missingHeaders.join(', ')}`,
-          details: { errors: [`Headers must include: ${expectedHeaders.join(', ')}`] }
-        });
-      }
-
-      let phasesCreated = 0, stepsCreated = 0, tasksCreated = 0;
-      let errors: string[] = [];
-      const createdItems: { phases: any[]; steps: any[]; tasks: any[] } = { phases: [], steps: [], tasks: [] };
-
-      // Get existing templates for reference
-      const templates = await storage.getMapTemplates();
-
-      for (let i = 1; i < lines.length; i++) {
-        try {
-          const values = lines[i].split(',').map(v => v.replace(/^["']|["']$/g, '').trim());
-          const rowData: any = {};
-
-          headers.forEach((header, index) => {
-            rowData[header] = values[index] || '';
-          });
-
-          // Validate required fields
-          if (!rowData.type || !rowData.name) {
-            errors.push(`Row ${i + 1}: Missing required fields (type, name)`);
-            continue;
-          }
-
-          // Validate type
-          if (!['phase', 'step', 'task'].includes(rowData.type.toLowerCase())) {
-            errors.push(`Row ${i + 1}: Invalid type "${rowData.type}". Must be phase, step, or task`);
-            continue;
-          }
-
-          const type = rowData.type.toLowerCase();
-          const templateId = rowData.templateId ? parseInt(rowData.templateId) : 1; // Default to template 1
-
-          // Prepare data based on type
-          let itemData: any = {
-            name: rowData.name,
-            description: rowData.description || '',
-            orderIndex: rowData.orderIndex ? parseInt(rowData.orderIndex) : 0,
-            templateId
-          };
-
-          const csvStatus = mapItemStatusSchema.safeParse(rowData.status);
-          if (rowData.status && csvStatus.success) {
-            itemData.status = csvStatus.data;
-          }
-
-          try {
-            if (type === 'phase') {
-              const phase = await storage.createMapPhase(itemData);
-              phasesCreated++;
-              createdItems.phases.push({ id: phase.id, name: phase.name });
-            } else if (type === 'step') {
-              // For steps, we need to find the parent phase
-              if (rowData.parentPhase) {
-                // Find phase by name
-                const phases = await storage.getMapPhasesByTemplate(templateId);
-                const parentPhase = phases.find((p: any) => p.name === rowData.parentPhase);
-                if (parentPhase) {
-                  itemData.phaseId = parentPhase.id;
-                  const step = await storage.createMapStep(itemData);
-                  stepsCreated++;
-                  createdItems.steps.push({ id: step.id, name: step.name, phase: parentPhase.name });
-                } else {
-                  errors.push(`Row ${i + 1}: Parent phase "${rowData.parentPhase}" not found`);
-                  continue;
-                }
-              } else {
-                errors.push(`Row ${i + 1}: Parent phase required for steps`);
-                continue;
-              }
-            } else if (type === 'task') {
-              // For tasks, we need to find the parent step
-              if (rowData.parentStep) {
-                // Find step by name and phase
-                const phases = await storage.getMapPhasesByTemplate(templateId);
-                let parentStep = null;
-
-                for (const phase of phases) {
-                  const steps = await storage.getMapStepsByPhase(phase.id);
-                  parentStep = steps.find((s: any) => s.name === rowData.parentStep);
-                  if (parentStep) break;
-                }
-
-                if (parentStep) {
-                  itemData.stepId = parentStep.id;
-                  if (rowData.dueDate) {
-                    itemData.dueDate = new Date(rowData.dueDate);
-                  }
-
-                  const task = await storage.createMapTask(itemData);
-                  tasksCreated++;
-                  createdItems.tasks.push({ id: task.id, name: task.name, step: parentStep.name });
-
-                  // Handle assignment if provided
-                  if (rowData.assignedTo) {
-                    try {
-                      // Find user by email or name
-                      const users: any[] = await storage.getUsers();
-                      const assignedUser = users.find(u =>
-                        u.email === rowData.assignedTo ||
-                        `${u.firstName} ${u.lastName}` === rowData.assignedTo
-                      );
-
-                      if (assignedUser) {
-                        await storage.createMapAssignment({
-                          projectId: null as any, // Will be set when template is applied to project
-                          entityType: 'task',
-                          entityId: task.id,
-                          userId: assignedUser.id,
-                          isOwner: true
-                        });
-                      }
-                    } catch (assignError) {
-                      console.warn(`Warning: Could not assign task to ${rowData.assignedTo}:`, assignError);
-                    }
-                  }
-                } else {
-                  errors.push(`Row ${i + 1}: Parent step "${rowData.parentStep}" not found`);
-                  continue;
-                }
-              } else {
-                errors.push(`Row ${i + 1}: Parent step required for tasks`);
-                continue;
-              }
-            }
-          } catch (createError: any) {
-            console.error(`Error creating ${type}:`, createError);
-            errors.push(`Row ${i + 1}: Failed to create ${type} - ${createError.message}`);
-            continue;
-          }
-        } catch (rowError: any) {
-          console.error(`Error processing row ${i + 1}:`, rowError);
-          errors.push(`Row ${i + 1}: Processing error - ${rowError.message}`);
-        }
-      }
-
-      const summary = {
-        imported: phasesCreated + stepsCreated + tasksCreated,
-        phases: phasesCreated,
-        steps: stepsCreated,
-        tasks: tasksCreated,
-        errors: errors.length,
-        details: errors,
-        created: createdItems
-      };
-
-      console.log('MAP CSV import summary:', summary);
-
-      if (errors.length > 0) {
-        return res.status(207).json({ // 207 Multi-Status for partial success
-          message: `Import completed with ${errors.length} errors`,
-          ...summary
-        });
-      }
-
-      res.json({
-        message: `Successfully imported ${summary.imported} MAP items`,
-        ...summary
-      });
-    } catch (error: any) {
-      console.error("Error importing MAP CSV:", error);
-      res.status(500).json({ message: "Failed to import MAP CSV file" });
     }
   });
 

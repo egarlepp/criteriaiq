@@ -37,18 +37,7 @@ import {
 import { getVersionInfo, getVersionUpdates } from "../lib/version-info";
 import { docsManifest } from "../docs-manifest";
 import { createDocsLoader } from "../docs-runtime-loader";
-import {
-  QUARANTINE_DIR,
-  ensureQuarantineDir,
-  ALLOWED_MIME_TYPES,
-  BLOCKED_EXTENSIONS,
-  MAX_FILE_SIZE_BYTES,
-  buildDocumentPath,
-  buildLogoPath,
-  buildRichTextPath,
-  buildSupportPath,
-  normalizeFilename,
-} from "../lib/upload-config";
+import { QUARANTINE_DIR, ensureQuarantineDir, ALLOWED_MIME_TYPES, BLOCKED_EXTENSIONS, MAX_FILE_SIZE_BYTES, buildDocumentPath, buildLogoPath, buildRichTextPath, buildSupportPath, normalizeFilename, discardQuarantinedUpload } from "../lib/upload-config";
 import { processUpload } from "../lib/upload-processor";
 import { uploadFile as gcsUploadFile, generateSignedUrl } from "../lib/cloud-storage";
 import { requireInternalUser } from "../lib/internal-access";
@@ -744,7 +733,7 @@ export async function registerMiscRoutes(
 
       if (!givenName || !documentType) {
         // Clean up quarantine file
-        try { fs.unlinkSync(req.file.path); } catch {}
+        discardQuarantinedUpload(req.file.path);
         return res.status(400).json({ message: "Given name and document type are required" });
       }
 
@@ -812,13 +801,13 @@ export async function registerMiscRoutes(
       const customerId = parseInt(req.params.customerId as string);
 
       if (!await hasCustomerAccess(userId, req.session.user.role, customerId)) {
-        if (req.file) try { fs.unlinkSync(req.file.path); } catch {}
+        discardQuarantinedUpload(req.file?.path);
         return res.status(403).json({ message: "Access denied to this customer" });
       }
 
       const customer = await storage.getCustomer(customerId);
       if (!customer) {
-        if (req.file) try { fs.unlinkSync(req.file.path); } catch {}
+        discardQuarantinedUpload(req.file?.path);
         return res.status(404).json({ message: "Customer not found" });
       }
 

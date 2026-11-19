@@ -17,7 +17,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { validateMagicBytes, hashFile, validateFileAllowed, normalizeFilename, QUARANTINE_DIR, ensureQuarantineDir } from './upload-config';
+import { validateMagicBytes, hashFile, validateFileAllowed, normalizeFilename, QUARANTINE_DIR, ensureQuarantineDir, quarantinedUploadPath } from './upload-config';
 import { scanFile } from './virus-scanner';
 import { uploadFile } from './cloud-storage';
 
@@ -66,7 +66,10 @@ export async function processUpload(
   gcsObjectKey: string,
   context: UploadContext = 'document',
 ): Promise<{ ok: true; file: ProcessedFile } | { ok: false; reason: string; status: number }> {
-  const quarantinePath = multerFile.path;
+  const quarantinePath = quarantinedUploadPath(multerFile.path);
+  if (!quarantinePath) {
+    return { ok: false, reason: 'Upload was not stored in quarantine.', status: 400 };
+  }
   let cleaned = false;
 
   const cleanup = () => {

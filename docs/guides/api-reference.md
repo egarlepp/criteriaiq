@@ -345,7 +345,6 @@ Value Mappings define why a validation is being conducted and help choose the ri
 | PUT | `/api/projects/:projectId/map-automation-config` | Update project config | Yes |
 | DELETE | `/api/projects/:projectId/map-automation-config` | Delete project config | Yes |
 | GET | `/api/map/management` | MAP management data | Yes |
-| POST | `/api/map/import-csv` | Import MAP from CSV | Yes |
 | POST | `/api/map/initialize` | Initialize MAP system | Yes |
 
 ### 11. Workflow Automation

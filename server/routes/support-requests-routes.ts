@@ -41,7 +41,7 @@ import {
   hasCustomerAccess,
   getUserAccessibleCustomers,
 } from "../lib/customer-access";
-import { buildSupportPath, normalizeFilename } from "../lib/upload-config";
+import { buildSupportPath, normalizeFilename, discardQuarantinedUpload } from "../lib/upload-config";
 import { processUpload } from "../lib/upload-processor";
 
 const uploadsDir = path.join(process.cwd(), "attached_assets");
@@ -542,7 +542,7 @@ export function registerSupportRequestsRoutes(
             const existingRequest = await storage.getSupportRequestById(requestIdNum);
             if (existingRequest && !await hasCustomerAccess(userId, userRole, existingRequest.customerId)) {
               // Delete uploaded file since access is denied
-              fs.unlink(req.file.path, () => {});
+              discardQuarantinedUpload(req.file.path);
               return res.status(403).json({ message: "Access denied to this support request" });
             }
             resolvedCustomerId = existingRequest?.customerId ?? null;
@@ -552,7 +552,7 @@ export function registerSupportRequestsRoutes(
           const bodyCustomerId = parseInt(req.body.customerId);
           if (!isNaN(bodyCustomerId)) {
             if (!await hasCustomerAccess(userId, userRole, bodyCustomerId)) {
-              fs.unlink(req.file.path, () => {});
+              discardQuarantinedUpload(req.file.path);
               return res.status(403).json({ message: "Access denied to this customer" });
             }
             resolvedCustomerId = bodyCustomerId;
@@ -612,7 +612,11 @@ export function registerSupportRequestsRoutes(
         return res.status(400).json({ message: "Invalid filename" });
       }
 
-      const filePath = path.join(uploadsDir, 'support_attachments', filename);
+      const attachmentsRoot = path.resolve(uploadsDir, 'support_attachments') + path.sep;
+      const filePath = path.resolve(attachmentsRoot, filename);
+      if (!filePath.startsWith(attachmentsRoot)) {
+        return res.status(400).json({ message: "Invalid filename" });
+      }
 
       // Check if file exists on local disk (legacy only)
       if (!fs.existsSync(filePath)) {

@@ -45,6 +45,7 @@ import {
   runManualAuditLoginsPrune,
 } from "../services/audit-logins-cleanup";
 import { cleanupSpuriousAuditEntries } from "../auditHelper";
+import { quarantinedUploadPath, discardQuarantinedUpload } from "../lib/upload-config";
 
 export async function registerAuditAndReportsRoutes(
   app: Express,
@@ -433,9 +434,13 @@ export async function registerAuditAndReportsRoutes(
       if (!req.file) {
         return res.status(400).json({ message: "No CSV file uploaded" });
       }
+      const uploadedPath = quarantinedUploadPath(req.file.path);
+      if (!uploadedPath) {
+        return res.status(400).json({ message: "Invalid upload" });
+      }
 
-      const csvContent = fs.readFileSync(req.file.path, 'utf-8');
-      try { fs.unlinkSync(req.file.path); } catch {}
+      const csvContent = fs.readFileSync(uploadedPath, 'utf-8');
+      discardQuarantinedUpload(uploadedPath);
       let parsed;
       try {
         parsed = parseCSVContent(csvContent);
@@ -658,9 +663,13 @@ export async function registerAuditAndReportsRoutes(
       if (!req.file) {
         return res.status(400).json({ message: "No CSV file uploaded" });
       }
+      const uploadedPath = quarantinedUploadPath(req.file.path);
+      if (!uploadedPath) {
+        return res.status(400).json({ message: "Invalid upload" });
+      }
 
-      const csvContent = fs.readFileSync(req.file.path, 'utf-8');
-      try { fs.unlinkSync(req.file.path); } catch {}
+      const csvContent = fs.readFileSync(uploadedPath, 'utf-8');
+      discardQuarantinedUpload(uploadedPath);
       let parsed;
       try {
         parsed = parseCSVContent(csvContent);

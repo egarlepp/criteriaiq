@@ -535,6 +535,34 @@ export function normalizeFilename(originalName: string): string {
 // ─── Quarantine directory ─────────────────────────────────────────────────────
 
 export const QUARANTINE_DIR = path.join(process.cwd(), 'attached_assets', 'quarantine');
+/**
+ * QUARANTINE_DIR resolved, with a trailing separator. Every multer disk
+ * upload lands in QUARANTINE_DIR, so code that touches `req.file.path`
+ * checks `path.resolve(p).startsWith(QUARANTINE_ROOT)` first.
+ */
+export const QUARANTINE_ROOT = path.resolve(QUARANTINE_DIR) + path.sep;
+
+/**
+ * The absolute path of a multer upload, or null when it isn't inside
+ * QUARANTINE_DIR. Multer picks the name and folder itself, so null only
+ * happens if an upload was misconfigured; callers refuse the request.
+ */
+export function quarantinedUploadPath(filePath: unknown): string | null {
+  if (typeof filePath !== 'string' || filePath.length === 0) return null;
+  const resolved = path.resolve(filePath);
+  return resolved.startsWith(QUARANTINE_ROOT) ? resolved : null;
+}
+
+/** Deletes a multer upload from quarantine; ignores paths outside it and missing files. */
+export function discardQuarantinedUpload(filePath: unknown): void {
+  const safePath = quarantinedUploadPath(filePath);
+  if (!safePath) return;
+  try {
+    fs.unlinkSync(safePath);
+  } catch {
+    // Already gone.
+  }
+}
 
 export function ensureQuarantineDir(): void {
   if (!fs.existsSync(QUARANTINE_DIR)) {
