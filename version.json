@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.10",
+  "version": "v0.12.11",
   "release": "v0.12.0",
-  "buildDate": "2026-11-19T20:48:28Z",
-  "gitCommit": "27c3d88",
+  "buildDate": "2026-11-19T22:42:34Z",
+  "gitCommit": "bb80c38",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.11",
+      "date": "2026-11-19",
+      "pr": 11,
+      "title": "Add product screenshots in docs/screenshots",
+      "category": "feature"
+    },
     {
       "version": "v0.12.10",
       "date": "2026-11-19",
