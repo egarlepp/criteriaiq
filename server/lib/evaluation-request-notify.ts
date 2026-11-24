@@ -1,6 +1,6 @@
 // Tells the account team about a new evaluation request: an in-app
-// notification, and the "Evaluation Request Submitted" email to the
-// account's Account Representative and Account Engineer.
+// notification, and an email to the account's Account Representative and
+// Account Engineer with the request's details.
 //
 // Shared by POST /api/evaluation-requests (a signed-in user) and
 // POST /api/v1/evaluation-requests (another app, on behalf of a user).
@@ -8,6 +8,8 @@
 import { storage } from "../storage";
 import { sendEmail } from "../email/email";
 import { notifyEvaluationRequestSubmitted } from "../services/notifications";
+import { escapeHtml } from "../email/digest-utils";
+import { getPublicAppUrl } from "./app-config";
 
 export interface NewEvaluationRequestNotice {
   customerId: number;
@@ -22,6 +24,11 @@ export interface NewEvaluationRequestNotice {
     lastName?: string | null;
     email?: string | null;
   };
+}
+
+/** Dates are stored as midnight UTC, so the UTC day is the picked day. */
+function isoDay(date: Date): string {
+  return date.toISOString().slice(0, 10);
 }
 
 function fullName(first?: string | null, last?: string | null): string {
@@ -48,27 +55,33 @@ export async function notifyNewEvaluationRequest(notice: NewEvaluationRequestNot
     );
     if (recipientIds.length === 0) return;
 
-    const solutions = await storage.getProductsByIds(notice.solutionIds);
-    const emailData = {
-      requesterName,
-      requesterEmail: notice.requester.email ?? "",
-      customerName: customer.accountName,
-      solutions: solutions.map((s) => s.name),
-      startDate: notice.startDate.toLocaleDateString(),
-      endDate: notice.endDate.toLocaleDateString(),
-      topReasons: notice.topReasons,
-      compellingEvent: notice.compellingEvent,
-      status: "Open",
-    };
+    const solutions = (await storage.getProductsByIds(notice.solutionIds)).map((s) => s.name);
+    const accountName = customer.accountName ?? "";
+    const rows: Array<[string, string]> = [
+      ["Account", accountName],
+      ["Requested by", [requesterName, notice.requester.email].filter(Boolean).join(" · ")],
+      ["Solutions", solutions.join(", ")],
+      ["Dates", `${isoDay(notice.startDate)} to ${isoDay(notice.endDate)}`],
+      ["Top reasons", notice.topReasons],
+      ["Compelling event", notice.compellingEvent],
+    ];
+    const url = `${getPublicAppUrl()}/project?tab=validation&subtab=evaluation-requests`;
+    const text = [...rows.map(([k, v]) => `${k}: ${v}`), "", `Open the requests: ${url}`].join("\n");
+    const html = `<p>A new evaluation request is open.</p><table cellpadding="4">${rows
+      .map(([k, v]) => `<tr><td><strong>${escapeHtml(k)}</strong></td><td>${escapeHtml(v)}</td></tr>`)
+      .join("")}</table><p><a href="${escapeHtml(url)}">Open the requests</a></p>`;
 
-    for (const recipientId of recipientIds) {
+    for (const recipientId of new Set(recipientIds)) {
       const recipient = await storage.getUser(recipientId);
       if (!recipient?.email) continue;
       await sendEmail({
         to: recipient.email,
-        template: "Evaluation Request Submitted",
-        data: emailData,
-      } as Parameters<typeof sendEmail>[0]);
+        from: process.env.GMAIL_USER || "noreply@example.com",
+        subject: `New evaluation request: ${accountName}`,
+        text,
+        html,
+        emailType: "evaluation_request_submitted",
+      });
     }
   } catch (error) {
     console.error("Failed to send evaluation request notification email:", error);
