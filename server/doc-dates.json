@@ -1,266 +1,266 @@
 {
   "PROJECT_REFERENCE.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/admin/demo-mode.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T21:06:21Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/architecture/application-startup-routing.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/architecture/database-connection-architecture.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/architecture/design-document.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/architecture/navigation-sitemap.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/architecture/project-overview.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/architecture/workflow-diagram.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/account-user-management.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/ai-assessment-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/approved-email-domains.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/archive-management-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/backup-restore.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/color-picker-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/database-connection-manager.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/email-graph-sending.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/email-triggers-reference.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/encryption-key-rotation.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/file-upload-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T23:57:43Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/first-run-setup.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/flight-deck.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/gap-analysis-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/global-search-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/icon-picker-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/map-system-architecture.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/mcp-server.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/metric-history-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/n8n-integration.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/outcome-intelligence-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/report-builder.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/salesforce-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/single-sign-on.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T22:20:30Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/standard-table-pattern.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/system-announcements.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/system-health-dashboard.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/tiptap-editor-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/toast-notification-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/webhook-reference.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/workflow-automation-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/features/workflow-automation-triggers.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/adding-a-new-language.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/ai-provider-webhook.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/api-reference.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T23:57:43Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/azure-sso-setup.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/csv-import-guide.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/deployment.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/dokploy-traefik-timeouts.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/entra-app-registration.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/error-handling-debug-guide.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/language-translation.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T19:54:03Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/local-dev-setup.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/memory-management-guide.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/mfa-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/migration-strategy.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/modern-card-styling-system.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/native-install/README.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/okta-setup.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/performance-monitoring-guide.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/secrets-management.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/self-hosting.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/sorting-docs.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/storage-mixin-architecture.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/version-update-guide.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/guides/websocket-stability-guide.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "docs/plans/backlog.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T19:54:03Z",
+    "posted": "2026-11-18T16:38:56Z"
   },
   "migrations/db_refactor/README.md": {
-    "updated": "2026-11-19T22:42:34Z",
-    "posted": "2026-11-19T22:42:34Z"
+    "updated": "2026-11-18T16:38:56Z",
+    "posted": "2026-11-18T16:38:56Z"
   }
 }
