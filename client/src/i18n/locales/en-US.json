@@ -6306,7 +6306,9 @@
       "eventCount_other": "{{count}} events",
       "toastWebhookLoadFailed": "Could not load the webhook",
       "presetPeopleSummaryLabel": "People summary only (VectorIQ)",
-      "presetPeopleSummaryDescription": "Read one person's counts by email: validations they were on, won, lost, and success criteria met. No project or customer names. Nothing else."
+      "presetPeopleSummaryDescription": "Read one person's counts by email: validations they were on, won, lost, and success criteria met. No project or customer names. Nothing else.",
+      "presetEvaluationRequestsLabel": "Evaluation requests only (DemoIQ)",
+      "presetEvaluationRequestsDescription": "Ask for a POC on behalf of an SE, named by email, after a demo. Can look up account and solution names to fill the request. Nothing else."
     },
     "salesforce": {
       "viewNavigation": "Salesforce Navigation",

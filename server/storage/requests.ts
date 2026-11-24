@@ -26,8 +26,8 @@
 // mixin level — these tables predate the demo flag and the upstream
 // route handlers gate access via the user's role/customer scope.
 import { db, pool } from "../db";
-import { applyDemoFilterByCustomer } from "../lib/demo-storage";
-import { eq, and, or, desc, count, sql, inArray, gte, ilike } from "drizzle-orm";
+import { applyDemoFilter, applyDemoFilterByCustomer } from "../lib/demo-storage";
+import { eq, and, or, desc, asc, count, sql, inArray, gte, ilike } from "drizzle-orm";
 import {
   users,
   projects,
@@ -772,5 +772,100 @@ export class RequestsStorageMixin {
 
     const result = await query;
     return result[0]?.count || 0;
+  }
+
+  // ── Evaluation requests from other apps (POST /api/v1/evaluation-requests)
+  // Accounts and solutions a request may name, in the current request's demo
+  // mode: active, not the internal (company) account, ids and names only.
+
+  /** Accounts whose name contains the query (case-insensitive), exact matches first. */
+  async searchEvaluationRequestAccounts(query: string, limit: number): Promise<Array<{ id: number; name: string }>> {
+    const needle = query.trim().toLowerCase();
+    const escaped = needle.replace(/[\\%_]/g, (c) => `\\${c}`);
+    return db
+      .select({ id: customers.id, name: customers.accountName })
+      .from(customers)
+      .where(
+        and(
+          eq(customers.isActive, true),
+          eq(customers.isInternal, false),
+          applyDemoFilter(customers),
+          ilike(customers.accountName, `%${escaped}%`),
+        ),
+      )
+      .orderBy(sql`(lower(${customers.accountName}) = ${needle}) DESC`, asc(customers.accountName))
+      .limit(limit);
+  }
+
+  /** The account, if a request from another app may name it. */
+  async getEvaluationRequestAccount(id: number): Promise<{ id: number; name: string } | undefined> {
+    const [row] = await db
+      .select({ id: customers.id, name: customers.accountName })
+      .from(customers)
+      .where(
+        and(
+          eq(customers.id, id),
+          eq(customers.isActive, true),
+          eq(customers.isInternal, false),
+          applyDemoFilter(customers),
+        ),
+      )
+      .limit(1);
+    return row;
+  }
+
+  /** Active solutions, by name. */
+  async getEvaluationRequestSolutions(): Promise<Array<{ id: number; name: string }>> {
+    return db
+      .select({ id: products.id, name: products.name })
+      .from(products)
+      .where(and(eq(products.isActive, true), applyDemoFilter(products)))
+      .orderBy(asc(products.name));
+  }
+
+  async getEvaluationRequestByExternalRef(externalRef: string): Promise<EvaluationRequest | undefined> {
+    const [row] = await db
+      .select()
+      .from(evaluationRequests)
+      .where(eq(evaluationRequests.externalRef, externalRef))
+      .limit(1);
+    return row;
+  }
+
+  /**
+   * Saves a request another app sent, with its solutions, in one transaction.
+   * A second call with the same externalRef (a retry racing the first) gets
+   * the saved request back with created: false.
+   */
+  async createExternalEvaluationRequest(
+    values: {
+      userId: string;
+      customerId: number;
+      startDate: Date;
+      endDate: Date;
+      topReasons: string;
+      compellingEvent: string;
+      externalRef: string;
+    },
+    productIds: number[],
+  ): Promise<{ request: EvaluationRequest; created: boolean }> {
+    try {
+      const request = await db.transaction(async (tx) => {
+        const [row] = await tx.insert(evaluationRequests).values(values).returning();
+        await tx
+          .insert(evaluationRequestProducts)
+          .values(productIds.map((productId) => ({ evaluationRequestId: row.id, productId })));
+        return row;
+      });
+      return { request, created: true };
+    } catch (error) {
+      // node-postgres errors may arrive wrapped by drizzle, with the pg error as `cause`.
+      const e = error as { code?: string; cause?: { code?: string } } | null;
+      if ((e?.code ?? e?.cause?.code) === "23505") {
+        const existing = await this.getEvaluationRequestByExternalRef(values.externalRef);
+        if (existing) return { request: existing, created: false };
+      }
+      throw error;
+    }
   }
 }

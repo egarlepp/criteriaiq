@@ -19,8 +19,8 @@ import { z } from "zod";
 import { storage } from "../storage";
 import { isAuthenticated } from "../auth/simpleAuth";
 import { createEvaluationRequestSchema, updateEvaluationRequestSchema } from "@shared/schema";
-import { sendEmail } from "../email/email";
-import { notifyEvaluationRequestStatusChanged, notifyEvaluationRequestSubmitted } from "../services/notifications";
+import { notifyEvaluationRequestStatusChanged } from "../services/notifications";
+import { notifyNewEvaluationRequest } from "../lib/evaluation-request-notify";
 import { hasCustomerAccess, getUserAccessibleCustomers } from "../lib/customer-access";
 import { isExternalRole } from "../lib/internal-access";
 
@@ -75,64 +75,15 @@ export function registerEvaluationRequestsRoutes(app: Express) {
 
       const newRequest = await storage.createEvaluationRequestWithProducts(requestData, solutionIds);
 
-      // Send email notification to Account Representative and Account Engineer
-      try {
-        const customer = await storage.getCustomer(validatedData.customerId);
-        if (customer) {
-          notifyEvaluationRequestSubmitted({
-            customerId: validatedData.customerId,
-            accountName: customer.accountName ?? null,
-            requesterName: [req.session.user.firstName, req.session.user.lastName].filter(Boolean).join(' ') || null,
-            accountRepresentativeId: customer.accountRepresentativeId,
-            accountEngineerId: customer.accountEngineerId,
-            actorUserId: userId,
-          });
-        }
-        if (customer && (customer.accountRepresentativeId || customer.accountEngineerId)) {
-          // Get solution names for email
-          const solutions = await storage.getProductsByIds(solutionIds);
-          const solutionNames = solutions.map(s => s.name);
-
-          const emailData = {
-            requesterName: req.session.user.firstName + ' ' + req.session.user.lastName,
-            requesterEmail: req.session.user.email,
-            customerName: customer.accountName,
-            solutions: solutionNames,
-            startDate: validatedData.startDate.toLocaleDateString(),
-            endDate: validatedData.endDate.toLocaleDateString(),
-            topReasons: validatedData.topReasons,
-            compellingEvent: validatedData.compellingEvent,
-            status: 'Open'
-          };
-
-          // Send to Account Representative
-          if (customer.accountRepresentativeId) {
-            const accountRep = await storage.getUser(customer.accountRepresentativeId);
-            if (accountRep && accountRep.email) {
-              await sendEmail({
-                to: accountRep.email,
-                template: 'Evaluation Request Submitted',
-                data: emailData
-              } as any);
-            }
-          }
-
-          // Send to Account Engineer
-          if (customer.accountEngineerId) {
-            const accountEngineer = await storage.getUser(customer.accountEngineerId);
-            if (accountEngineer && accountEngineer.email) {
-              await sendEmail({
-                to: accountEngineer.email,
-                template: 'Evaluation Request Submitted',
-                data: emailData
-              } as any);
-            }
-          }
-        }
-      } catch (emailError) {
-        console.error('Failed to send evaluation request notification email:', emailError);
-        // Don't fail the request creation if email fails
-      }
+      await notifyNewEvaluationRequest({
+        customerId: validatedData.customerId,
+        solutionIds,
+        startDate: validatedData.startDate,
+        endDate: validatedData.endDate,
+        topReasons: validatedData.topReasons,
+        compellingEvent: validatedData.compellingEvent,
+        requester: req.session.user,
+      });
 
       res.status(201).json(newRequest);
     } catch (error: any) {

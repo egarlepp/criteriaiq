@@ -35,6 +35,7 @@ export const API_KEY_SCOPES = [
   "webhooks:write",
   "mcp:read",
   "people:read",
+  "evaluation-requests:write",
 ] as const;
 
 export type ApiKeyScope = (typeof API_KEY_SCOPES)[number];
@@ -70,6 +71,9 @@ export const API_KEY_SCOPE_PRESETS = {
   automation: ["automation:read", "automation:execute"],
   // VectorIQ's readiness feed: per-person counts only, no customer names.
   "people-summary": ["people:read"],
+  // DemoIQ: ask for a POC after a demo, on behalf of the SE who ran it.
+  // Account names and solution names only; no projects, users or contacts.
+  "evaluation-requests": ["evaluation-requests:write"],
 } as const satisfies Record<string, readonly ApiKeyScope[]>;
 
 export type ApiKeyScopePreset = keyof typeof API_KEY_SCOPE_PRESETS;
@@ -121,6 +125,8 @@ const SCOPE_ROUTES: readonly PathRule[] = [
   { prefix: "/api/mcp", scope: "mcp:read" },
   // Fixed scope: the only route under this prefix is GET /api/v1/people/summary.
   { prefix: "/api/v1/people", scope: "people:read" },
+  // Fixed scope for reads too: the options lookup only serves the create form.
+  { prefix: "/api/v1/evaluation-requests", scope: "evaluation-requests:write" },
 ];
 
 interface ForbiddenRule {

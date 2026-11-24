@@ -68,19 +68,21 @@ interface N8nConfigDisplay {
 }
 
 // Mirrors API_KEY_SCOPE_PRESETS in server/auth/apiKeyScopes.ts.
-const API_KEY_PRESET_OPTIONS = ["read-only", "read-write", "automation", "people-summary"] as const;
+const API_KEY_PRESET_OPTIONS = ["read-only", "read-write", "automation", "people-summary", "evaluation-requests"] as const;
 type ApiKeyScopePreset = (typeof API_KEY_PRESET_OPTIONS)[number];
 const API_KEY_PRESET_LABEL_KEYS: Record<ApiKeyScopePreset, string> = {
   "read-only": "integrations.n8n.presetReadOnlyLabel",
   "read-write": "integrations.n8n.presetReadWriteLabel",
   automation: "integrations.n8n.presetAutomationLabel",
   "people-summary": "integrations.n8n.presetPeopleSummaryLabel",
+  "evaluation-requests": "integrations.n8n.presetEvaluationRequestsLabel",
 };
 const API_KEY_PRESET_DESCRIPTION_KEYS: Record<ApiKeyScopePreset, string> = {
   "read-only": "integrations.n8n.presetReadOnlyDescription",
   "read-write": "integrations.n8n.presetReadWriteDescription",
   automation: "integrations.n8n.presetAutomationDescription",
   "people-summary": "integrations.n8n.presetPeopleSummaryDescription",
+  "evaluation-requests": "integrations.n8n.presetEvaluationRequestsDescription",
 };
 
 interface ApiKeyDisplay {

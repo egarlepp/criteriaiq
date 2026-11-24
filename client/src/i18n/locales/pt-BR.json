@@ -6370,7 +6370,9 @@
       "eventCount_other": "{{count}} eventos",
       "toastWebhookLoadFailed": "Não foi possível carregar o webhook",
       "presetPeopleSummaryLabel": "Somente resumo de pessoas (VectorIQ)",
-      "presetPeopleSummaryDescription": "Lê as contagens de uma pessoa pelo e-mail: validações de que participou, ganhas, perdidas e critérios de sucesso atingidos. Sem nomes de projetos ou clientes. Nada mais."
+      "presetPeopleSummaryDescription": "Lê as contagens de uma pessoa pelo e-mail: validações de que participou, ganhas, perdidas e critérios de sucesso atingidos. Sem nomes de projetos ou clientes. Nada mais.",
+      "presetEvaluationRequestsLabel": "Somente solicitações de avaliação (DemoIQ)",
+      "presetEvaluationRequestsDescription": "Solicita uma POC em nome de um SE, indicado pelo e-mail, após uma demonstração. Pode consultar nomes de contas e soluções para preencher a solicitação. Nada mais."
     },
     "impactiq": {
       "keyScopeNote": "Crie a chave no ImpactIQ em Minhas configurações › Chaves de API apenas com o escopo effort:read. Um líder de equipe ou administrador precisa criá-la. Ela só consegue ler totais de horas por oportunidade.",
