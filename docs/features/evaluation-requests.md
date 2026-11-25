@@ -90,14 +90,15 @@ with that SE as the requester, and the account team is told as above.
 
 Create the key in Admin › Integrations › n8n › API keys with the
 **Evaluation requests only (DemoIQ)** preset (scope
-`evaluation-requests:write`). That key can call the two endpoints below and
+`evaluation-requests:write`). That key can call the endpoints below and
 nothing else; no other preset includes the scope, and a signed-in user can't
 call them (they use `/api/evaluation-requests`). Send
 `Authorization: Bearer <key>`. Demo Mode follows the app-wide setting.
 
 | Method | Endpoint | Notes |
 |--------|----------|-------|
-| GET | `/api/v1/evaluation-requests/options?account=<text>` | `{ data: { accounts, solutions } }`: active solutions, and with 2+ characters up to 20 active accounts whose name contains the text, exact matches first. Ids and names only. The internal (company) account is never listed. |
+| GET | `/api/v1/evaluation-requests/options?account=<text>` | `{ data: { accounts, solutions } }`: active solutions, and with 2+ characters up to 20 active accounts whose name contains the text, exact matches first. Accounts are ids and names only; the internal (company) account is never listed. Each solution is `{ id, name, iconName, graphicUrl }`: how CriteriaIQ draws it, its uploaded graphic (`graphicUrl`, a path on CriteriaIQ, wins when set) or else its lucide icon name (PascalCase, like `ShieldCheck`). Either can be `null`. |
+| GET | `/api/files/system/solution-icons/<file>` | The graphic a solution's `graphicUrl` points at. DemoIQ copies these so its solutions look the same. |
 | POST | `/api/v1/evaluation-requests` | Body below. `201` with `{ data: { id, status, created: true, url } }`; `200` with `created: false` when `externalRef` was already used. |
 
 POST body (unknown fields are rejected):

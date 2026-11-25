@@ -72,7 +72,8 @@ export const API_KEY_SCOPE_PRESETS = {
   // VectorIQ's readiness feed: per-person counts only, no customer names.
   "people-summary": ["people:read"],
   // DemoIQ: ask for a POC after a demo, on behalf of the SE who ran it.
-  // Account names and solution names only; no projects, users or contacts.
+  // Account names, solution names and solution graphics only; no projects,
+  // users or contacts.
   "evaluation-requests": ["evaluation-requests:write"],
 } as const satisfies Record<string, readonly ApiKeyScope[]>;
 
@@ -127,6 +128,10 @@ const SCOPE_ROUTES: readonly PathRule[] = [
   { prefix: "/api/v1/people", scope: "people:read" },
   // Fixed scope for reads too: the options lookup only serves the create form.
   { prefix: "/api/v1/evaluation-requests", scope: "evaluation-requests:write" },
+  // The solution graphics the options lookup points at (graphicUrl), so
+  // DemoIQ can show the same picture. Only GET exists under this prefix;
+  // uploads go through /api/admin/solution-icons.
+  { prefix: "/api/files/system/solution-icons", scope: "evaluation-requests:write" },
 ];
 
 interface ForbiddenRule {
