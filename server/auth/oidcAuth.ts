@@ -111,6 +111,7 @@ import { getPublicAppUrl } from "../lib/app-config";
 import { isSsoProvider, SSO_PROVIDERS } from "@shared/schema";
 import { parseTeamGroupMapping, targetsFromGroups, teamGroupMappingSchema, type TeamGroupMapping } from "@shared/teams";
 import type { SsoConfig, SsoProvider, User } from "@shared/schema";
+import { trimTrailingChar } from "@shared/trim-edge";
 
 // ---------------------------------------------------------------------------
 // Configuration & constants
@@ -200,7 +201,7 @@ function hasProviderSettings(row: SsoConfig): boolean {
 
 /** "your-org.okta.com" or "https://your-org.okta.com/" → "https://your-org.okta.com". */
 function normalizeOktaDomain(raw: string): string {
-  const trimmed = raw.trim().replace(/\/+$/, "");
+  const trimmed = trimTrailingChar(raw.trim(), "/");
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 }
 
@@ -297,7 +298,7 @@ export function invalidateOidcConfigCache(provider?: SsoProvider): void {
 // ---------------------------------------------------------------------------
 
 function getDefaultRedirectUri(provider: SsoProvider): string {
-  const base = getPublicAppUrl().replace(/\/+$/, "");
+  const base = trimTrailingChar(getPublicAppUrl(), "/");
   return `${base}${PROVIDERS[provider].callbackPath}`;
 }
 

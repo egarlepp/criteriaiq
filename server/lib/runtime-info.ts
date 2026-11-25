@@ -40,6 +40,7 @@
 // `applyDatabaseUrlVia*` helpers. The endpoint reports a boolean
 // `controlApi.available` flag and, for diagnostics, the *name* of the
 // env var the operator should set — never its value.
+import { trimTrailingChar } from "@shared/trim-edge";
 
 export type Runtime = "coolify" | "dokploy" | "docker" | "standalone";
 
@@ -151,7 +152,7 @@ function readEnv(
  * (which some reverse proxies treat as a 404).
  */
 function trimTrailingSlash(url: string): string {
-  return url.replace(/\/+$/, "");
+  return trimTrailingChar(url, "/");
 }
 
 /**

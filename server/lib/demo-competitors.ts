@@ -17,6 +17,7 @@ import {
   customerCompetitors,
 } from "@shared/schema";
 import type { DemoSolution } from "./demo-library";
+import { trimEdgeChar } from "@shared/trim-edge";
 
 interface DemoSpaceDef {
   code: string;
@@ -131,7 +132,7 @@ function freeCode(wanted: string, taken: Set<string>): string {
 }
 
 function toSlug(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return trimEdgeChar(name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), "-");
 }
 
 export async function seedDemoCompetitors(

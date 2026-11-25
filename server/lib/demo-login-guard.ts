@@ -20,6 +20,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { sql } from "drizzle-orm";
 import { DEMO_LOGIN_BLOCKED_CODE, isDemoLoginKind } from "@shared/demo-login";
+import { trimTrailingChar } from "@shared/trim-edge";
 
 const READ_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
@@ -246,7 +247,7 @@ export interface DemoLoginRequest {
 export function decideDemoLoginRequest(req: DemoLoginRequest): DemoLoginDecision {
   const method = req.method.toUpperCase();
   const isRead = READ_METHODS.has(method);
-  const path = req.path.replace(/\/+$/, "") || "/";
+  const path = trimTrailingChar(req.path, "/") || "/";
   if (!path.startsWith("/api/")) return { allow: true, checks: [] };
 
   const readException = isRead && READ_EXCEPTIONS.some((p) => under(path, p));

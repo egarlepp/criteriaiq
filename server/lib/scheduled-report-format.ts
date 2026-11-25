@@ -3,6 +3,7 @@
 // HTML table that go into the email. No database access here, so all of it
 // is unit-tested in server/lib/__tests__/scheduled-report-format.test.ts.
 import { isExternalRole } from "./internal-access";
+import { trimEdgeChar } from "@shared/trim-edge";
 
 const DAY_MS = 86_400_000;
 
@@ -247,10 +248,6 @@ export function buildReportHtmlTable(columns: readonly ReportColumn[], rows: Rea
 
 /** A safe attachment file name, e.g. "project-status-report-2026-10-31.csv". */
 export function reportCsvFilename(reportName: string, now: Date): string {
-  const slug = reportName
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 60);
+  const slug = trimEdgeChar(reportName.toLowerCase().replace(/[^a-z0-9]+/g, "-"), "-").slice(0, 60);
   return `${slug || "report"}-${isoDay(now)}.csv`;
 }

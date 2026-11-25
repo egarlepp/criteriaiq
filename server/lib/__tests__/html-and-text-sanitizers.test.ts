@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { stripScriptTags } from "../strip-script-tags";
-import { trimEdgeChar } from "../trim-edge";
+import { trimEdgeChar, trimTrailingChar } from "@shared/trim-edge";
 import { sanitizeSvg } from "../svg-sanitizer";
 import { resolveMinifiedStack } from "../sourcemap-resolver";
 
@@ -29,6 +29,21 @@ describe("trimEdgeChar", () => {
     const input = "-".repeat(200_000) + "x" + "-".repeat(200_000) + "y";
     const started = Date.now();
     expect(trimEdgeChar(input, "-")).toBe("x" + "-".repeat(200_000) + "y");
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
+});
+
+describe("trimTrailingChar", () => {
+  it("trims the trailing run only", () => {
+    expect(trimTrailingChar("https://x.io//", "/")).toBe("https://x.io");
+    expect(trimTrailingChar("/a/b", "/")).toBe("/a/b");
+    expect(trimTrailingChar("///", "/")).toBe("");
+  });
+
+  it("stays fast on a long run that isn't at the end", () => {
+    const input = "/".repeat(200_000) + "x";
+    const started = Date.now();
+    expect(trimTrailingChar(input, "/")).toBe(input);
     expect(Date.now() - started).toBeLessThan(1000);
   });
 });

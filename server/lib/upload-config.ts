@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { trimEdgeChar } from './trim-edge';
+import { trimEdgeChar } from '@shared/trim-edge';
 
 // ─── Allowed MIME types with per-type size limits ─────────────────────────────
 
