@@ -163,7 +163,7 @@ function SolutionTable({
               <SortableTableCell className="text-sm text-gray-500">{solution.id}</SortableTableCell>
               <SortableTableCell className="font-medium">
                 <div className="flex items-center gap-2">
-                  <SolutionGraphic graphic={solution.solutionIcon} icon={solution.solutionIconName} name={solution.name} className="w-[35px] h-[35px] object-contain shrink-0" />
+                  <SolutionGraphic graphic={solution.solutionIcon} icon={solution.solutionIconName} name={solution.name} className="h-5 w-5" />
                   <span>{solution.name}</span>
                   {solution.isSystem && (
                     <Tooltip>
