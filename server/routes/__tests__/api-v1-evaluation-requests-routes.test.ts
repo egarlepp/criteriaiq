@@ -80,8 +80,8 @@ beforeEach(() => {
   storageMock.getEvaluationRequestByExternalRef.mockResolvedValue(undefined);
   storageMock.getEvaluationRequestAccount.mockImplementation(async (id: number) => (id === 5 ? { id: 5, name: "Acme" } : undefined));
   storageMock.getEvaluationRequestSolutions.mockResolvedValue([
-    { id: 11, name: "Auditor" },
-    { id: 12, name: "Access Analyzer" },
+    { id: 11, name: "Auditor", iconName: null, graphicUrl: "/api/files/system/solution-icons/auditor.svg" },
+    { id: 12, name: "Access Analyzer", iconName: "ShieldCheck", graphicUrl: null },
   ]);
   storageMock.searchEvaluationRequestAccounts.mockResolvedValue([{ id: 5, name: "Acme" }]);
   storageMock.createExternalEvaluationRequest.mockImplementation(async (values: { userId: string }) => ({
@@ -103,6 +103,13 @@ describe("scopes", () => {
   it("maps the v1 evaluation-requests path to its own scope, for reads and writes", () => {
     expect(checkApiKeyAccess(["evaluation-requests:write"], "POST", "/api/v1/evaluation-requests")).toEqual({ allowed: true });
     expect(checkApiKeyAccess(["evaluation-requests:write"], "GET", "/api/v1/evaluation-requests/options")).toEqual({ allowed: true });
+  });
+
+  it("lets that key read solution graphics, and no other file", () => {
+    expect(checkApiKeyAccess(["evaluation-requests:write"], "GET", "/api/files/system/solution-icons/auditor.svg")).toEqual({ allowed: true });
+    expect(checkApiKeyAccess(["evaluation-requests:write"], "GET", "/api/files/system/branding/logo.png").allowed).toBe(false);
+    expect(checkApiKeyAccess(["evaluation-requests:write"], "GET", "/api/files/accounts/6/documents/a.pdf").allowed).toBe(false);
+    expect(checkApiKeyAccess(["projects:read"], "GET", "/api/files/system/solution-icons/auditor.svg").allowed).toBe(false);
   });
 
   it("gives that key nothing else, and other keys not this", () => {
@@ -194,7 +201,13 @@ describe("POST /api/v1/evaluation-requests", () => {
 describe("GET /api/v1/evaluation-requests/options", () => {
   it("lists solutions, and accounts once two characters are typed", async () => {
     const short = await call("GET", "/api/v1/evaluation-requests/options?account=A");
-    expect(short.body.data).toEqual({ accounts: [], solutions: [{ id: 11, name: "Auditor" }, { id: 12, name: "Access Analyzer" }] });
+    expect(short.body.data).toEqual({
+      accounts: [],
+      solutions: [
+        { id: 11, name: "Auditor", iconName: null, graphicUrl: "/api/files/system/solution-icons/auditor.svg" },
+        { id: 12, name: "Access Analyzer", iconName: "ShieldCheck", graphicUrl: null },
+      ],
+    });
     expect(storageMock.searchEvaluationRequestAccounts).not.toHaveBeenCalled();
 
     const res = await call("GET", "/api/v1/evaluation-requests/options?account=Acm");

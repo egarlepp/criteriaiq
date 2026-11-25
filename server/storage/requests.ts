@@ -26,7 +26,18 @@
 // mixin level — these tables predate the demo flag and the upstream
 // route handlers gate access via the user's role/customer scope.
 import { db, pool } from "../db";
+import { solutionGraphicPath } from "../lib/solution-graphic";
 import { applyDemoFilter, applyDemoFilterByCustomer } from "../lib/demo-storage";
+
+/** A solution as the DemoIQ options lookup lists it. */
+export interface EvaluationRequestSolution {
+  id: number;
+  name: string;
+  /** A lucide icon name (PascalCase, as the icon picker saves it), or null. */
+  iconName: string | null;
+  /** Where the uploaded graphic is served (/api/files/...), or null. Wins over iconName. */
+  graphicUrl: string | null;
+}
 import { eq, and, or, desc, asc, count, sql, inArray, gte, ilike } from "drizzle-orm";
 import {
   users,
@@ -814,13 +825,27 @@ export class RequestsStorageMixin {
     return row;
   }
 
-  /** Active solutions, by name. */
-  async getEvaluationRequestSolutions(): Promise<Array<{ id: number; name: string }>> {
-    return db
-      .select({ id: products.id, name: products.name })
+  /**
+   * Active solutions, by name, with how CriteriaIQ draws each one: its
+   * uploaded graphic (graphicUrl, wins when set) or its lucide icon name.
+   */
+  async getEvaluationRequestSolutions(): Promise<EvaluationRequestSolution[]> {
+    const rows = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        solutionIcon: products.solutionIcon,
+        solutionIconName: products.solutionIconName,
+      })
       .from(products)
       .where(and(eq(products.isActive, true), applyDemoFilter(products)))
       .orderBy(asc(products.name));
+    return rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      iconName: r.solutionIconName || null,
+      graphicUrl: solutionGraphicPath(r.solutionIcon),
+    }));
   }
 
   async getEvaluationRequestByExternalRef(externalRef: string): Promise<EvaluationRequest | undefined> {
