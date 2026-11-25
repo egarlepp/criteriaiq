@@ -169,7 +169,7 @@ export function registerApiV1EvaluationRequestsRoutes(app: Express) {
       });
     } catch (error) {
       console.error("[api/v1] Couldn't create an evaluation request:", error);
-      return res.status(500).json({ message: "Failed to create the evaluation request" });
+      return res.status(500).json({ message: "Failed to create the request" });
     }
   });
 }

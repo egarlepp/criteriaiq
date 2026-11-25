@@ -86,7 +86,7 @@ CriteriaIQ-issued Bearer tokens that n8n, DemoIQ, VectorIQ, ImpactIQ or any othe
 **Creating a key:**
 1. Click **+ Create API Key**
 2. Enter a label (e.g. `n8n-main`)
-3. Pick an access preset: **Read only**, **Read and write**, **Automation only**, **People summary only (VectorIQ)** or **Evaluation requests only (DemoIQ)**
+3. Pick an access preset: **Read only**, **Read and write**, **Automation only**, **People summary only (VectorIQ)** or **<record> requests only (DemoIQ)** (the Terminology name, e.g. Project)
 4. Optionally set an expiry date
 5. Copy the generated token — it is shown **exactly once** and cannot be recovered
 

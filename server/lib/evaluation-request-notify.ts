@@ -1,4 +1,5 @@
-// Tells the account team about a new evaluation request: an in-app
+// Tells the account team about a new request (named with the Terminology
+// setting, e.g. "Project request"; stored as an evaluation request): an in-app
 // notification, and an email to the account's Account Representative and
 // Account Engineer with the request's details.
 //
@@ -10,6 +11,8 @@ import { sendEmail } from "../email/email";
 import { notifyEvaluationRequestSubmitted } from "../services/notifications";
 import { escapeHtml } from "../email/digest-utils";
 import { getPublicAppUrl } from "./app-config";
+import { getValidationRecordSettings } from "./crm-validation-record-settings";
+import { validationRecordEnglishName } from "@shared/crm-validation-record";
 
 export interface NewEvaluationRequestNotice {
   customerId: number;
@@ -55,6 +58,8 @@ export async function notifyNewEvaluationRequest(notice: NewEvaluationRequestNot
     );
     if (recipientIds.length === 0) return;
 
+    // The admin's word for the record (Admin › System Settings › Terminology).
+    const record = validationRecordEnglishName(await getValidationRecordSettings());
     const solutions = (await storage.getProductsByIds(notice.solutionIds)).map((s) => s.name);
     const accountName = customer.accountName ?? "";
     const rows: Array<[string, string]> = [
@@ -67,7 +72,7 @@ export async function notifyNewEvaluationRequest(notice: NewEvaluationRequestNot
     ];
     const url = `${getPublicAppUrl()}/project?tab=validation&subtab=evaluation-requests`;
     const text = [...rows.map(([k, v]) => `${k}: ${v}`), "", `Open the requests: ${url}`].join("\n");
-    const html = `<p>A new evaluation request is open.</p><table cellpadding="4">${rows
+    const html = `<p>A new ${escapeHtml(record)} request is open.</p><table cellpadding="4">${rows
       .map(([k, v]) => `<tr><td><strong>${escapeHtml(k)}</strong></td><td>${escapeHtml(v)}</td></tr>`)
       .join("")}</table><p><a href="${escapeHtml(url)}">Open the requests</a></p>`;
 
@@ -77,13 +82,13 @@ export async function notifyNewEvaluationRequest(notice: NewEvaluationRequestNot
       await sendEmail({
         to: recipient.email,
         from: process.env.GMAIL_USER || "noreply@example.com",
-        subject: `New evaluation request: ${accountName}`,
+        subject: `New ${record} request: ${accountName}`,
         text,
         html,
         emailType: "evaluation_request_submitted",
       });
     }
   } catch (error) {
-    console.error("Failed to send evaluation request notification email:", error);
+    console.error("Failed to send the request notification email:", error);
   }
 }

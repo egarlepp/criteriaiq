@@ -1,8 +1,10 @@
 # Evaluation Requests
 
-An evaluation request asks the team to start a validation (Evaluation, POC,
-POV — the name comes from Admin › System Settings › Terminology) for an
-account. It records the solutions wanted, the requested start and end dates,
+A request asks the team to start a validation for an account. Screens, emails
+and notifications call it a "<record> request", where <record> is the name
+chosen in Admin › System Settings › Terminology (Project, POC, POV,
+Evaluation...). The code, API paths and tables keep the name
+`evaluation_requests`. It records the solutions wanted, the requested start and end dates,
 the top reasons and the compelling event. A request is `open` or `closed`.
 
 Code: `server/routes/evaluation-requests-routes.ts` (routes),
@@ -47,8 +49,8 @@ routes file). Opening, editing and status changes use `hasCustomerAccess`
 delete is the requester or an Admin.
 
 A new request notifies the account's Account Representative and Account
-Engineer in the app and by email (subject "New evaluation request:
-<account>", with the account, requester, solutions, dates, reasons and
+Engineer in the app and by email (subject "New <record> request:
+<account>", for example "New Project request: Acme", with the account, requester, solutions, dates, reasons and
 compelling event). No email is sent in Demo Mode.
 
 ## Drawer and dialog
@@ -89,7 +91,8 @@ on behalf of the SE who ran the demo. The result is an ordinary open request
 with that SE as the requester, and the account team is told as above.
 
 Create the key in Admin › Integrations › API Keys with the
-**Evaluation requests only (DemoIQ)** preset (scope
+**<record> requests only (DemoIQ)** preset (for example "Project requests
+only (DemoIQ)") (scope
 `evaluation-requests:write`). That key can call the endpoints below and
 nothing else; no other preset includes the scope, and a signed-in user can't
 call them (they use `/api/evaluation-requests`). Send

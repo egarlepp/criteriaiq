@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CopyButton } from "./CopyButton";
+import { useValidationRecordLabel } from "@/hooks/use-validation-record-label";
 
 /**
  * Admin › Integrations › API Keys. The keys other apps and tools call
@@ -61,6 +62,7 @@ interface ApiKeyDisplay {
 const KEYS_KEY = ["/api/admin/api-keys"] as const;
 
 export function ApiKeysTab() {
+  const record = useValidationRecordLabel();
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -248,12 +250,12 @@ export function ApiKeysTab() {
                   <SelectContent>
                     {API_KEY_PRESET_OPTIONS.map((preset) => (
                       <SelectItem key={preset} value={preset}>
-                        {t(API_KEY_PRESET_LABEL_KEYS[preset])}
+                        {t(API_KEY_PRESET_LABEL_KEYS[preset], { record })}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{t(API_KEY_PRESET_DESCRIPTION_KEYS[newKeyPreset])}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t(API_KEY_PRESET_DESCRIPTION_KEYS[newKeyPreset], { record })}</p>
               </div>
               <div className="grid gap-1.5 py-2">
                 <Label htmlFor="new-key-expires">{t("integrations.apiKeys.dialogExpiresField")}</Label>
