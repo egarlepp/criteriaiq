@@ -92,6 +92,7 @@ describe("toPageValues (one-time backfill)", () => {
     expect(value(rows, "config.login-history")).toBe("view");
     expect(value(rows, "config.hubspot")).toBe("edit");
     expect(value(rows, "config.mcp-server")).toBe("edit");
+    expect(value(rows, "config.api-keys")).toBe("edit");
   });
 
   it("converts the Account Portal and drops unknown keys", () => {

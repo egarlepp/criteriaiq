@@ -1,11 +1,15 @@
 # Evaluation Requests
 
-An evaluation request asks the team to start a validation (Evaluation, POC,
-POV — the name comes from Admin › System Settings › Terminology) for an
-account. It records the solutions wanted, the requested start and end dates,
+A request asks the team to start a validation for an account. Screens, emails
+and notifications call it a "<record> request", where <record> is the name
+chosen in Admin › System Settings › Terminology (Project, POC, POV,
+Evaluation...). The code, API paths and tables keep the name
+`evaluation_requests`. It records the solutions wanted, the requested start and end dates,
 the top reasons and the compelling event. A request is `open` or `closed`.
 
 Code: `server/routes/evaluation-requests-routes.ts` (routes),
+`server/routes/api-v1-evaluation-requests-routes.ts` (requests from other
+apps), `server/lib/evaluation-request-notify.ts` (who is told),
 `server/storage/requests.ts` (queries), `shared/schema/projects.ts`
 (`evaluation_requests`, `evaluation_request_products`, and the
 `createEvaluationRequestSchema` / `updateEvaluationRequestSchema` request
@@ -24,7 +28,8 @@ bodies), `client/src/components/requests/` (UI).
   button; Total / Open / Closed cards; a sortable, paged table whose row
   actions are View, Edit and Delete (Delete for the requester or an Admin,
   behind a confirmation). Same visibility as the API (see Who sees
-  what below).
+  what below). `&requestId=<id>` on this URL opens that request's details,
+  which is the link other apps are given.
 
 The menu and tab label read `{{record}}` from i18next's default variables:
 `useValidationRecordLabel()` calls `applyRecordWording()` (in
@@ -42,6 +47,11 @@ The list and the count share this rule (`evaluationRequestScope` in the
 routes file). Opening, editing and status changes use `hasCustomerAccess`
 (internal roles pass; outside users must be a contact on the account);
 delete is the requester or an Admin.
+
+A new request notifies the account's Account Representative and Account
+Engineer in the app and by email (subject "New <record> request:
+<account>", for example "New Project request: Acme", with the account, requester, solutions, dates, reasons and
+compelling event). No email is sent in Demo Mode.
 
 ## Drawer and dialog
 
@@ -73,3 +83,39 @@ Start and end dates are stored as midnight UTC; the client reads the
 | GET | `/api/evaluation-requests/:id` | Same shape as a list row. |
 | PATCH | `/api/evaluation-requests/:id` | Any of `startDate`, `endDate`, `topReasons`, `compellingEvent`, `solutionIds` (replaces the list), `status`. Other fields are rejected. A status change notifies the requester. |
 | DELETE | `/api/evaluation-requests/:id` | Requester or Admin. |
+
+## For other apps (DemoIQ)
+
+After a demo where the prospect agreed to a POC or trial, DemoIQ asks for one
+on behalf of the SE who ran the demo. The result is an ordinary open request
+with that SE as the requester, and the account team is told as above.
+
+Create the key in Admin › Integrations › API Keys with the
+**<record> requests only (DemoIQ)** preset (for example "Project requests
+only (DemoIQ)") (scope
+`evaluation-requests:write`). That key can call the endpoints below and
+nothing else; no other preset includes the scope, and a signed-in user can't
+call them (they use `/api/evaluation-requests`). Send
+`Authorization: Bearer <key>`. Demo Mode follows the app-wide setting.
+
+| Method | Endpoint | Notes |
+|--------|----------|-------|
+| GET | `/api/v1/evaluation-requests/options?account=<text>` | `{ data: { accounts, solutions } }`: active solutions, and with 2+ characters up to 20 active accounts whose name contains the text, exact matches first. Accounts are ids and names only; the internal (company) account is never listed. Each solution is `{ id, name, iconName, graphicUrl, solutionType, description, components }`. `iconName` and `graphicUrl` are how CriteriaIQ draws it: its uploaded graphic (`graphicUrl`, a path on CriteriaIQ, wins when set) or else its lucide icon name (PascalCase, like `ShieldCheck`); either can be `null`. `components` lists the active components linked to the solution as `{ id, name, description }`, by name. DemoIQ uses these to import solutions and their components. |
+| GET | `/api/files/system/solution-icons/<file>` | The graphic a solution's `graphicUrl` points at. DemoIQ copies these so its solutions look the same. |
+| POST | `/api/v1/evaluation-requests` | Body below. `201` with `{ data: { id, status, created: true, url } }`; `200` with `created: false` when `externalRef` was already used. |
+
+POST body (unknown fields are rejected):
+
+| Field | Rule |
+|-------|------|
+| `requesterEmail` | An active, approved internal user. Unknown, outside (Customer, Guest, Partner) and inactive people all get the same `404 requester_not_found`. |
+| `customerId` | An active account from `options` (`404 account_not_found` otherwise). |
+| `solutionIds` | 1 to 100 active solution ids (`400 unknown_solutions` lists any others). |
+| `startDate`, `endDate` | `yyyy-MM-dd`, stored as midnight UTC; end on or after start. |
+| `topReasons`, `compellingEvent` | 1 to 5,000 characters each. |
+| `externalRef` | The caller's own id for the request, up to 200 of `A-Z a-z 0-9 . _ : / -` (DemoIQ sends `demoiq:demo:<demo id>`). Unique: a retry returns the request already made, and a ref used by another person's request is `409 external_ref_conflict`. |
+
+Errors carry `{ code, message }`; a body that fails validation is
+`400 invalid_request` with `errors: [{ path, message }]`. `url` opens the
+request in CriteriaIQ.
+

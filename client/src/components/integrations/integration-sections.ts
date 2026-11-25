@@ -7,5 +7,6 @@ export const INTEGRATION_SUBTAB_SECTIONS: Record<string, string> = {
   hubspot: "config.hubspot",
   "ai-providers": "config.ai-providers",
   n8n: "config.n8n",
+  "api-keys": "config.api-keys",
   "mcp-server": "config.mcp-server",
 };

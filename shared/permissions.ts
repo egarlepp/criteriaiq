@@ -93,6 +93,7 @@ export const PAGE_PERMISSION_KEYS = [
   "config.hubspot",
   "config.ai-providers",
   "config.n8n",
+  "config.api-keys",
   "config.mcp-server",
   // Admin › Monitoring & Audit
   "config.system-health",
@@ -127,6 +128,7 @@ export const PERMISSION_KEY_SPLITS: Record<string, string> = {
   "config.hubspot": "config.salesforce-configuration",
   "config.ai-providers": "config.salesforce-configuration",
   "config.n8n": "config.salesforce-configuration",
+  "config.api-keys": "config.salesforce-configuration",
   "config.mcp-server": "config.salesforce-configuration",
   // Industries moved off Field Settings to its own page.
   "config.industries": "config.configuration",

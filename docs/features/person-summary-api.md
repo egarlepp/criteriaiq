@@ -30,8 +30,8 @@ an account.
 
 ## Who can call it
 
-- **API keys with `people:read`.** Create one in Admin › Integrations › n8n
-  › API keys with the **People summary only (VectorIQ)** access preset. That
+- **API keys with `people:read`.** Create one in Admin › Integrations › API Keys
+  with the **People summary only (VectorIQ)** access preset. That
   key can call this endpoint and nothing else: not the project summaries,
   not `/api/projects`, not `/api/users`. `people:read` is in no other preset,
   so a Read only or Read and write key can't call it either. Send

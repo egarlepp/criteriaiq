@@ -48,7 +48,7 @@ CriteriaIQ's native automation engine (email rules, notifications, webhooks) con
 Navigate to **Admin → Integrations → n8n**. The page has three cards, one for each thing n8n needs to act as the automation engine:
 
 1. **Connection**: where n8n lives.
-2. **API keys**: how n8n calls CriteriaIQ.
+2. **Calling CriteriaIQ**: the automation trigger endpoint, and a link to **Admin → Integrations → API Keys**, where the key n8n calls CriteriaIQ with is made.
 3. **Event subscriptions**: which CriteriaIQ events are pushed to n8n.
 
 The workflow browser, workflow sync filters and stats strip that used to sit on this page were removed (2026-10-20): they only displayed n8n's own workflow list and did not drive any automation.
@@ -65,11 +65,15 @@ Stores how CriteriaIQ reaches n8n. Optional: the host URL pre-fills the webhook 
 
 Use the **Test Connection** button to ping n8n's `/healthz` endpoint. The result shows latency and any error details.
 
-> **Note:** The n8n API key here is the *n8n-side* key — what CriteriaIQ uses to call n8n. This is distinct from the CriteriaIQ API key that n8n uses to call CriteriaIQ (managed in the API Keys section below).
+> **Note:** The n8n API key here is the *n8n-side* key — what CriteriaIQ uses to call n8n. This is distinct from the CriteriaIQ API key that n8n uses to call CriteriaIQ (made on the API Keys page, described below).
 
-### 2. API Keys (n8n → CriteriaIQ direction)
+### 2. Calling CriteriaIQ (n8n → CriteriaIQ direction)
 
-CriteriaIQ-issued Bearer tokens that n8n (or any external caller) uses to authenticate against `/api/*` endpoints. The card also shows the automation trigger endpoint (`POST /api/n8n/trigger`) with a copy button. MCP server keys (`mcp:*` scopes) are managed on the MCP Server page and are not listed here.
+This card shows the automation trigger endpoint (`POST /api/n8n/trigger`) with a copy button, and a **Manage API keys** button.
+
+### API Keys page (Admin → Integrations → API Keys)
+
+CriteriaIQ-issued Bearer tokens that n8n, DemoIQ, VectorIQ, ImpactIQ or any other external caller uses to authenticate against `/api/*` endpoints. They have their own Integrations page (permission `config.api-keys`) and an Overview card that shows Configured once an active, unexpired key exists. MCP server keys (`mcp:*` scopes) are managed on the MCP Server page and are not listed here.
 
 | Column | Description |
 |---|---|
@@ -82,7 +86,7 @@ CriteriaIQ-issued Bearer tokens that n8n (or any external caller) uses to authen
 **Creating a key:**
 1. Click **+ Create API Key**
 2. Enter a label (e.g. `n8n-main`)
-3. Pick an access preset: **Read only**, **Read and write**, or **Automation only**
+3. Pick an access preset: **Read only**, **Read and write**, **Automation only**, **People summary only (VectorIQ)** or **<record> requests only (DemoIQ)** (the Terminology name, e.g. Project)
 4. Optionally set an expiry date
 5. Copy the generated token — it is shown **exactly once** and cannot be recovered
 

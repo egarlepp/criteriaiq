@@ -67,6 +67,12 @@ export default function EvaluationRequestsSection({
   const [dialog, setDialog] = useState<DialogState>({ kind: 'closed' });
   const [pendingDelete, setPendingDelete] = useState<EvaluationRequestDetail | null>(null);
 
+  // A link from another app (DemoIQ) opens one request: ?requestId=<id>.
+  useEffect(() => {
+    const raw = new URLSearchParams(window.location.search).get('requestId');
+    if (raw && /^\d{1,9}$/.test(raw)) setDialog({ kind: 'existing', id: Number(raw), mode: 'view' });
+  }, []);
+
   const { data: requests = [], isLoading, isError } = useQuery<EvaluationRequestDetail[]>({
     queryKey: ['/api/evaluation-requests', 'all'],
     queryFn: () => apiRequest('GET', '/api/evaluation-requests'),

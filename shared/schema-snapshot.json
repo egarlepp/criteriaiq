@@ -1451,6 +1451,7 @@
       "created_at": "timestamp DEFAULT",
       "customer_id": "integer NOT NULL",
       "end_date": "timestamp NOT NULL",
+      "external_ref": "varchar(200)",
       "id": "serial NOT NULL DEFAULT PK",
       "start_date": "timestamp NOT NULL",
       "status": "varchar(50) NOT NULL DEFAULT",

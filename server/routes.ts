@@ -57,6 +57,7 @@ import { registerUserFlightDeckRoutes } from "./routes/user-flight-deck-routes";
 import { registerUsersRoutes } from "./routes/users-routes";
 import { registerProjectsRoutes } from "./routes/projects-routes";
 import { registerApiV1Routes } from "./routes/api-v1-routes";
+import { registerApiV1EvaluationRequestsRoutes } from "./routes/api-v1-evaluation-requests-routes";
 import { registerImpactiqRoutes } from "./routes/impactiq-routes";
 import { registerSalesforceIntegrationRoutes } from "./routes/salesforce-integration-routes";
 import { registerEmailConfigurationRoutes } from "./routes/email-configuration-routes";
@@ -644,6 +645,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerProjectsRoutes(app);
   // Versioned read-only summaries for other apps (ImpactIQ, VectorIQ).
   registerApiV1Routes(app);
+  registerApiV1EvaluationRequestsRoutes(app);
   registerImpactiqRoutes(app);
 
   // 5ee. Salesforce user-facing integration (Phase 8 extraction #13)

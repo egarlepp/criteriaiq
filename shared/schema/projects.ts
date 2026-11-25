@@ -10,6 +10,7 @@ import {
   integer,
   decimal,
   unique,
+  uniqueIndex,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
@@ -250,9 +251,14 @@ export const evaluationRequests = pgTable("evaluation_requests", {
   topReasons: text("top_reasons").notNull(),
   compellingEvent: text("compelling_event").notNull(),
   status: varchar("status", { length: 50 }).default("open").notNull(),
+  // Set when another app sent the request (POST /api/v1/evaluation-requests,
+  // e.g. "demoiq:demo:<id>"), so a retry finds the request it already made.
+  externalRef: varchar("external_ref", { length: 200 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => [
+  uniqueIndex("evaluation_requests_external_ref_unique").on(table.externalRef),
+]);
 
 export const evaluationRequestProducts = pgTable(
   "evaluation_request_products",
