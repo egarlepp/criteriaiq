@@ -97,7 +97,7 @@ call them (they use `/api/evaluation-requests`). Send
 
 | Method | Endpoint | Notes |
 |--------|----------|-------|
-| GET | `/api/v1/evaluation-requests/options?account=<text>` | `{ data: { accounts, solutions } }`: active solutions, and with 2+ characters up to 20 active accounts whose name contains the text, exact matches first. Accounts are ids and names only; the internal (company) account is never listed. Each solution is `{ id, name, iconName, graphicUrl }`: how CriteriaIQ draws it, its uploaded graphic (`graphicUrl`, a path on CriteriaIQ, wins when set) or else its lucide icon name (PascalCase, like `ShieldCheck`). Either can be `null`. |
+| GET | `/api/v1/evaluation-requests/options?account=<text>` | `{ data: { accounts, solutions } }`: active solutions, and with 2+ characters up to 20 active accounts whose name contains the text, exact matches first. Accounts are ids and names only; the internal (company) account is never listed. Each solution is `{ id, name, iconName, graphicUrl, solutionType, description, components }`. `iconName` and `graphicUrl` are how CriteriaIQ draws it: its uploaded graphic (`graphicUrl`, a path on CriteriaIQ, wins when set) or else its lucide icon name (PascalCase, like `ShieldCheck`); either can be `null`. `components` lists the active components linked to the solution as `{ id, name, description }`, by name. DemoIQ uses these to import solutions and their components. |
 | GET | `/api/files/system/solution-icons/<file>` | The graphic a solution's `graphicUrl` points at. DemoIQ copies these so its solutions look the same. |
 | POST | `/api/v1/evaluation-requests` | Body below. `201` with `{ data: { id, status, created: true, url } }`; `200` with `created: false` when `externalRef` was already used. |
 

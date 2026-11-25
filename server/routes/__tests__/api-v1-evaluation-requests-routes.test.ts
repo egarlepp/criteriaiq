@@ -80,8 +80,8 @@ beforeEach(() => {
   storageMock.getEvaluationRequestByExternalRef.mockResolvedValue(undefined);
   storageMock.getEvaluationRequestAccount.mockImplementation(async (id: number) => (id === 5 ? { id: 5, name: "Acme" } : undefined));
   storageMock.getEvaluationRequestSolutions.mockResolvedValue([
-    { id: 11, name: "Auditor", iconName: null, graphicUrl: "/api/files/system/solution-icons/auditor.svg" },
-    { id: 12, name: "Access Analyzer", iconName: "ShieldCheck", graphicUrl: null },
+    { id: 11, name: "Auditor", iconName: null, graphicUrl: "/api/files/system/solution-icons/auditor.svg", solutionType: "Solution", description: "Change auditing", components: [{ id: 5, name: "Active Directory", description: null }] },
+    { id: 12, name: "Access Analyzer", iconName: "ShieldCheck", graphicUrl: null, solutionType: null, description: null, components: [] },
   ]);
   storageMock.searchEvaluationRequestAccounts.mockResolvedValue([{ id: 5, name: "Acme" }]);
   storageMock.createExternalEvaluationRequest.mockImplementation(async (values: { userId: string }) => ({
@@ -204,8 +204,8 @@ describe("GET /api/v1/evaluation-requests/options", () => {
     expect(short.body.data).toEqual({
       accounts: [],
       solutions: [
-        { id: 11, name: "Auditor", iconName: null, graphicUrl: "/api/files/system/solution-icons/auditor.svg" },
-        { id: 12, name: "Access Analyzer", iconName: "ShieldCheck", graphicUrl: null },
+        { id: 11, name: "Auditor", iconName: null, graphicUrl: "/api/files/system/solution-icons/auditor.svg", solutionType: "Solution", description: "Change auditing", components: [{ id: 5, name: "Active Directory", description: null }] },
+        { id: 12, name: "Access Analyzer", iconName: "ShieldCheck", graphicUrl: null, solutionType: null, description: null, components: [] },
       ],
     });
     expect(storageMock.searchEvaluationRequestAccounts).not.toHaveBeenCalled();
