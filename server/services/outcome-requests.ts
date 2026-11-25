@@ -239,7 +239,7 @@ async function notifyInternal(
     }
     return await storage.createUserNotifications(rows);
   } catch (err) {
-    console.error(`[outcome-requests] Could not notify about project ${projectId}:`, err);
+    console.error("[outcome-requests] Could not notify about project %s:", projectId, err);
     return 0;
   }
 }
@@ -326,7 +326,7 @@ export async function syncOutcomeRequest(
     }
     return row;
   } catch (err) {
-    console.error(`[outcome-requests] Could not update the request for project ${projectId}:`, err);
+    console.error("[outcome-requests] Could not update the request for project %s:", projectId, err);
     return null;
   }
 }
@@ -352,7 +352,7 @@ export async function markOutcomeCaptured(projectId: number, outcomeType: Outcom
       capturedAt: new Date(),
     });
   } catch (err) {
-    console.error(`[outcome-requests] Could not mark project ${projectId} captured:`, err);
+    console.error("[outcome-requests] Could not mark project %s captured:", projectId, err);
   }
 }
 
@@ -373,7 +373,7 @@ export async function reopenOutcomeRequest(projectId: number): Promise<void> {
     // Drops the row if the project has since reopened.
     await syncOutcomeRequest(projectId);
   } catch (err) {
-    console.error(`[outcome-requests] Could not reopen the request for project ${projectId}:`, err);
+    console.error("[outcome-requests] Could not reopen the request for project %s:", projectId, err);
   }
 }
 

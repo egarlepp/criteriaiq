@@ -10,10 +10,18 @@ interface FuzzySuggestion {
   matchType: 'exact' | 'case_insensitive' | 'normalized' | 'partial' | 'fuzzy';
 }
 
+/** Values longer than this are compared on their first MAX_COMPARE_LENGTH characters. */
+const MAX_COMPARE_LENGTH = 255;
+
 /**
  * Calculate Levenshtein distance between two strings
  */
-function levenshteinDistance(str1: string, str2: string): number {
+function levenshteinDistance(a: string, b: string): number {
+  // The table is (len1 + 1) × (len2 + 1): only real strings, of bounded
+  // length, are compared, whatever the caller passes in.
+  if (typeof a !== "string" || typeof b !== "string") throw new TypeError("levenshteinDistance compares strings only");
+  const str1 = a.length > MAX_COMPARE_LENGTH ? a.slice(0, MAX_COMPARE_LENGTH) : a;
+  const str2 = b.length > MAX_COMPARE_LENGTH ? b.slice(0, MAX_COMPARE_LENGTH) : b;
   const len1 = str1.length;
   const len2 = str2.length;
   const dp: number[][] = Array(len1 + 1).fill(null).map(() => Array(len2 + 1).fill(0));
@@ -39,7 +47,8 @@ function levenshteinDistance(str1: string, str2: string): number {
  * Calculate similarity ratio (0-1) between two strings
  */
 export function calculateSimilarity(str1: string, str2: string): number {
-  const maxLen = Math.max(str1.length, str2.length);
+  if (typeof str1 !== "string" || typeof str2 !== "string") return 0;
+  const maxLen = Math.min(Math.max(str1.length, str2.length), MAX_COMPARE_LENGTH);
   if (maxLen === 0) return 1;
   const distance = levenshteinDistance(str1, str2);
   return 1 - (distance / maxLen);

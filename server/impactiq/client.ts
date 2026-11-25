@@ -10,6 +10,7 @@ import { z } from "zod";
 import { assertOutboundUrl, OutboundUrlError } from "../lib/outbound-url";
 import { IMPACTIQ_MAX_PROJECT_ACTIVITIES, type ImpactiqActivityCountSettings, type ImpactiqActivityTypeOption, type ImpactiqEffort, type ImpactiqErrorCode } from "@shared/impactiq";
 import { getImpactiqConfig, type ImpactiqConfig } from "./config";
+import { trimTrailingChar } from "@shared/trim-edge";
 
 const REQUEST_TIMEOUT_MS = 8000;
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -65,7 +66,7 @@ export function impactiqActivitiesUrl(impactiqUrl: string, crmOpportunityId: str
 
 /** ImpactIQ's own link for people to open, built from the saved address only. */
 export function impactiqAppUrl(config: Pick<ImpactiqConfig, "baseUrl">): string {
-  return config.baseUrl.replace(/\/+$/, "");
+  return trimTrailingChar(config.baseUrl, "/");
 }
 
 function errorForStatus(status: number, body: unknown): ImpactiqError {

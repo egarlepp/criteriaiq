@@ -60,6 +60,7 @@ import {
   type ProjectImpactiqActivitiesResponse,
   type ProjectImpactiqEffortResponse,
 } from "@shared/impactiq";
+import { trimTrailingChar } from "@shared/trim-edge";
 
 const configBodySchema = z.object({
   baseUrl: z.url({ protocol: /^https?$/ }).max(500),
@@ -134,7 +135,7 @@ export function registerImpactiqRoutes(app: Express) {
     try {
       const parsed = configBodySchema.safeParse(req.body ?? {});
       if (!parsed.success) return res.status(400).json({ message: "Invalid ImpactIQ settings", errorCode: "invalid" });
-      const baseUrl = parsed.data.baseUrl.replace(/\/+$/, "");
+      const baseUrl = trimTrailingChar(parsed.data.baseUrl, "/");
       try {
         await assertOutboundUrl(baseUrl);
       } catch {

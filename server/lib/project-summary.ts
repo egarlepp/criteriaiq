@@ -11,6 +11,7 @@ import {
   type ProjectSummaryV1,
 } from "@shared/project-summary";
 import type { ProjectSummaryData, ProjectSummaryRow, StatusCount, SummaryUser } from "../storage/project-summary";
+import { trimTrailingChar } from "@shared/trim-edge";
 
 function iso(value: Date | null): string | null {
   return value instanceof Date && !Number.isNaN(value.getTime()) ? value.toISOString() : null;
@@ -81,7 +82,7 @@ export function buildProjectSummaries(data: ProjectSummaryData, appUrl: string):
   const phases = groupByProject(data.phases);
   const tasks = groupByProject(data.tasks);
   const usersById = new Map(data.users.map((u) => [u.id, u]));
-  const base = appUrl.replace(/\/+$/, "");
+  const base = trimTrailingChar(appUrl, "/");
 
   return data.rows.map((row) => ({
     version: PROJECT_SUMMARY_VERSION,

@@ -25,7 +25,7 @@ import { products, tags } from "../../shared/schema/products";
 import { eq, ilike, and, or, inArray, sql, desc } from "drizzle-orm";
 import { isAuthenticated } from "../auth/simpleAuth";
 import { applyDemoFilter, applyDemoFilterByProject, applyDemoFlag } from "../lib/demo-storage";
-import { trimEdgeChar } from "../lib/trim-edge";
+import { trimEdgeChar } from "@shared/trim-edge";
 
 function toSlug(name: string): string {
   return trimEdgeChar(name.toLowerCase().replace(/[^a-z0-9]+/g, "-"), "-");

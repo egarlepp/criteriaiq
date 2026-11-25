@@ -2,6 +2,7 @@
 // Teams only organize and filter people: they never change what anyone can
 // see or do, and each person keeps one role. See docs/features/teams.md.
 import { z } from "zod";
+import { trimEdgeChar } from "./trim-edge";
 
 /** Subteams nest at most this many levels deep, as in ImpactIQ. */
 export const MAX_SUBTEAM_DEPTH = 4;
@@ -18,13 +19,12 @@ export const USERS_SECTION = "config.user-management";
 
 /** "Sales Engineering EMEA" → "sales-engineering-emea". Empty when nothing usable is left. */
 export function slugifyTeamName(name: string): string {
-  return name
+  const dashed = name
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 120);
+    .replace(/[^a-z0-9]+/g, "-");
+  return trimEdgeChar(dashed, "-").slice(0, 120);
 }
 
 const name = z.string().trim().min(1).max(120);

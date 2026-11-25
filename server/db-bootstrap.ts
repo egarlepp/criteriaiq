@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { trimEdgeChar } from './lib/trim-edge';
+import { trimEdgeChar } from '@shared/trim-edge';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const CONFIG_FILE = path.join(DATA_DIR, 'db-config.json');
