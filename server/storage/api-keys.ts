@@ -8,7 +8,7 @@
 // Registered in server/storage.ts alongside the other 24 domain mixins.
 
 import { db } from "../db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, count, sql } from "drizzle-orm";
 import { apiKeys, n8nConfig } from "@shared/schema";
 import type { ApiKey, InsertApiKey, N8nConfig } from "@shared/schema";
 
@@ -22,6 +22,24 @@ export class ApiKeysStorageMixin {
       .from(apiKeys)
       .orderBy(desc(apiKeys.createdAt));
     return rows.map(({ keyHash: _hash, ...rest }) => rest);
+  }
+
+  /**
+   * Active, unexpired keys other than MCP Server keys (scope mcp:*), which
+   * are counted on their own (countActiveMcpKeys). Drives the API Keys card.
+   */
+  async countActiveIntegrationApiKeys(): Promise<number> {
+    const [row] = await db
+      .select({ value: count() })
+      .from(apiKeys)
+      .where(
+        and(
+          eq(apiKeys.isActive, true),
+          sql`(${apiKeys.expiresAt} IS NULL OR ${apiKeys.expiresAt} > now())`,
+          sql`NOT EXISTS (SELECT 1 FROM jsonb_array_elements_text(${apiKeys.scopes}) AS s(scope) WHERE s.scope LIKE 'mcp:%')`,
+        ),
+      );
+    return Number(row?.value ?? 0);
   }
 
   /** Inserts a new API key row. Caller must supply the bcrypt hash + prefix. */

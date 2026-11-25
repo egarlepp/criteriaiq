@@ -5,6 +5,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { SalesforceConfigurationTab } from "./SalesforceConfigurationTab";
 import { AIProvidersTab } from "./AIProvidersTab";
 import { N8nTab } from "./N8nTab";
+import { ApiKeysTab } from "./ApiKeysTab";
 import { IntegrationsOverview } from "./IntegrationsOverview";
 import { McpServerTab } from "./McpServerTab";
 import { useCrmProvider } from "@/hooks/use-crm-provider";
@@ -84,6 +85,10 @@ export function IntegrationsTab({ user }: IntegrationsTabProps) {
 
           <TabsContent value="n8n" className="space-y-4">
             <N8nTab user={user} />
+          </TabsContent>
+
+          <TabsContent value="api-keys" className="space-y-4">
+            <ApiKeysTab />
           </TabsContent>
 
           <TabsContent value="mcp-server" className="space-y-4">

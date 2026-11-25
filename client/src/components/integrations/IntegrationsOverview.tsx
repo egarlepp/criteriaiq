@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useLocation, useSearch } from "wouter";
 import type { LucideIcon } from "lucide-react";
-import { Activity, AlertCircle, Brain, CalendarDays, CheckCircle2, CircleSlash, Cloud, Hexagon, KeyRound, Loader2, MailPlus, Server, Shield, Zap } from "lucide-react";
+import { Activity, AlertCircle, Brain, CalendarDays, CheckCircle2, CircleSlash, Cloud, Hexagon, KeyRound, KeySquare, Loader2, MailPlus, Server, Shield, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useCrmProvider } from "@/hooks/use-crm-provider";
 import { CRM_DISPLAY_NAMES } from "@shared/crm-provider";
@@ -17,7 +17,7 @@ import { OutlookSigninForm } from "./OutlookSigninForm";
 import { EmailConfigurationForm } from "./EmailConfigurationForm";
 import { OverviewCard } from "./OverviewCard";
 
-type IntegrationKey = "okta" | "azure" | "salesforce" | "hubspot" | "email" | "aiProviders" | "n8n" | "mcp" | "impactiq" | "outlook";
+type IntegrationKey = "okta" | "azure" | "salesforce" | "hubspot" | "email" | "aiProviders" | "n8n" | "apiKeys" | "mcp" | "impactiq" | "outlook";
 
 interface IntegrationStatus {
   key: IntegrationKey;
@@ -56,6 +56,7 @@ const OTHER_INTEGRATIONS: IntegrationDef[] = [
   { key: "outlook", icon: CalendarDays, inline: { kind: "outlook" } },
   { key: "aiProviders", icon: Brain, href: `${INTEGRATIONS_HREF}&subtab=ai-providers` },
   { key: "n8n", icon: Zap, href: `${INTEGRATIONS_HREF}&subtab=n8n` },
+  { key: "apiKeys", icon: KeySquare, href: `${INTEGRATIONS_HREF}&subtab=api-keys` },
   { key: "mcp", icon: Server, href: `${INTEGRATIONS_HREF}&subtab=mcp-server` },
   { key: "impactiq", icon: Activity, inline: { kind: "impactiq" } },
 ];
