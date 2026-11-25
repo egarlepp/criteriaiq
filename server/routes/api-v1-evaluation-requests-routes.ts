@@ -8,7 +8,8 @@
 //        Active solutions, and (with 2+ characters) up to 20 accounts whose
 //        name contains the text, for the caller's form. Accounts are ids and
 //        names; solutions add iconName and graphicUrl, so the caller can draw
-//        them the way CriteriaIQ does (the key may GET graphicUrl).
+//        them the way CriteriaIQ does (the key may GET graphicUrl), plus their
+//        type, description and linked components, so the caller can import them.
 //   POST /api/v1/evaluation-requests
 //        Creates the request. externalRef is the caller's own id for it, so
 //        a retry returns the request already made (200, created: false).

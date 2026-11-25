@@ -37,6 +37,11 @@ export interface EvaluationRequestSolution {
   iconName: string | null;
   /** Where the uploaded graphic is served (/api/files/...), or null. Wins over iconName. */
   graphicUrl: string | null;
+  /** The solution's type as set on the solution ("Solution" unless an admin changed it), or null. */
+  solutionType: string | null;
+  description: string | null;
+  /** Active components linked to this solution, by name. */
+  components: Array<{ id: number; name: string; description: string | null }>;
 }
 import { eq, and, or, desc, asc, count, sql, inArray, gte, ilike } from "drizzle-orm";
 import {
@@ -44,6 +49,8 @@ import {
   projects,
   customers,
   products,
+  components,
+  productComponents,
   supportRequests,
   evaluationRequests,
   evaluationRequestProducts,
@@ -834,17 +841,48 @@ export class RequestsStorageMixin {
       .select({
         id: products.id,
         name: products.name,
+        solutionType: products.solutionType,
+        description: products.description,
         solutionIcon: products.solutionIcon,
         solutionIconName: products.solutionIconName,
       })
       .from(products)
       .where(and(eq(products.isActive, true), applyDemoFilter(products)))
       .orderBy(asc(products.name));
+    const ids = rows.map((r) => r.id);
+    const links = ids.length
+      ? await db
+          .select({
+            productId: productComponents.productId,
+            id: components.id,
+            name: components.name,
+            description: components.description,
+          })
+          .from(productComponents)
+          .innerJoin(components, eq(components.id, productComponents.componentId))
+          .where(
+            and(
+              inArray(productComponents.productId, ids),
+              eq(components.isActive, true),
+              applyDemoFilter(components),
+            ),
+          )
+          .orderBy(asc(components.name), asc(components.id))
+      : [];
+    const byProduct = new Map<number, EvaluationRequestSolution["components"]>();
+    for (const l of links) {
+      const list = byProduct.get(l.productId) ?? [];
+      if (!list.some((c) => c.id === l.id)) list.push({ id: l.id, name: l.name, description: l.description || null });
+      byProduct.set(l.productId, list);
+    }
     return rows.map((r) => ({
       id: r.id,
       name: r.name,
       iconName: r.solutionIconName || null,
       graphicUrl: solutionGraphicPath(r.solutionIcon),
+      solutionType: r.solutionType || null,
+      description: r.description || null,
+      components: byProduct.get(r.id) ?? [],
     }));
   }
 
