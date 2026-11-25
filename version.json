@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.11",
+  "version": "v0.12.12",
   "release": "v0.12.0",
-  "buildDate": "2026-11-19T22:42:34Z",
-  "gitCommit": "bb80c38",
+  "buildDate": "2026-11-25T20:21:00Z",
+  "gitCommit": "f238cfa",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.12",
+      "date": "2026-11-25",
+      "pr": 12,
+      "title": "Evaluation requests from DemoIQ: scoped v1 endpoint",
+      "category": "improvement"
+    },
     {
       "version": "v0.12.11",
       "date": "2026-11-19",
