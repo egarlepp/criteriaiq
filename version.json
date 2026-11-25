@@ -1,10 +1,17 @@
 {
-  "version": "v0.12.12",
+  "version": "v0.12.13",
   "release": "v0.12.0",
-  "buildDate": "2026-11-25T20:21:00Z",
-  "gitCommit": "f238cfa",
+  "buildDate": "2026-11-25T20:34:39Z",
+  "gitCommit": "ec6e001",
   "environment": "production",
   "updates": [
+    {
+      "version": "v0.12.13",
+      "date": "2026-11-25",
+      "pr": 16,
+      "title": "Fix remaining code scanning alerts (slow pattern matching, log formatting, fuzzy matcher)",
+      "category": "fix"
+    },
     {
       "version": "v0.12.12",
       "date": "2026-11-25",
