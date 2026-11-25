@@ -88,7 +88,7 @@ function requireAdmin(req: Request, res: Response, next: NextFunction) {
   return next();
 }
 
-export type IntegrationKey = "okta" | "azure" | "salesforce" | "hubspot" | "email" | "aiProviders" | "n8n" | "mcp" | "impactiq" | "outlook";
+export type IntegrationKey = "okta" | "azure" | "salesforce" | "hubspot" | "email" | "aiProviders" | "n8n" | "apiKeys" | "mcp" | "impactiq" | "outlook";
 
 export interface IntegrationStatus {
   key: IntegrationKey;
@@ -101,13 +101,14 @@ export interface IntegrationStatus {
 export function registerAdminIntegrationsRoutes(app: Express) {
   app.get("/api/admin/integrations/status", isAuthenticated, requireAdmin, async (_req, res) => {
     try {
-      const [stored, salesforceConfigured, hubspotConfigured, crmProvider, mcpSettings, mcpKeyCount, impactiq, outlook] = await Promise.all([
+      const [stored, salesforceConfigured, hubspotConfigured, crmProvider, mcpSettings, mcpKeyCount, apiKeyCount, impactiq, outlook] = await Promise.all([
         storage.getStoredIntegrationStates(),
         isSalesforceConfigured(),
         isHubspotConfigured().catch(() => false),
         getCrmProviderId(),
         getMcpSettings(),
         storage.countActiveMcpKeys(),
+        storage.countActiveIntegrationApiKeys(),
         getImpactiqConnectionSummary().catch(() => null),
         getOutlookSigninConfig().catch(() => null),
       ]);
@@ -129,6 +130,8 @@ export function registerAdminIntegrationsRoutes(app: Express) {
         { key: "outlook", configured: outlook !== null, enabled: !!outlook?.enabled },
         { key: "aiProviders", configured: stored.aiProviders.configured, enabled: stored.aiProviders.enabled },
         { key: "n8n", ...stored.n8n },
+        // API Keys counts as set up once an active, unexpired non-MCP key exists.
+        { key: "apiKeys", configured: apiKeyCount > 0, enabled: apiKeyCount > 0 },
         // MCP is configured once an mcp:read key exists; enabled is the admin switch.
         { key: "mcp", configured: mcpKeyCount > 0, enabled: mcpKeyCount > 0 && mcpSettings.enabled },
         { key: "impactiq", configured: !!impactiq?.configured, enabled: !!impactiq?.configured && !!impactiq.enabled },

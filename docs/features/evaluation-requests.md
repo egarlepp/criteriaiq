@@ -88,7 +88,7 @@ After a demo where the prospect agreed to a POC or trial, DemoIQ asks for one
 on behalf of the SE who ran the demo. The result is an ordinary open request
 with that SE as the requester, and the account team is told as above.
 
-Create the key in Admin › Integrations › n8n › API keys with the
+Create the key in Admin › Integrations › API Keys with the
 **Evaluation requests only (DemoIQ)** preset (scope
 `evaluation-requests:write`). That key can call the endpoints below and
 nothing else; no other preset includes the scope, and a signed-in user can't

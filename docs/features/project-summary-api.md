@@ -143,7 +143,7 @@ five-minute cache and nightly job. To set it up:
 
 1. In ImpactIQ, open Admin → Integrations → Projects (POC|POV). The
    **Live refresh** section appears under the CriteriaIQ connection once that
-   connection is saved (a Read only key from Admin › Integrations › n8n ›
+   connection is saved (a Read only key from Admin › Integrations ›
    API Keys here). Turn it on and copy the endpoint URL and the signing
    secret it shows.
 2. In CriteriaIQ, open Admin › Integrations › Webhooks › New Webhook, pick

@@ -23,7 +23,7 @@ Integrations card) and `client/src/components/project-detail/ImpactiqEffortCard.
 
 The card's **How to connect ImpactIQ** panel lists these steps plus the other
 two parts of the link: the Read only key ImpactIQ uses to read projects here
-(Admin › Integrations › n8n › API Keys) and the webhook behind its live
+(Admin › Integrations › API Keys) and the webhook behind its live
 refresh (see `project-summary-api.md`). ImpactIQ carries the same steps, with
 troubleshooting, in How to Use ImpactIQ › Connecting CriteriaIQ; change both
 when a menu moves. The panel is open until a connection is saved.

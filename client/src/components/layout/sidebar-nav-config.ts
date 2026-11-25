@@ -90,6 +90,7 @@ import {
   HardDrive,
   Gauge,
   Zap,
+  KeySquare,
   Server,
   User,
   Bug,
@@ -451,6 +452,7 @@ export const SIDEBAR_NAV: SidebarNavGroup[] = [
           { id: "integrations-ai-providers", labelKey: "layout.sidebar.items.aiProviders", icon: Brain, href: "/admin?tab=salesforce-configuration&subtab=ai-providers", section: "config.ai-providers" },
           { id: "webhooks", labelKey: "layout.sidebar.items.webhooks", icon: Webhook, href: "/admin?tab=webhooks", adminOnly: true },
           { id: "integrations-n8n", labelKey: "layout.sidebar.items.n8n", icon: Zap, href: "/admin?tab=salesforce-configuration&subtab=n8n", section: "config.n8n" },
+          { id: "integrations-api-keys", labelKey: "layout.sidebar.items.apiKeys", icon: KeySquare, href: "/admin?tab=salesforce-configuration&subtab=api-keys", section: "config.api-keys" },
           { id: "integrations-mcp-server", labelKey: "layout.sidebar.items.mcpServer", icon: Server, href: "/admin?tab=salesforce-configuration&subtab=mcp-server", section: "config.mcp-server" },
           {
             // No TAB_DEFAULT_PARAMS entry: without a subtab the page opens on

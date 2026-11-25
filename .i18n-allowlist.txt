@@ -95,6 +95,7 @@ client/src/components/validation-criteria/ComponentsTab.tsx
 client/src/components/validation-criteria/CriteriaTab.tsx
 client/src/components/project-detail/GapAnalysisTab.tsx
 client/src/components/integrations/N8nTab.tsx
+client/src/components/integrations/ApiKeysTab.tsx
 client/src/components/dashboard/calendar-dashboard.tsx
 client/src/components/dashboard/dashboard-renderer.tsx
 client/src/components/projects/project-grouped-views.tsx
